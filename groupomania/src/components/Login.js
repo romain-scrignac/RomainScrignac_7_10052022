@@ -2,15 +2,38 @@ import { useState } from 'react';
 
 const Login = () => {
     document.title = 'Login';
+    const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [email, setEmailValue] = useState('');
     const [password, setPasswordValue] = useState('');
+    const [isValid, setIsValid] = useState({
+        email: '',
+        password: ''
+    });
 
     function emailOnChange(e) {
-        setEmailValue(e.target.value)
+        const email = e.target.value;
+        if (!email.match(regexEmail)) {
+            setIsValid(previousState => { return {...previousState, email: ''}});
+            e.target.style["border-color"] = "#FD2D01";
+        } else {
+            setIsValid(previousState => { return {...previousState, email: email}});
+            e.target.style["border-color"] = "#34c924";
+        }
+        setEmailValue(email.toLowerCase())
     }
 
     function passwordOnChange(e) {
-        setPasswordValue(e.target.value)
+        const password = e.target.value;
+        if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
+        || password.length < 8 || password.match[/\s|=|'|"'/]) {
+            setIsValid(previousState => { return {...previousState, password: ''}});
+            e.target.style["border-color"] = "#FD2D01";
+        }
+        else {
+            setIsValid(previousState => { return {...previousState, password: password}});
+            e.target.style["border-color"] = "#34c924";
+        }
+        setPasswordValue(password)
     }
 
     const handleSubmit = (event) => {
@@ -27,12 +50,16 @@ const Login = () => {
                     },
                     body: JSON.stringify({ email, password })
                 });
+                const responseJson = await response.json((err) => {
+                    if (err) throw err;
+                });
                 if (response.ok) {
-                    const responseJson = await response.json();
                     localStorage.setItem("session_firstname", responseJson.firstname);
                     localStorage.setItem('session_id', responseJson.userId);
                     localStorage.setItem("session_token", responseJson.token);
                     setTimeout(function(){ window.location.href="/" } , 5000);
+                } else {
+                    alert(responseJson.err)
                 }
             } catch (err) {
                 console.error(err);
@@ -42,17 +69,19 @@ const Login = () => {
     };
 
     return (
-        <div className="login-form">
-             <form>
+        <div className="login">
+            <h1>Connexion</h1>
+             <form className='login-form'>
                 <fieldset>
                     <label htmlFor='email'>Email</label>
                     <input
                         id='email'
                         name='email'
-                        value={email}
+                        value={email.toLowerCase()}
                         onChange={emailOnChange}
                     />
-                    <p id='emailErrorMsg' className='errorMsg'></p>
+                </fieldset>
+                <fieldset>
                     <label htmlFor='password'>Password</label>
                     <input
                         id='password'
@@ -61,15 +90,18 @@ const Login = () => {
                         value={password}
                         onChange={passwordOnChange}
                     />
-                    <p id='passwordErrorMsg' className='errorMsg'></p>
                 </fieldset>
-                {password.includes(' ') || password.trim().length < 8 || email.trim() === '' ? (
-                        <div>
-                            <span className='messageValid'>* Tous les champs doivent être valident</span>
-                            <button className="btn btn-submit-login" disabled>Submit</button>
-                        </div>
+                {
+                    isValid.email && isValid.password ?
+                    (
+                        <button className="btn btn-submit" onClick={handleSubmit} title="Connexion">
+                            Valider
+                        </button>
                     ) : (
-                        <button className="btn btn-submit-login" onClick={handleSubmit} title="Valider">Valider</button>
+                        <div className='submit'>
+                            <span className='messageValid'>* Tous les champs doivent être renseignés</span>
+                            <button className='btn btn-submit' disabled>Submit</button>
+                        </div>
                     )
                 }
             </form>

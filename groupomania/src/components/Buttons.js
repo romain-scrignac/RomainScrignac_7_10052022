@@ -2,9 +2,17 @@ function Buttons() {
 
     const url = new URL(window.location);
     const pathName = url.pathname;
+
+    const historyBack = () => {
+        return window.history.back()
+    }
     
     return (
         <div>
+            {pathName === '/login' || pathName === '/signup' ? 
+            (
+                <button className="btn btn-return" onClick={historyBack} title="Revenir an arrière">Retour</button>
+            ):(null)}
             {!localStorage.session_id && pathName !== '/' && pathName !== '/login' && pathName !== '/signup' ? 
                 (
                     <div>

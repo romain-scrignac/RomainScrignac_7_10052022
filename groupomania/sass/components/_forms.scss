@@ -1,5 +1,5 @@
-/* Signup */
-.signup {
+/* Forms */
+.signup, .login {
     margin-top: 30px;
     display: flex;
     flex-direction: column;
@@ -7,14 +7,16 @@
     justify-content: center;
 }
 
-.signup h1 {
-    margin-bottom: 30px;
+.signup h1, .login h1 {
+    margin: 30px auto;
     color: $primary;
     font-size: 20px;
     text-align: center;
+    text-decoration: underline;
 }
 
-.signup-form {
+.signup-form, .login-form {
+    position: relative;
     display: flex;
     flex-direction: column;
     border: 1px $tertiary groove;
@@ -25,11 +27,11 @@
         width: 70%;
     }
     @include desktop-only {
-        width: 500px;
+        width: 400px;
     }
 }
 
-.signup-form fieldset {
+.signup-form fieldset, .login-form fieldset {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
@@ -39,23 +41,30 @@
     width: 95%;
 }
 
-.signup-form label {
+.signup-form label, .login-form label {
     display: flex;
     width: 30%;
     font-size: 14px;
     text-decoration: underline;
 }
 
-.signup-form input {
+.signup-form input, .login-form input {
     outline: none;
     border: 2px #f2f0f0 groove;
     background-color: white;
     width: 50%;
 }
 
-.signup-form .messageValid {
+.messageValid {
+    position: absolute;
+    bottom: -20px;
     font-style: italic;
     color: $primary;
     font-size: 12px;
     margin-left: 10px;
+}
+
+.submit {
+    display: flex;
+    flex-direction: column;
 }

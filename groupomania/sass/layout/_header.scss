@@ -7,7 +7,6 @@
 }
 
 .grpm-logo {
-    text-align: center;
     margin-top: 20px;
     width: 100%;
     display: flex;
@@ -23,7 +22,6 @@
 
 .grpm-logo-img {
     width: 150px;
-    object-fit: cover;
     @include tablet-only {
         width: 200px;
     }

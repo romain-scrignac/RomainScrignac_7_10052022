@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
 function Signup() {
     document.title = 'Signup';
@@ -49,7 +49,7 @@ function Signup() {
             setIsValid(previousState => { return {...previousState, email: email}});
             e.target.style["border-color"] = "#34c924";
         }
-        setEmailValue(email);
+        setEmailValue(email.toLowerCase());
     }
 
     function passwordOnChange(e) {
@@ -115,7 +115,7 @@ function Signup() {
 
     return (
         <div className="signup">
-            <h1>Formulaire d'inscription</h1>
+            <h1>Inscription</h1>
             <form className="signup-form">
                 <fieldset>
                     <label htmlFor="firstname">Prénom:</label>
@@ -143,7 +143,7 @@ function Signup() {
                         id="email"
                         name="email"
                         type="email"
-                        value={emailValue}
+                        value={emailValue.toLowerCase()}
                         onChange={emailOnChange}
                     />
                 </fieldset>
@@ -171,17 +171,13 @@ function Signup() {
                     isValid.firstname && isValid.lastname && isValid.email && isValid.password 
                     && isValid.verifPass && passwordValue === verifPasswordValue ?
                     (
-                        <button 
-                            className="btn btn-submit-signup"
-                            onClick={handleSubmit}
-                            value="Valider l'inscription"
-                        >
+                        <button className="btn btn-submit" onClick={handleSubmit} title="Inscription">
                             Valider
                         </button>
                     ):(
-                        <div>
+                        <div className='submit'>
                             <span className='messageValid'>* Tous les champs doivent être renseignés</span>
-                            <button className="btn btn-submit-signup" disabled>Valider</button>
+                            <button className="btn btn-submit" disabled>Valider</button>
                         </div>
                     )
                 }

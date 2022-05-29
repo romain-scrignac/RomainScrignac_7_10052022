@@ -1,34 +1,38 @@
 /* Buttons */
-.btn:enabled:enabled {
+.btn {
     cursor: pointer;
-    padding: 3px 8px 5px 8px;
+    padding: 5px 8px;
     border-radius: 5px;
-    background-color: $tertiary;
-    color: white;
     font-weight: bold;
     font-size: 12px;
+}
+
+.btn:enabled {
+    background-color: $tertiary;
+    color: white;
+}
+
+.btn:disabled {
+    color: silver;
 }
 
 .btn:hover:enabled {
     background-color: $secondary;
     color: $tertiary;
+    scale: 1.05;
 }
 
 .btn-logout {
     right: 10px;
 }
 
-.btn-submit-signup {
-    margin: 5px 40%;
-    width: 20%;
+.btn-submit {
+    width: 60px;
+    margin: 5px auto;
 }
 
-.btn-submit-login {
-    margin: 5px 35%;
-    width: 30%;
-}
-
-.btn-submit-logout {
-    text-align: center;
-    margin-top: 250px;
+.btn-return {
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
