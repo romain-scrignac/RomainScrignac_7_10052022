@@ -1,0 +1,31 @@
+.btn {
+    cursor: pointer;
+    padding: 3px 8px 5px 8px;
+    border-radius: 5px;
+    background-color: #FFD7D7;
+    color: #4E5166
+}
+
+.btn:hover {
+    background-color: #4E5166;
+    color: #FFD7D7
+}
+
+.btn-logout {
+    right: 10px;
+}
+
+.btn-submit-signup {
+    margin: 5px 40%;
+    width: 20%;
+}
+
+.btn-submit-login {
+    margin: 5px 35%;
+    width: 30%;
+}
+
+.btn-submit-logout {
+    text-align: center;
+    margin-top: 250px;
+}

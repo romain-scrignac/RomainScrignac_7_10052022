@@ -1,0 +1,37 @@
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.grpm-logo {
+    width: 100%;
+    text-align: center;
+    margin-top: 20px
+}
+
+.grpm-buttons {
+    width: 200px;
+    margin-top: 80px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.grpm-logo .logo {
+    width: 300px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .grpm-logo {
+        animation: grpm-logo-spin infinite 20s linear;
+    }
+}
+
+@keyframes grpm-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}

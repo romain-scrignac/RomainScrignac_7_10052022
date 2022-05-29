@@ -1,0 +1,11 @@
+# Dotenv
+.env
+
+# Node
+/node_modules
+
+# Images
+/images
+
+# functions
+/functions/verifEmail.js

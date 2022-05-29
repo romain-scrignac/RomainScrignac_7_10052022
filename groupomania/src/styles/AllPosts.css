@@ -1,0 +1,17 @@
+.post {
+    margin: 15
+}
+
+.post-name {
+    color: 'blue';
+    font-style: 'italic';
+    margin-bottom: 5px;
+    font-size: 14;
+    cursor: 'pointer';
+    display: 'inline-block';
+}
+
+.post-content {
+   margin: 0;
+}
+
