@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import '../styles/Signup.css'
 
 function Signup() {
     document.title = 'Signup';
@@ -9,51 +8,74 @@ function Signup() {
     const [emailValue, setEmailValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
     const [verifPasswordValue, setVerifPasswordValue] = useState('')
+    const [isValid, setIsValid] = useState({
+        firstname: '',
+        lastname: '',
+        email: '',
+        password: '',
+        verifPass: ''
+    });
 
     function firstnameOnChange(e) {
-        if (e.target.value.length < 3) {
-            document.getElementById('firstname').style.borderColor = "#ff1c05";
+        const firstname = e.target.value;
+        if (firstname.length < 3) {
+            (setIsValid(previousState => { return {...previousState, firstname: ''}}));
+            e.target.style["border-color"] = "#FD2D01";
         } else {
-            document.getElementById('firstname').style.borderColor = "#34c924";
+            setIsValid(previousState => { return {...previousState, firstname: firstname}});
+            e.target.style["border-color"] = "#34c924";
         }
-        setFirstnameValue(e.target.value);
+        setFirstnameValue(firstname);
     }
 
     function lastnameOnChange(e) {
-        if (e.target.value.length < 3) {
-            document.getElementById('lastname').style.borderColor = "red";
+        const lastname = e.target.value;
+        if (lastname.length < 3) {
+            setIsValid(previousState => { return {...previousState, lastname: ''}});
+            e.target.style["border-color"] = "#FD2D01";
         } else {
-            document.getElementById('lastname').style.borderColor = "#34c924";
+            setIsValid(previousState => { return {...previousState, lastname: lastname}});
+            e.target.style["border-color"] = "#34c924";
         }
-        setLastnameValue(e.target.value);
+        setLastnameValue(lastname);
     }
 
     function emailOnChange(e) {
-        if (!e.target.value.match(regexEmail)) {
-            document.getElementById('email').style.borderColor = "red";
+        const email = e.target.value;
+        if (!email.match(regexEmail)) {
+            setIsValid(previousState => { return {...previousState, email: ''}});
+            e.target.style["border-color"] = "#FD2D01";
         } else {
-            document.getElementById('email').style.borderColor = "#34c924";
+            setIsValid(previousState => { return {...previousState, email: email}});
+            e.target.style["border-color"] = "#34c924";
         }
-        setEmailValue(e.target.value);
+        setEmailValue(email);
     }
 
     function passwordOnChange(e) {
-        if(!e.target.value.match(/[A-Z]/g) || !e.target.value.match(/[a-z]/g) || !e.target.value.match(/[0-9]/g) 
-        || e.target.value.length < 8 || e.target.value.match[/\s|=|'|"'/]) {
-            document.getElementById('password').style.borderColor = "red";
-        } else {
-            document.getElementById('password').style.borderColor = "#34c924";
+        const password = e.target.value;
+        if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
+        || password.length < 8 || password.match[/\s|=|'|"'/]) {
+            setIsValid(previousState => { return {...previousState, password: ''}});
+            e.target.style["border-color"] = "#FD2D01";
         }
-        setPasswordValue(e.target.value);
+        else {
+            setIsValid(previousState => { return {...previousState, password: password}});
+            e.target.style["border-color"] = "#34c924";
+        }
+        setPasswordValue(password);
     }
 
     function verifPasswordOnChange(e) {
-        if(e.target.value !== passwordValue) {
-            document.getElementById('verifPassword').style.borderColor = "red";
+        const verifPass = e.target.value;
+        if(verifPass !== passwordValue) {
+            setIsValid(previousState => { return {...previousState, verifPass: ''}});
+            e.target.style["border-color"] = "#FD2D01";
         } else {
-            document.getElementById('verifPassword').style.borderColor = "#34c924";
+            setIsValid(previousState => { return {...previousState, verifPass: verifPass}});
+            e.target.style["border-color"] = "#34c924";
         }
-        setVerifPasswordValue(e.target.value);
+        setVerifPasswordValue(verifPass);
     }
 
     const handleSubmit = (event) => {
@@ -68,7 +90,13 @@ function Signup() {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ firstname: firstnameValue, lastname: lastnameValue, email: emailValue, password: passwordValue })
+                    body: JSON.stringify({ 
+                        firstname: firstnameValue, 
+                        lastname: lastnameValue, 
+                        email: emailValue, 
+                        password: passwordValue,
+                        verifPass: verifPasswordValue
+                     })
                 });
                 const responseJson = await response.json((err) => {
                     if (err) throw err;
@@ -87,7 +115,7 @@ function Signup() {
 
     return (
         <div className="signup">
-            <h2>Formulaire d'inscription</h2>
+            <h1>Formulaire d'inscription</h1>
             <form className="signup-form">
                 <fieldset>
                     <label htmlFor="firstname">Prénom:</label>
@@ -95,60 +123,68 @@ function Signup() {
                         id="firstname"
                         name="firstname"
                         type="text"
-                        size="50"
                         value={firstnameValue}
                         onChange={firstnameOnChange}
-                        required
                     />
+                </fieldset>
+                <fieldset>
                     <label htmlFor="lastname">Nom:</label>
                     <input 
                         id="lastname"
                         name="lastname"
                         type="text"
-                        size="50"
                         value={lastnameValue}
                         onChange={lastnameOnChange}
-                        required
                     />
+                </fieldset>
+                <fieldset>
                     <label htmlFor="email">Email:</label>
                     <input
                         id="email"
                         name="email"
                         type="email"
-                        size="50"
                         value={emailValue}
                         onChange={emailOnChange}
-                        required
                     />
+                </fieldset>
+                <fieldset>
                     <label htmlFor="password">Password:</label>
                     <input
                         id="password"
                         name="password"
                         type="password"
-                        size="50"
                         value={passwordValue}
                         onChange={passwordOnChange}
-                        required
                     />
+                </fieldset>
+                <fieldset>
                     <label htmlFor="password">Vérification:</label>
                     <input
                         id="verifPassword"
                         name="verifPassword"
                         type="password"
-                        size="50"
                         value={verifPasswordValue}
                         onChange={verifPasswordOnChange}
-                        required
                     />
                 </fieldset>
-                {1 + 1 === 2 ? (
-                    <button className="btn btn-submit-signup" onClick={handleSubmit} title="Valider l'inscription">Valider</button>
-                ):(
-                    <div>
-                        <span className='messageValid'>* Tous les champs doivent être renseignés</span>
-                        <button className="btn btn-submit-signup" disabled>Valider</button>
-                    </div>
-                )}
+                {   
+                    isValid.firstname && isValid.lastname && isValid.email && isValid.password 
+                    && isValid.verifPass && passwordValue === verifPasswordValue ?
+                    (
+                        <button 
+                            className="btn btn-submit-signup"
+                            onClick={handleSubmit}
+                            value="Valider l'inscription"
+                        >
+                            Valider
+                        </button>
+                    ):(
+                        <div>
+                            <span className='messageValid'>* Tous les champs doivent être renseignés</span>
+                            <button className="btn btn-submit-signup" disabled>Valider</button>
+                        </div>
+                    )
+                }
                 
             </form>
         </div>

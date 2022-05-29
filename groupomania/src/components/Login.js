@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import '../styles/Login.css'
 
 const Login = () => {
     document.title = 'Login';

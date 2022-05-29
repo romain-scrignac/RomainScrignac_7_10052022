@@ -1,7 +1,5 @@
 import Buttons from './Buttons';
 import {grpmLogo} from '../datas/images';
-import '../styles/Header.css';
-
 
 function Header () {
     // const url = new URL(window.location);

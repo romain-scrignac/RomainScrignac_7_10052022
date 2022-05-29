@@ -1,9 +1,4 @@
-import Login from './Login';
-import Logout from'./Logout';
-import Signup from './Signup';
-import '../styles/Buttons.css'
-
-  function Buttons() {
+function Buttons() {
 
     const url = new URL(window.location);
     const pathName = url.pathname;
@@ -29,9 +24,6 @@ import '../styles/Buttons.css'
             {localStorage.session_token && pathName !== '/logout' ? 
                 (<button className='btn btn-logout' onClick={() => window.location.href='/logout'}>Déconnexion</button>): null 
             }
-            {pathName === '/login' ? (<Login />): null}
-            {pathName === '/logout' ? (<Logout />): null}
-            {pathName === '/signup' ? (<Signup />): null}
         </div>
     )
 }

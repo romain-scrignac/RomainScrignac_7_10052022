@@ -66,14 +66,17 @@ const validatePostPayload = (authId, postObject) => {
         firstname,
         lastname,
         email,
-        password
+        password,
+        verifPass
     } = userObject;
     
-    if (!firstname || !lastname || !email || !password) {
+    if (!firstname || !lastname || !email || !password || !verifPass) {
         throw 'Invalid form!';
     } else if (typeof firstname !== 'string' || typeof lastname !== 'string' || typeof email !== 'string' 
-    || typeof password !== 'string') {
+    || typeof password !== 'string' || typeof verifPass !== 'string') {
         throw 'Invalid field(s)!';
+    } else if (password !== verifPass) {
+        throw 'Passwords do not match !';
     } else if (!email.match(regexEmail)) {
         throw 'Invalid email format!';
     } else if (!password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/[0-9]/)

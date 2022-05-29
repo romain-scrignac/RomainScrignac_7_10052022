@@ -1,0 +1,26 @@
+@mixin tablet-only {
+    @media screen and (min-width: map-get($breakpoints-min, tablet)) and (max-width: map-get($breakpoints-max, tablet)){
+        @content;
+    }
+}
+  
+@mixin desktop-only {
+    @media screen and (min-width: map-get($breakpoints-min, desktop)){
+        @content;
+    }
+}
+
+@mixin buttons {
+    font-weight: bold; font-size: 14px;
+    font-weight: normal; color: white;
+    background-image: linear-gradient(175deg, $secondary, $primary);
+    border: none; border-radius: 30px;
+    box-shadow: 1px 2px 8px $shadow;
+    transition: all 0.4s;
+}
+  
+@mixin button-hover {
+    box-shadow: 2px 5px 8px $shadow;
+    opacity: 0.9;
+    cursor: pointer;
+}

@@ -1,6 +1,8 @@
 import Header from './Header';
 import AllPosts from './AllPosts';
-import '../styles/App.css';
+import Login from './Login';
+import Logout from'./Logout';
+import Signup from './Signup';
 
 function App() {
   document.title = 'Groupomania';
@@ -11,6 +13,9 @@ function App() {
     <div>
       <Header />
       {localStorage.session_token && pathName === '/' ? (<AllPosts />) : null}
+      {pathName === '/login' ? (<Login />): null}
+      {pathName === '/logout' ? (<Logout />): null}
+      {pathName === '/signup' ? (<Signup />): null}
     </div>
   )
 }

@@ -1,0 +1,33 @@
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.grpm-logo {
+    text-align: center;
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.grpm-buttons {
+    width: 200px;
+    margin-top: 80px;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.grpm-logo-img {
+    width: 150px;
+    object-fit: cover;
+    @include tablet-only {
+        width: 200px;
+    }
+    @include desktop-only {
+        width: 250px;
+    }
+}
