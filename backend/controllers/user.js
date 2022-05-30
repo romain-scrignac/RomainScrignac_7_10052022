@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const { User } = require('../database/models');
 const { validateUserPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
+const verifEmail = require('../functions/verifEmail');
 
 // Fonction signup
 exports.signup = async (req, res) => {
@@ -11,7 +12,7 @@ exports.signup = async (req, res) => {
             throw 'Invalid form!';
         }
         const userObject = req.body;
-        console.log(userObject)
+
         // Vérification du formulaire
         validateUserPayload(userObject);
 
@@ -20,12 +21,20 @@ exports.signup = async (req, res) => {
         if (findUser !== null) {
             throw 'This email is already in use, please enter another one!';
         }
+
+        // Création d'un code aléatoire de vérification
+        const userCode = Math.random().toString().substring(2,8);
+
         // Création utilisateur
         const hash = await bcrypt.hash(userObject.password, 10);
         await User.create({ user_firstname: userObject.firstname, user_lastname: userObject.lastname,
-        user_email: userObject.email, user_password: hash }, (err) => {
+        user_email: userObject.email, user_password: hash, user_code: userCode }, (err) => {
                 if (err) throw err;
         });
+
+        // Envoi d'un mail de confirmation
+        verifEmail(userObject.email, userObject.firstname, userCode);
+
         res.status(201).json({ message: 'User created!' });
     } catch (err) {
         switchErrors(res, err);
@@ -100,6 +109,7 @@ exports.login = async (req, res) => {
         if (!req.body || !req.body.email || !req.body.password) {
             throw 'Invalid form!';
         }
+
         const findUser = await User.findOne({ where: { user_email: req.body.email } });
         if (findUser === null) throw 'User not found!';
         if (findUser.user_last_connection > findUser.user_last_disconnection) {
@@ -110,14 +120,19 @@ exports.login = async (req, res) => {
         const compare = await bcrypt.compare(req.body.password, findUser.user_password);
         if (!compare) throw 'Wrong password!';
 
-        await User.update({ user_last_connection: Date() }, { where: {user_id: findUser.user_id} }, (err) => {
-            if (err) throw err;
-        });
-        const token = jwt.sign(
-            { userEmail: findUser.user_email, userId: findUser.user_id }, process.env.JWT_KEY, { expiresIn: '24h' }
-        );
-        //res.status(200).json({ email: findUser.user_email, token });
-        res.status(200).json({ firstname: findUser.user_firstname, userId: findUser.user_id, token: token });
+        if (findUser.isVerified === 0) {
+            res.status(200).json({ userId: findUser.user_id, isVerified: false });
+        } else {
+            await User.update({ user_last_connection: Date() }, { where: {user_id: findUser.user_id} }, (err) => {
+                if (err) throw err;
+            });
+    
+            const token = jwt.sign(
+                { userEmail: findUser.user_email, userId: findUser.user_id }, process.env.JWT_KEY, { expiresIn: '24h' }
+            );
+            //res.status(200).json({ email: findUser.user_email, token });
+            res.status(200).json({ firstname: findUser.user_firstname, userId: findUser.user_id, token: token });
+        }        
     } catch (err) {
         switchErrors(res, err);
     }
@@ -138,6 +153,49 @@ exports.logout = async(req, res) => {
             if (err) throw err;
         });
         res.status(200).json({ message: 'User disconnected!'});
+    } catch (err) {
+        switchErrors(res, err);
+    }
+};
+
+// Fonction verification code
+exports.verifCode = async (req, res) => {
+    try {
+        if(!req.body || !req.body.userId || !req.body.code) {
+            throw 'Bad request!';
+        }
+
+        const findUser = await User.findOne({ where: {user_id: req.body.userId} });
+        if (findUser === null) throw 'User not found!';
+        if (findUser.user_code !== req.body.code) throw 'Invalid code!';
+
+        await User.update({ isVerified: 1 }, { where: {user_id: req.body.userId} }, (err) => {
+            if (err) throw err;
+        })
+
+        const token = jwt.sign(
+            { userEmail: findUser.user_email, userId: findUser.user_id }, process.env.JWT_KEY, { expiresIn: '24h' }
+        );
+
+        res.status(200).json({ firstname: findUser.user_firstname, token: token });
+    } catch (err) {
+        switchErrors(res, err);
+    }
+};
+
+exports.sendCode = async (req, res) => {
+    try {
+        if(!req.body || !req.body.userId) {
+            throw 'Bad request!';
+        }
+
+        const findUser = await User.findOne({ where: {user_id: req.body.userId} });
+        if (findUser === null) throw 'User not found!';
+
+        // Renvoi du code de vérification
+        verifEmail(findUser.user_email, findUser.user_firstname, findUser.user_code);
+
+        res.status(200).json({ message: 'The code has been send back!'});
     } catch (err) {
         switchErrors(res, err);
     }

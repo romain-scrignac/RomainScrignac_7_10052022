@@ -1,11 +1,12 @@
 # Dotenv
 .env
 
+# SSL
+cert.pem
+key.pem
+
 # Node
 /node_modules
 
 # Images
 /images
-
-# functions
-/functions/verifEmail.js

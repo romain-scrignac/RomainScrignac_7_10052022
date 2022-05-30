@@ -67,7 +67,7 @@ a {
 }
 
 /* Forms */
-.signup, .login {
+.signup, .login, .verif {
   margin-top: 30px;
   display: flex;
   flex-direction: column;
@@ -75,15 +75,14 @@ a {
   justify-content: center;
 }
 
-.signup h1, .login h1 {
+.signup h1, .login h1, .verif h1 {
   margin: 30px auto;
   color: #FD2D01;
   font-size: 20px;
   text-align: center;
-  text-decoration: underline;
 }
 
-.signup-form, .login-form {
+.signup-form, .login-form, .verif-form {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -93,17 +92,17 @@ a {
   width: 100%;
 }
 @media screen and (min-width: 600px) and (max-width: 991px) {
-  .signup-form, .login-form {
+  .signup-form, .login-form, .verif-form {
     width: 70%;
   }
 }
 @media screen and (min-width: 992px) {
-  .signup-form, .login-form {
+  .signup-form, .login-form, .verif-form {
     width: 400px;
   }
 }
 
-.signup-form fieldset, .login-form fieldset {
+.signup-form fieldset, .login-form fieldset, .verif-form fieldset {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
@@ -113,14 +112,14 @@ a {
   width: 95%;
 }
 
-.signup-form label, .login-form label {
+.signup-form label, .login-form label, .verif-form label {
   display: flex;
   width: 30%;
   font-size: 14px;
   text-decoration: underline;
 }
 
-.signup-form input, .login-form input {
+.signup-form input, .login-form input, .verif-form input {
   outline: none;
   border: 2px #f2f0f0 groove;
   background-color: white;

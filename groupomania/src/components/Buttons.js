@@ -9,11 +9,13 @@ function Buttons() {
     
     return (
         <div>
-            {pathName === '/login' || pathName === '/signup' ? 
-            (
-                <button className="btn btn-return" onClick={historyBack} title="Revenir an arrière">Retour</button>
-            ):(null)}
-            {!localStorage.session_id && pathName !== '/' && pathName !== '/login' && pathName !== '/signup' ? 
+            {
+                pathName === '/login' || pathName === '/signup' ? 
+                (<button className="btn btn-return" onClick={historyBack} title="Revenir an arrière">Retour</button>):(null)
+            }
+            {
+                !localStorage.session_id && pathName !== '/' && pathName !== '/login' && pathName !== '/signup'
+                 && pathName !== '/verification' ? 
                 (
                     <div>
                         <p>Vous n'êtes pas connecté !</p>
@@ -21,7 +23,8 @@ function Buttons() {
                     </div>
                 ) : null
             }
-            {!localStorage.session_id && pathName === '/' ?
+            {
+                !localStorage.session_token && pathName === '/' ?
                 (
                     <div className="grpm-buttons">
                         <button className='btn btn-login' onClick={() => window.location.href='/login'}>Connexion</button>
@@ -29,7 +32,8 @@ function Buttons() {
                     </div>
                 ) : null
             }
-            {localStorage.session_token && pathName !== '/logout' ? 
+            {
+                localStorage.session_token && pathName !== '/logout' ? 
                 (<button className='btn btn-logout' onClick={() => window.location.href='/logout'}>Déconnexion</button>): null 
             }
         </div>

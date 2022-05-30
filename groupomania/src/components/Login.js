@@ -50,16 +50,23 @@ const Login = () => {
                     },
                     body: JSON.stringify({ email, password })
                 });
+
                 const responseJson = await response.json((err) => {
                     if (err) throw err;
                 });
+
                 if (response.ok) {
-                    localStorage.setItem("session_firstname", responseJson.firstname);
-                    localStorage.setItem('session_id', responseJson.userId);
-                    localStorage.setItem("session_token", responseJson.token);
-                    setTimeout(function(){ window.location.href="/" } , 5000);
+                    if (responseJson.isVerified === false) {
+                        localStorage.setItem('session_id', responseJson.userId);
+                        window.location.href = "/verification";
+                    } else {
+                        localStorage.setItem("session_firstname", responseJson.firstname);
+                        localStorage.setItem('session_id', responseJson.userId);
+                        localStorage.setItem("session_token", responseJson.token);
+                        setTimeout(function(){ window.location.href="/" } , 5000);
+                    }
                 } else {
-                    alert(responseJson.err)
+                    alert(responseJson.err);
                 }
             } catch (err) {
                 console.error(err);
@@ -100,7 +107,7 @@ const Login = () => {
                     ) : (
                         <div className='submit'>
                             <span className='messageValid'>* Tous les champs doivent être renseignés</span>
-                            <button className='btn btn-submit' disabled>Submit</button>
+                            <button className='btn btn-submit' disabled>Valider</button>
                         </div>
                     )
                 }

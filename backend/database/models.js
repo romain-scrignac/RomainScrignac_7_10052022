@@ -1,4 +1,4 @@
-const { DataTypes, TINYINT, UUIDV4 } = require("sequelize");
+const { DataTypes, TINYINT, UUIDV4, SMALLINT } = require("sequelize");
 const sequelize = require('./config');
 
 "use strict";
@@ -6,8 +6,8 @@ const sequelize = require('./config');
 const User = sequelize.define('User', {              // User model
     // Model attributes are defined here
     user_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
+        autoIncrement: true,
         primaryKey: true
     },
     user_firstname: {
@@ -30,17 +30,21 @@ const User = sequelize.define('User', {              // User model
         type: DataTypes.TINYINT(4),
         defaultValue: 1
     },
+    user_code: {
+        type: DataTypes.STRING(6),
+        allowNull: false
+    },
     isVerified: {
-        type: DataTypes.BOOLEAN,
+        type: DataTypes.TINYINT(1),
         defaultValue: 0
     }, 
     user_last_connection: {
         type: DataTypes.DATE,
-        defaultValue: Date
+        defaultValue: DataTypes.NOW
     },
     user_last_disconnection: {
         type: DataTypes.DATE,
-        defaultValue: Date
+        defaultValue: DataTypes.NOW
     }
 }, {
     // Other model options go here
@@ -56,8 +60,7 @@ const Post = sequelize.define('Post', {             // post model
         primaryKey: true
     },
     post_user_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
         allowNull: false
     },
     post_content: {
@@ -69,15 +72,10 @@ const Post = sequelize.define('Post', {             // post model
     },
     post_video: {
         type: DataTypes.STRING
-    },
-    post_date: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
     }
 }, {
     // Other model options go here
-    tableName: 'Posts',
-    timestamps: false
+    tableName: 'Posts'
 });
 
 const Comment = sequelize.define('Comment', {       // Comment model
@@ -92,22 +90,16 @@ const Comment = sequelize.define('Comment', {       // Comment model
         allowNull: false
     },
     comment_user_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
         allowNull: false
     },
     comment_content: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    comment_date: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
     }
 }, {
     // Other model options go here
-    tableName: 'Comments',
-    timestamps: false
+    tableName: 'Comments'
 });
 
 const Like = sequelize.define('Like', {             // Like model
@@ -124,8 +116,7 @@ const Like = sequelize.define('Like', {             // Like model
         type: DataTypes.SMALLINT
     },
     like_user_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
         allowNull: false
     },
     like_value: {
@@ -146,13 +137,11 @@ const Message = sequelize.define('Message', {       // Message model
         primaryKey: true
     },
     message_sender_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
         allowNull: false
     },
     message_receiver_id: {
-        type: DataTypes.UUID,
-        defaultValue: UUIDV4,
+        type: DataTypes.SMALLINT,
         allowNull: false
     },
     message_content: {
@@ -169,30 +158,24 @@ const Message = sequelize.define('Message', {       // Message model
 });
 
 User.hasOne(Post, {                                 // Associations
-    foreignKey: 'post_user_id',
-    constraints: false
+    foreignKey: 'post_user_id'
 });
 Post.belongsTo(User, {
-    foreignKey: 'post_user_id',
-    constraints: false
+    foreignKey: 'post_user_id'
 });
 
 User.hasOne(Comment, { 
-    foreignKey: 'comment_user_id',
-    constraints: false
+    foreignKey: 'comment_user_id'
 });
 Comment.belongsTo(User, {
-    foreignKey: 'comment_user_id',
-    constraints: false
+    foreignKey: 'comment_user_id'
 });
 
 User.hasOne(Like, {
-    foreignKey: 'like_user_id',
-    constraints: false
+    foreignKey: 'like_user_id'
 });
 Like.belongsTo(User, {
-    foreignKey: 'like_user_id',
-    constraints: false
+    foreignKey: 'like_user_id'
 });
 
 Post.hasMany(Comment, {

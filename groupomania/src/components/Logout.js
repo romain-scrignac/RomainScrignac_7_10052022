@@ -22,7 +22,7 @@ const Logout = () => {
     deconnexion()
 
     return (
-        <div className="btn btn-submit-logout">Déconnexion en cours...</div>
+        <div className="btn btn-submit-logout"><p>Déconnexion en cours...</p></div>
     )
 };
 

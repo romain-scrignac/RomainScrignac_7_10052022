@@ -3,6 +3,7 @@ import AllPosts from './AllPosts';
 import Login from './Login';
 import Logout from'./Logout';
 import Signup from './Signup';
+import Verification from './Verification';
 
 function App() {
   document.title = 'Groupomania';
@@ -16,6 +17,7 @@ function App() {
       {pathName === '/login' ? (<Login />): null}
       {pathName === '/logout' ? (<Logout />): null}
       {pathName === '/signup' ? (<Signup />): null}
+      {pathName === '/verification' ? (<Verification />): null}
     </div>
   )
 }
