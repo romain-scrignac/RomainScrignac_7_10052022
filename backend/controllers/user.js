@@ -169,7 +169,7 @@ exports.verifCode = async (req, res) => {
         if (findUser === null) throw 'User not found!';
         if (findUser.user_code !== req.body.code) throw 'Invalid code!';
 
-        await User.update({ isVerified: 1 }, { where: {user_id: req.body.userId} }, (err) => {
+        await User.update({ user_last_connection: Date(), isVerified: 1 }, { where: {user_id: req.body.userId} }, (err) => {
             if (err) throw err;
         })
 

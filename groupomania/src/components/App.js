@@ -14,10 +14,10 @@ function App() {
     <div>
       <Header />
       {localStorage.session_token && pathName === '/' ? (<AllPosts />) : null}
+      {localStorage.session_token && pathName === '/logout' ? (<Logout />) : null}
+      {localStorage.session_id && pathName === '/verification' ? (<Verification />) : null}
       {pathName === '/login' ? (<Login />): null}
-      {pathName === '/logout' ? (<Logout />): null}
       {pathName === '/signup' ? (<Signup />): null}
-      {pathName === '/verification' ? (<Verification />): null}
     </div>
   )
 }

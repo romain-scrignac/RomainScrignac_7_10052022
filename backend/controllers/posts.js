@@ -12,11 +12,11 @@ exports.getAllPosts = async (req, res) => {
         // console.log(req.headers.query)
         if (req.headers.query && req.headers.query.match(/order true/)) {
             const order = req.headers.query.split(' ')[1];
-            sortByDate = [['post_date', 'ASC']];
+            sortByDate = [['createdAt', 'ASC']];
         } else {
-            sortByDate = [['post_date', 'DESC']];
+            sortByDate = [['createdAt', 'DESC']];
         }
-console.log('test');
+
         const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['post_id'],
             include: [

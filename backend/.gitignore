@@ -2,8 +2,8 @@
 .env
 
 # SSL
-cert.pem
-key.pem
+server.cert
+server.key
 
 # Node
 /node_modules

@@ -9,7 +9,7 @@ const OnePost = () => {
     }, [])
 
     const fetchData = async () => {
-        const response = await fetch(`http://localhost:3000/api/posts/${postId}`, {
+        const response = await fetch(`https://localhost/api/posts/${postId}`, {
             headers: { 
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',

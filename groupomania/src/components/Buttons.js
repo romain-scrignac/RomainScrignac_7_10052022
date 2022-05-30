@@ -14,16 +14,6 @@ function Buttons() {
                 (<button className="btn btn-return" onClick={historyBack} title="Revenir an arrière">Retour</button>):(null)
             }
             {
-                !localStorage.session_id && pathName !== '/' && pathName !== '/login' && pathName !== '/signup'
-                 && pathName !== '/verification' ? 
-                (
-                    <div>
-                        <p>Vous n'êtes pas connecté !</p>
-                        <p>Cliquez <a href='/'>ici</a> pour revenir à l'accueil</p>
-                    </div>
-                ) : null
-            }
-            {
                 !localStorage.session_token && pathName === '/' ?
                 (
                     <div className="grpm-buttons">

@@ -2,8 +2,8 @@ import Buttons from './Buttons';
 import {grpmLogo} from '../datas/images';
 
 function Header () {
-    // const url = new URL(window.location);
-    // const pathName = url.pathname;
+    const url = new URL(window.location);
+    const pathName = url.pathname;
 
     return (
         <div className='header'>
@@ -13,6 +13,16 @@ function Header () {
                 </div>
             </div>
             <Buttons />
+            {
+                !localStorage.session_token && pathName !== '/' && pathName !== '/login' && pathName !== '/signup' 
+                && (pathName === '/verification' && !localStorage.session_id) ? 
+                (
+                    <div>
+                        <p>Vous n'êtes pas connecté !</p>
+                        <p>Cliquez <u><a href='/'>ici</a></u> pour revenir à l'accueil</p>
+                    </div>
+                ) : null
+            }
         </div>
     )
 }

@@ -3,7 +3,7 @@ const Logout = () => {
     const deconnexion = async () => {
         try {
             const userId = localStorage.session_id;
-            const response = await fetch('http://localhost:3000/api/auth/logout', {
+            const response = await fetch('https://localhost/api/auth/logout', {
                 method: "PUT",
                 headers: { 
                     'Accept': 'application/json',

@@ -23,7 +23,7 @@ const Verification = () => {
 
         async function fetchData() {
             try {
-                const response = await fetch('http://localhost:3000/api/auth/verification', {
+                const response = await fetch('https://localhost/api/auth/verification', {
                     method: "POST",
                     headers: { 
                         'Accept': 'application/json',
@@ -57,7 +57,7 @@ const Verification = () => {
 
         async function fetchData() {
             try {
-                const response = await fetch('http://localhost:3000/api/auth/sendcode', {
+                const response = await fetch('https://localhost/api/auth/sendcode', {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
@@ -82,7 +82,7 @@ const Verification = () => {
                 message ? (<p>Bienvenue ! Vous allez être redirigé vers la page d'acueil</p>):
                 (
                     <div className="verif">
-                        <h3>Veuillez saisir le code de vérification envoyé sur votre boite mail</h3>
+                        <p>Veuillez saisir le code de vérification reçu dans votre boite mail</p>
                         <form className='verif-form'>
                             <fieldset>
                                 <label htmlFor='userCode'>Code:</label>
@@ -100,7 +100,7 @@ const Verification = () => {
                             }
                         </form>
                         {
-                            !sendMail ? (<p onClick={sendCode}>Renvoyer le code</p>):
+                            !sendMail ? (<a href="/" onClick={sendCode}>Renvoyer le code</a>):
                             (<p>{sendMail}</p>)
                             
                         }
