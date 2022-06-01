@@ -11,7 +11,7 @@ function Buttons() {
         <div>
             {
                 pathName === '/login' || pathName === '/signup' ? 
-                (<button className="btn btn-return" onClick={historyBack} title="Revenir an arrière">Retour</button>):(null)
+                (<button className="btn btn-return" onClick={historyBack} title="Page précédente">Retour</button>):(null)
             }
             {
                 !localStorage.session_token && pathName === '/' ?

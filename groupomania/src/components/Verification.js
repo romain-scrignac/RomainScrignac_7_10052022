@@ -79,7 +79,7 @@ const Verification = () => {
     return (
         <div>
             {
-                message ? (<p>Bienvenue ! Vous allez être redirigé vers la page d'acueil</p>):
+                message ? (<p>Bienvenue ! Vous allez être redirigé vers la page d'accueil</p>):
                 (
                     <div className="verif">
                         <p>Veuillez saisir le code de vérification reçu dans votre boite mail</p>

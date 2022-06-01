@@ -1,4 +1,48 @@
 /* Forms */
+.post-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    width: 100%;
+}
+
+.post-form textarea {
+    overflow: auto;
+    resize: none;
+    outline: none;
+    height: 100px;
+}
+
+.post-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 35px;
+    padding: 0 5px;
+}
+
+.post-options label {
+    height: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.post-options label:hover {
+    cursor: pointer;
+    height: 27px;
+}
+
+.post-options input[type=file] {
+    display: none;
+}
+
+.post-options img {
+    height: 100%;
+    margin: 0;
+}
+
 .signup, .login, .verif {
     margin-top: 30px;
     display: flex;

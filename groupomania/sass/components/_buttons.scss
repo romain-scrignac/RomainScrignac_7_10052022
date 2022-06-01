@@ -19,10 +19,15 @@
 .btn:hover:enabled {
     background-color: $secondary;
     color: $tertiary;
+}
+
+.btn-submit:hover:enabled {
     scale: 1.05;
 }
 
 .btn-logout {
+    position: absolute;
+    top: 10px;
     right: 10px;
 }
 

@@ -9,6 +9,7 @@ const Login = () => {
         email: '',
         password: ''
     });
+    const session = localStorage.session_token;
 
     function emailOnChange(e) {
         const email = e.target.value;
@@ -48,7 +49,7 @@ const Login = () => {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password, session })
                 });
 
                 const responseJson = await response.json((err) => {
@@ -61,7 +62,7 @@ const Login = () => {
                         window.location.href = "/verification";
                     } else {
                         localStorage.setItem("session_firstname", responseJson.firstname);
-                        localStorage.setItem('session_id', responseJson.userId);
+                        localStorage.setItem('session_id', JSON.parse(responseJson.userId));
                         localStorage.setItem("session_token", responseJson.token);
                         setTimeout(function(){ window.location.href="/" } , 5000);
                     }

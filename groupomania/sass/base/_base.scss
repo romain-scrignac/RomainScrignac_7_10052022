@@ -26,3 +26,18 @@ a {
     padding: 0;
     margin: 0;
 }
+
+.logout, .unconnected {
+    text-align: center;
+    margin-top: 100px;
+}
+
+.grpm-err404 {
+    display: flex;
+    justify-content: center;
+    margin: 100px auto;
+}
+
+.grpm-err404 img {
+    width: 30%;
+}

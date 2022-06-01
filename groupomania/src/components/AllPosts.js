@@ -1,15 +1,22 @@
 import { useState, useEffect } from "react";
+import { iconImg } from '../datas/images';
 
 const AllPosts = () => {
 
-    const [allPosts, setAllPosts] = useState([]);
-    // const [allLikes, setAllLikes] = useState([]);
-    // const [allDislikes, setAllDislikes] = useState([]);
     const [order, setOrder] = useState(false);
-
+    const [allPosts, setAllPosts] = useState([]);
+    const [allLikes, setAllLikes] = useState([]);
+    const [allDislikes, setAllDislikes] = useState([]);
+    const [postContentValue, setPostContentValue] = useState('');
+    const [postImageFile, setPostImageFile] = useState(null);
+    const [addPost, setAddPost] = useState({
+        content: postContentValue,
+        image: postImageFile
+    });
+    
     useEffect(() => {
-        fetchPosts()
-    }, [order]);
+        getPosts()
+    }, []);
 
     function changeOrder() {
         if (order === false) {
@@ -20,24 +27,97 @@ const AllPosts = () => {
         }
     };
 
-    const fetchPosts = async () => {
-        const response = await fetch(`https://localhost/api/posts/`, {
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.session_token}`,
-                'Query': `order ${order}`
-            },
-            Query: order
-        });
-        if (response.ok) {
-            const responseJson = await response.json();
-            const allPosts = responseJson.allPosts;
-            setAllPosts(allPosts);
+    function onChangeContent(e) {
+        const content = e.target.value;
+        if(content.length < 10) {
+            setAddPost(previousState => { return {...previousState, content: ''}});
+        } else {
+            setAddPost(previousState => { return {...previousState, content: content}});
         }
+        setPostContentValue(content);
     };
 
-    // const fetchLikes = async () => {
+    function onChangeImage(e) {
+        const file = e.target.files[0];
+        if(file.size > (1024 * 1024)) {
+            setAddPost(previousState => { return {...previousState, image: null}});
+        } else {
+            setAddPost(previousState => { return {...previousState, image: file}});
+        }
+        setPostImageFile(file);
+    };
+
+    function onSubmitPost(e) {
+        e.preventDefault();
+        fetchPostData();
+    };
+
+    function addLike(e) {
+        e.preventDefault();
+        const postId = e.target.value;
+        fetchLikeData(postId, "1");
+        
+    }
+
+    function addDislike(e) {
+        e.preventDefault();
+        const postId = e.target.value;        
+        fetchLikeData(postId, "-1");
+    }
+
+    const getPosts = async () => {
+        try{
+            const response = await fetch(`https://localhost/api/posts/`, {
+                headers: { 
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.session_token}`,
+                    'Query': `order ${order}`
+                },
+                Query: order
+            });
+            if (response.ok) {
+                const responseJson = await response.json();
+                setAllPosts(responseJson.allPosts);
+                
+                for (let i = 0; i < responseJson.allPosts.length; i++) {
+                    if (responseJson.allPosts[i].Likes[0]) {
+                        if (responseJson.allPosts[i].Likes[0].like_value === 1) {
+                            setAllLikes(
+                                previousState => {
+                                    return {
+                                        ...previousState,
+                                        postId: responseJson.allPosts[i].post_id,
+                                        like: 1
+                                    }
+                                }
+                            )
+                        } else {
+                            //setAllLikes(allLikes.push({postId: responseJson.allPosts[i].post_id, like: 0}))
+                        }
+
+                        if (responseJson.allPosts[i].Likes[0].like_value === -1) {
+                            setAllDislikes(
+                                previousState => {
+                                    return {
+                                        ...previousState,
+                                        postId: responseJson.allPosts[i].post_id,
+                                        like: -1
+                                    }
+                                }
+                            )
+                        } else {
+                            //setAllDislikes(allDislikes.push({postId: responseJson.allPosts[i].post_id, dislike: 0}))
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }        
+    };
+
+    // const getLikes = async () => {
     //     const response = await fetch('https://localhost/api/posts/', {
     //         headers: { 
     //             'Accept': 'application/json',
@@ -48,55 +128,111 @@ const AllPosts = () => {
     //     if (response.ok) {
     //         const responseJson = await response.json();
     //         const likes = responseJson.allLikes;
-    //         setAllLikes(allLikes);
-    //         setAllDislikes(allDislikes);
+    //         setAllLikes(likes);
     //     }
-
-    //     let likes = [];
-    //     post.Likes.map(like => {
-    //         likes.push({postId: post.post_id, like: like.like_value})
-    //     })
     // };
 
-    const onLike = async (postId, like) => {      
-        //setAllLikes()  
-        const response = await fetch(`https://localhost/api/posts/${postId}/like`, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.session_token}`
-            },
-            body: JSON.stringify({postId: postId, like: like})
-        });
-        if (response.ok) {
-            if (like === 1) {
-                console.log("Like ajouté !")
-            } else {
-                console.log("Dislike ajouté !")
+    const fetchPostData = async () => {
+        try {
+            const response = await fetch(`https://localhost/api/posts/`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.session_token}`
+                },
+                body: JSON.stringify({ content: addPost.content, image: addPost.image, userId: localStorage.session_id })
+            });
+
+            if (!response.ok) {
+                const responseJson = await response.json((err) => {
+                    if (err) throw err;
+                });
+                alert(responseJson.err);
             }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchLikeData = async (postId, like) => {
+        try {
+            await fetch(`https://localhost/api/posts/${postId}/like`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.session_token}`
+                },
+                body: JSON.stringify({ like: like, postId: postId, userId: localStorage.session_id })
+            });
+        } catch (err) {
+            console.error(err);
         }
     }
 
+    // console.log(allLikes)
+    function likeList (post_id) {
+        for (let i = 0; i < allLikes; i++) {
+            if (allLikes[i].postId === post_id) {
+                 return allLikes.like
+                }
+        }  
+    }
+
     return (
-        <div id="test">
-            <button onClick={changeOrder}>Trier par date</button>
+        <div className="allPosts">
+            <div className="addPost">
+                <h2>Publier</h2>
+                <form className="post-form">                   
+                    <textarea 
+                        name="postText"
+                        placeholder="Écrivez quelque chose..."
+                        onChange={onChangeContent}
+                    >
+                    </textarea>
+                    <div className="post-options">
+                        <label htmlFor="file" className="btn-uploadImg">
+                            <img
+                                src={iconImg.cover}
+                                alt={iconImg.name}
+                                title="Insérer une image"
+                            />
+                            <span className="isFile">{postImageFile ? (postImageFile.name): null}</span>
+                        </label>
+                        <input type="file" id="file" accept="image/*" onChange={onChangeImage} />
+                    </div>
+                    { 
+                        addPost.content ? 
+                        (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
+                        (<button className="btn btn-submit-post" disabled>Publier</button>)
+                    }
+                </form>
+            </div>
+
+            {
+                allPosts.length > 1 ? (<button onClick={changeOrder}>Trier par date</button>): null
+            }
+            
             {allPosts.map(post => (
-                <div key={post.post_id} className="post">
-                    <p className="post-content">Post n° {post.post_id}: {post.post_content}</p>
+                <div className="post" key={post.post_id}>
+                    <p className="post-content">Post n° {post.post_id}:</p>
+                    <p>{post.post_content}</p>
                     <span title= {post.User.user_email} className="post-name">{post.User.user_firstname}</span>
                         {
-                            JSON.stringify(post.Likes) === "[]" ? 
-                            (<p>Like: 0</p>):
-                            (
-                                <p>
-                                    <a href='/' onClick={() => onLike(post.post_id)}>Like: </a>
-                                    {JSON.stringify(post.Likes[0].like_value)}
-                                </p>
-                            )
+                            post.Likes.like_value ?
+                            (<p>Likes: 1</p>):
+                            (<p>Likes: 0</p>)
                         }
-                    <button onClick={() => onLike(post.post_id, 1)}>+</button>
-                    <button onClick={() => onLike(post.post_id, -1)}>-</button>
+                        {
+                            allDislikes.postId === post.post_id ? 
+                            (<p>Dislikes: {allDislikes.dislike}</p>):
+                            (<p>Dislikes: 0</p>)
+                        }
+                    
+                        <button onClick={addLike} value={post.post_id}>+</button>
+                        <button onClick={addDislike} value={post.post_id}>-</button>
+                    
                 </div>
             ))}
         </div>

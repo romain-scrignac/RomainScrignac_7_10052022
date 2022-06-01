@@ -110,9 +110,14 @@ exports.login = async (req, res) => {
             throw 'Invalid form!';
         }
 
+        let session = false;
+        if(req.body.session && session !== undefined) {
+            session = true;
+        }
+
         const findUser = await User.findOne({ where: { user_email: req.body.email } });
         if (findUser === null) throw 'User not found!';
-        if (findUser.user_last_connection > findUser.user_last_disconnection) {
+        if (session && findUser.user_last_connection > findUser.user_last_disconnection) {
             throw 'User already connected!';
         } 
 

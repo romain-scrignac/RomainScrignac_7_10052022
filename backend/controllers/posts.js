@@ -5,13 +5,13 @@ const fs = require('fs');
 
 // Fonction pour afficher tous les posts
 exports.getAllPosts = async (req, res) => {
-
     try {
         // Sort by type
         let sortByDate;
         // console.log(req.headers.query)
+        let order;
         if (req.headers.query && req.headers.query.match(/order true/)) {
-            const order = req.headers.query.split(' ')[1];
+            order = req.headers.query.split(' ')[1];
             sortByDate = [['createdAt', 'ASC']];
         } else {
             sortByDate = [['createdAt', 'DESC']];
@@ -24,7 +24,7 @@ exports.getAllPosts = async (req, res) => {
                     model: User, attributes: userAttr 
                 },
                 { 
-                    model: Comment, separate: true, order: [['comment_date', 'ASC']], 
+                    model: Comment, separate: true, order: [['createdAt', 'ASC']], 
                     include: [
                         { model: User, attributes: userAttr }, 
                         { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id'] }
@@ -82,16 +82,16 @@ exports.addPost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body || !req.body.post) {
+        } else if (!req.body || !req.body.content) {
             throw 'Bad request!';
         }
 
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
-            ...JSON.parse(req.body.post),
+            ...JSON.parse(req.body),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body.post, imageUrl: null };
+        } : { ...req.body, imageUrl: null };
 
         // Si aucune vidéo on définit videoUrl à null
         let videoUrl;
@@ -223,20 +223,22 @@ exports.deletePost = async (req, res) => {
 
 // Fonction pour le système de like d'un post
 exports.likePost = async (req, res) => {
-    console.log(req.auth)
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body.like || !req.body.postId) {
-            throw 'Bad request!';
+        } else if (!req.body.like || !req.body.postId || !req.body.userId || req.body.userId != req.auth.userId) {
+            throw 'test!';
         }
 
-        const postId = req.body.postId;
+        const postId = parseInt(req.body.postId);
+        const like = parseInt(req.body.like);
+
+        console.log("like: "+like)
         
         const findPost = await Post.findOne({ where: {post_id: req.body.postId} });
         if (findPost === null) throw 'Post not found!';
 
-        const like = req.body.like;
+        
         if (like !== -1 && like !== 0 && like !== 1) {
             throw 'Invalid value!';
         }

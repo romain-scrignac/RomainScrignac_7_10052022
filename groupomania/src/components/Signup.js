@@ -19,7 +19,7 @@ function Signup() {
     function firstnameOnChange(e) {
         const firstname = e.target.value;
         if (firstname.length < 3) {
-            (setIsValid(previousState => { return {...previousState, firstname: ''}}));
+            setIsValid(previousState => { return {...previousState, firstname: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
             setIsValid(previousState => { return {...previousState, firstname: firstname}});

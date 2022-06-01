@@ -1,0 +1,39 @@
+/* Posts */
+.allPosts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin: 30px auto;
+}
+
+.addPost {
+    width: 100%;
+    @include tablet-only {
+        width: 70%;
+    }
+    @include desktop-only {
+        width: 60%;
+        margin-bottom: 60px;
+    }
+}
+
+.addPost h2 {
+    font-size: medium;
+    margin: 0;
+    padding: 5px;
+    background-color: $tertiary;
+    color: white;
+}
+
+.post {
+    width: 100%;
+    border: 1px groove $tertiary;
+    @include tablet-only {
+        width: 70%;
+    }
+    @include desktop-only {
+        width: 60%;
+        margin-bottom: 60px;
+    }
+}

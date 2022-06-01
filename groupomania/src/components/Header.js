@@ -5,6 +5,19 @@ function Header () {
     const url = new URL(window.location);
     const pathName = url.pathname;
 
+    function verifPath() {
+        let isValidPath = true;
+        if (!localStorage.session_id && pathName === '/logout') {
+            isValidPath = false;
+        } else if(!localStorage.session_token) {
+            if((pathName !== '/' && pathName !== '/login' && pathName !== '/signup') || pathName === '/logout') {
+                isValidPath = false;
+            }
+        }
+        return isValidPath;
+    }
+    verifPath();
+
     return (
         <div className='header'>
             <div className='grpm-logo'>
@@ -14,10 +27,9 @@ function Header () {
             </div>
             <Buttons />
             {
-                !localStorage.session_token && pathName !== '/' && pathName !== '/login' && pathName !== '/signup' 
-                && (pathName === '/verification' && !localStorage.session_id) ? 
+                !verifPath ? 
                 (
-                    <div>
+                    <div className='unconnected'>
                         <p>Vous n'êtes pas connecté !</p>
                         <p>Cliquez <u><a href='/'>ici</a></u> pour revenir à l'accueil</p>
                     </div>

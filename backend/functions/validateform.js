@@ -17,7 +17,7 @@ const validatePostPayload = (authId, postObject) => {
     } else if (!content || !userId) {
         throw 'Invalid form !';
     } else if (typeof content !== "string" || (video && typeof video !== "string") 
-    || typeof userId !== "string" || userId !== authId) {
+    || typeof userId !== "string" || userId != authId) {
         throw 'Invalid field(s)!';
     } else if (content.trim() === "" || userId.trim() === "") {
         throw 'Missing field(s)!';

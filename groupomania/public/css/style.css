@@ -27,6 +27,21 @@ a {
   margin: 0;
 }
 
+.logout, .unconnected {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.grpm-err404 {
+  display: flex;
+  justify-content: center;
+  margin: 100px auto;
+}
+
+.grpm-err404 img {
+  width: 30%;
+}
+
 /* Buttons */
 .btn {
   cursor: pointer;
@@ -48,10 +63,15 @@ a {
 .btn:hover:enabled {
   background-color: #FFD7D7;
   color: #4E5166;
+}
+
+.btn-submit:hover:enabled {
   scale: 1.05;
 }
 
 .btn-logout {
+  position: absolute;
+  top: 10px;
   right: 10px;
 }
 
@@ -67,6 +87,50 @@ a {
 }
 
 /* Forms */
+.post-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+
+.post-form textarea {
+  overflow: auto;
+  resize: none;
+  outline: none;
+  height: 100px;
+}
+
+.post-options {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 35px;
+  padding: 0 5px;
+}
+
+.post-options label {
+  height: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.post-options label:hover {
+  cursor: pointer;
+  height: 27px;
+}
+
+.post-options input[type=file] {
+  display: none;
+}
+
+.post-options img {
+  height: 100%;
+  margin: 0;
+}
+
 .signup, .login, .verif {
   margin-top: 30px;
   display: flex;
@@ -179,6 +243,54 @@ a {
 /* Footer */
 footer {
   display: flex;
+}
+
+/* Posts */
+.allPosts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 30px auto;
+}
+
+.addPost {
+  width: 100%;
+}
+@media screen and (min-width: 600px) and (max-width: 991px) {
+  .addPost {
+    width: 70%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .addPost {
+    width: 60%;
+    margin-bottom: 60px;
+  }
+}
+
+.addPost h2 {
+  font-size: medium;
+  margin: 0;
+  padding: 5px;
+  background-color: #4E5166;
+  color: white;
+}
+
+.post {
+  width: 100%;
+  border: 1px groove #4E5166;
+}
+@media screen and (min-width: 600px) and (max-width: 991px) {
+  .post {
+    width: 70%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .post {
+    width: 60%;
+    margin-bottom: 60px;
+  }
 }
 
 /*# sourceMappingURL=style.css.map */
