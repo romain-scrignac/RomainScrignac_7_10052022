@@ -2,21 +2,23 @@ import { useState, useEffect } from "react";
 import { iconImg } from '../datas/images';
 
 const AllPosts = () => {
-
+    document.title = 'Groupomania';
     const [order, setOrder] = useState(false);
     const [allPosts, setAllPosts] = useState([]);
-    const [allLikes, setAllLikes] = useState([]);
-    const [allDislikes, setAllDislikes] = useState([]);
+    const [newPost, setNewPost] = useState('');
+    const [allLikes, setAllLikes] = useState('');
+    const [allDislikes, setAllDislikes] = useState('');
     const [postContentValue, setPostContentValue] = useState('');
     const [postImageFile, setPostImageFile] = useState(null);
     const [addPost, setAddPost] = useState({
         content: postContentValue,
         image: postImageFile
     });
+    let countLikes = [];
     
     useEffect(() => {
-        getPosts()
-    }, []);
+        getPosts();
+    }, [allLikes, allDislikes, order, newPost]);
 
     function changeOrder() {
         if (order === false) {
@@ -54,15 +56,14 @@ const AllPosts = () => {
 
     function addLike(e) {
         e.preventDefault();
-        const postId = e.target.value;
+        const postId = e.target.previousElementSibling.value;
         fetchLikeData(postId, "1");
-        
     }
 
-    function addDislike(e) {
+    function removeLike(e) {
         e.preventDefault();
-        const postId = e.target.value;        
-        fetchLikeData(postId, "-1");
+        const postId = e.target.previousElementSibling.value;
+        fetchLikeData(postId, "0");
     }
 
     const getPosts = async () => {
@@ -79,58 +80,23 @@ const AllPosts = () => {
             if (response.ok) {
                 const responseJson = await response.json();
                 setAllPosts(responseJson.allPosts);
-                
-                for (let i = 0; i < responseJson.allPosts.length; i++) {
-                    if (responseJson.allPosts[i].Likes[0]) {
-                        if (responseJson.allPosts[i].Likes[0].like_value === 1) {
-                            setAllLikes(
-                                previousState => {
-                                    return {
-                                        ...previousState,
-                                        postId: responseJson.allPosts[i].post_id,
-                                        like: 1
-                                    }
-                                }
-                            )
-                        } else {
-                            //setAllLikes(allLikes.push({postId: responseJson.allPosts[i].post_id, like: 0}))
+                responseJson.allPosts.map(post => {
+                    post.Likes.map(like => {
+                        if (like.like_value === 1) {
+                            countLikes.push({postId: post.post_id, like: 1, userId: like.like_user_id});
                         }
-
-                        if (responseJson.allPosts[i].Likes[0].like_value === -1) {
-                            setAllDislikes(
-                                previousState => {
-                                    return {
-                                        ...previousState,
-                                        postId: responseJson.allPosts[i].post_id,
-                                        like: -1
-                                    }
-                                }
-                            )
-                        } else {
-                            //setAllDislikes(allDislikes.push({postId: responseJson.allPosts[i].post_id, dislike: 0}))
+                        if (like.like_value === 0) {
+                            countLikes.push({postId: post.post_id, like: 0, userId: like.like_user_id});
                         }
-                    }
-                }
+                        return like.like_value;
+                    });
+                    return post.Likes;
+                });
             }
         } catch (err) {
             console.error(err);
         }        
     };
-
-    // const getLikes = async () => {
-    //     const response = await fetch('https://localhost/api/posts/', {
-    //         headers: { 
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json',
-    //             'Authorization': `Bearer ${localStorage.session_token}`
-    //         }
-    //     });
-    //     if (response.ok) {
-    //         const responseJson = await response.json();
-    //         const likes = responseJson.allLikes;
-    //         setAllLikes(likes);
-    //     }
-    // };
 
     const fetchPostData = async () => {
         try {
@@ -144,12 +110,16 @@ const AllPosts = () => {
                 body: JSON.stringify({ content: addPost.content, image: addPost.image, userId: localStorage.session_id })
             });
 
-            if (!response.ok) {
-                const responseJson = await response.json((err) => {
-                    if (err) throw err;
-                });
+            const responseJson = await response.json((err) => {
+                if (err) throw err;
+            });
+
+            if (!response.ok) {                
                 alert(responseJson.err);
+            } else {
+                setNewPost(responseJson);
             }
+            
         } catch (err) {
             console.error(err);
         }
@@ -157,7 +127,7 @@ const AllPosts = () => {
 
     const fetchLikeData = async (postId, like) => {
         try {
-            await fetch(`https://localhost/api/posts/${postId}/like`, {
+            const response = await fetch(`https://localhost/api/posts/${postId}/like`, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -166,20 +136,28 @@ const AllPosts = () => {
                 },
                 body: JSON.stringify({ like: like, postId: postId, userId: localStorage.session_id })
             });
+            const responseJson = await response.json();
+            if(responseJson.err) {
+                alert(responseJson.err);
+            }
+            if (response.ok) {
+                if (like === "1") {
+                    setAllLikes(previousState => {
+                        return {...previousState, postId: postId, like: like, userId: localStorage.session_id} 
+                    });
+                }
+                if (like === "0") {
+                    setAllDislikes(previousState => {
+                        return {...previousState, postId: postId, like: like, userId: localStorage.session_id} 
+                    });
+                }
+                
+            }
         } catch (err) {
             console.error(err);
         }
     }
-
-    // console.log(allLikes)
-    function likeList (post_id) {
-        for (let i = 0; i < allLikes; i++) {
-            if (allLikes[i].postId === post_id) {
-                 return allLikes.like
-                }
-        }  
-    }
-
+    
     return (
         <div className="allPosts">
             <div className="addPost">
@@ -211,28 +189,80 @@ const AllPosts = () => {
             </div>
 
             {
-                allPosts.length > 1 ? (<button onClick={changeOrder}>Trier par date</button>): null
+                allPosts.length > 1 ? 
+                (<button className="btn-order" onClick={changeOrder}>Trier par date</button>): null
             }
             
             {allPosts.map(post => (
+                
                 <div className="post" key={post.post_id}>
                     <p className="post-content">Post n° {post.post_id}:</p>
                     <p>{post.post_content}</p>
                     <span title= {post.User.user_email} className="post-name">{post.User.user_firstname}</span>
-                        {
-                            post.Likes.like_value ?
-                            (<p>Likes: 1</p>):
-                            (<p>Likes: 0</p>)
-                        }
-                        {
-                            allDislikes.postId === post.post_id ? 
-                            (<p>Dislikes: {allDislikes.dislike}</p>):
-                            (<p>Dislikes: 0</p>)
-                        }
-                    
-                        <button onClick={addLike} value={post.post_id}>+</button>
-                        <button onClick={addDislike} value={post.post_id}>-</button>
-                    
+                    {
+                        post.Likes.length === 0 ? 
+                        (
+                            <div className="btn-fav" key={post.post_id}>
+                                <button 
+                                    className="fav"
+                                    title="Ajouter like"
+                                >
+                                    <span onClick={addLike} className="fav-before">
+                                        <input type="hidden" value={post.post_id} />
+                                        <i className="far fa-heart"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        ):(
+                            post.Likes.map( like => (
+                                like.like_user_id !== parseInt(localStorage.session_id) ? 
+                                (
+                                    <div className="btn-fav" key={post.post_id}>
+                                        <button 
+                                            className="fav"
+                                            title="Ajouter like"
+                                        >
+                                            <span onClick={addLike} className="fav-before">
+                                                <input type="hidden" value={post.post_id} />
+                                                <i className="far fa-heart"></i>
+                                            </span>
+                                        </button>
+                                    </div>
+                                ):(
+                                    <div className="btn-fav" key={like.like_id}>
+                                    {
+                                        like.like_value === 0 && like.like_user_id === parseInt(localStorage.session_id) ?
+                                        (
+                                            <button 
+                                                className="fav"
+                                                title="Ajouter like"
+                                            >
+                                                <span onClick={addLike} className="fav-before">
+                                                    <input type="hidden" value={post.post_id} />
+                                                    <i className="far fa-heart"></i>
+                                                </span>
+                                            </button>
+                                        ): null
+                                    }
+                                    {
+                                        like.like_value === 1 && like.like_user_id === parseInt(localStorage.session_id) ?
+                                        (
+                                            <button 
+                                                className="fav"
+                                                title="Retirer like"
+                                            >
+                                                <span onClick={removeLike} className="fav-after">
+                                                    <input type="hidden" value={post.post_id} />
+                                                    <i className="fas fa-heart" ></i>
+                                                </span>
+                                            </button>
+                                        ): null
+                                    }
+                                    </div>
+                                )
+                            ))
+                        )
+                    }
                 </div>
             ))}
         </div>

@@ -13,13 +13,6 @@
     justify-content: center;
 }
 
-.grpm-buttons {
-    width: 200px;
-    margin-top: 80px;
-    display: flex;
-    justify-content: space-evenly;
-}
-
 .grpm-logo-img {
     width: 150px;
     @include tablet-only {

@@ -40,7 +40,7 @@ const Verification = () => {
                     setMessage(true);
                     localStorage.setItem("session_firstname", responseJson.firstname);
                     localStorage.setItem("session_token", responseJson.token);
-                    setTimeout(function(){ window.location.href="/" } , 5000);
+                    // setTimeout(function(){ window.location.href="/" } , 5000);
 
                 } else {
                     alert(responseJson.err);
@@ -79,7 +79,13 @@ const Verification = () => {
     return (
         <div>
             {
-                message ? (<p>Bienvenue ! Vous allez être redirigé vers la page d'accueil</p>):
+                message ? 
+                (
+                    <div className="verif">
+                        <h3>Bienvenue !</h3>
+                        <p>Redirection vers la page d'accueil en cours...</p>
+                    </div>
+                ):
                 (
                     <div className="verif">
                         <p>Veuillez saisir le code de vérification reçu dans votre boite mail</p>

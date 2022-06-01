@@ -43,21 +43,6 @@
     margin: 0;
 }
 
-.signup, .login, .verif {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.signup h1, .login h1, .verif h1 {
-    margin: 30px auto;
-    color: $primary;
-    font-size: 20px;
-    text-align: center;
-}
-
 .signup-form, .login-form, .verif-form {
     position: relative;
     display: flex;

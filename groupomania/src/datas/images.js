@@ -13,7 +13,7 @@ export const iconImg = {
     cover: icon_img
 }
 
-export const grpm404 = {
+export const error404 = {
     name: 'Erreur 404',
     cover: Err404
 }

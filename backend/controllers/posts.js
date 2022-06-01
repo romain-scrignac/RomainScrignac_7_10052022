@@ -224,37 +224,37 @@ exports.deletePost = async (req, res) => {
 // Fonction pour le système de like d'un post
 exports.likePost = async (req, res) => {
     try {
+        console.log(req.body)
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
         } else if (!req.body.like || !req.body.postId || !req.body.userId || req.body.userId != req.auth.userId) {
-            throw 'test!';
+            throw 'Bad request!';
         }
 
         const postId = parseInt(req.body.postId);
         const like = parseInt(req.body.like);
+        const userId = parseInt(req.body.userId);
 
         console.log("like: "+like)
         
         const findPost = await Post.findOne({ where: {post_id: req.body.postId} });
         if (findPost === null) throw 'Post not found!';
 
-        
-        if (like !== -1 && like !== 0 && like !== 1) {
+        if (like !== 0 && like !== 1) {
             throw 'Invalid value!';
         }
-        console.log(`postId :${postId}`, `Like :${like}`);
 
-        const findUserLike = await Like.findOne({where : {like_user_id: req.auth.userId, like_post_id: postId}});
-        // Si l'utilisateur n'a pas encore like/dislike
-        if (findUserLike === null && like !== 0) {
+        const findUserLike = await Like.findOne({  where: {like_user_id: userId, like_post_id: postId} });
+
+        // Si l'utilisateur n'a pas encore like
+        if (findUserLike === null && like === 1) {
             await Like.create({ like_post_id: postId, like_user_id: req.auth.userId, like_value: like }, (err) => {
                 if (err) throw err;
             });
         }
         // Sinon, on met à jour like_value
         else if (findUserLike !== null) {
-            if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1) 
-            || (findUserLike.like_value === -1 && like !== -1)) {
+            if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
                 await Like.update({like_value: like}, { where: {like_post_id: req.body.postId, like_user_id: req.auth.userId} },
                  (err) => {
                     if (err) throw err;
@@ -270,25 +270,10 @@ exports.likePost = async (req, res) => {
         let likeMessage;
         switch (like) {
             case 1:
-                if (findUserLike.like_value === -1) {
-                    likeMessage = 'Dislike removed / Like added !';
-                } else {
-                    likeMessage = 'Like added !';
-                }
+                likeMessage = 'Like added !';
                 break;
             case 0:
-                if (findUserLike.like_value === 1) {
-                    likeMessage = 'Like removed!';
-                } else if (findUserLike.like_value === -1) {
-                    likeMessage = 'Dislike removed!';
-                }
-                break;
-            case -1:
-                if (findUserLike.like_value === 1) {
-                    likeMessage = 'Like removed / Dislike added !';
-                } else {
-                    likeMessage = 'Dislike added !';
-                }
+                likeMessage = 'Like removed!';
         }
         res.status(200).json({ message: likeMessage });
     } catch (err) {

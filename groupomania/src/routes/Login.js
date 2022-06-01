@@ -9,6 +9,7 @@ const Login = () => {
         email: '',
         password: ''
     });
+    const [message, setMessage] = useState('');
     const session = localStorage.session_token;
 
     function emailOnChange(e) {
@@ -59,12 +60,18 @@ const Login = () => {
                 if (response.ok) {
                     if (responseJson.isVerified === false) {
                         localStorage.setItem('session_id', responseJson.userId);
-                        window.location.href = "/verification";
+                        setMessage('Vérification de l\'email nécessaire, veuillez patienter...');
+                        setTimeout(function(){ 
+                            window.location.href="/verification" 
+                        } , 5000);
                     } else {
                         localStorage.setItem("session_firstname", responseJson.firstname);
                         localStorage.setItem('session_id', JSON.parse(responseJson.userId));
                         localStorage.setItem("session_token", responseJson.token);
-                        setTimeout(function(){ window.location.href="/" } , 5000);
+                        setMessage('Connexion ok, redirection en cours...');
+                        setTimeout(function(){ 
+                            window.location.href="/" 
+                        } , 5000);
                     }
                 } else {
                     alert(responseJson.err);
@@ -107,12 +114,13 @@ const Login = () => {
                         </button>
                     ) : (
                         <div className='submit'>
-                            <span className='messageValid'>* Tous les champs doivent être renseignés</span>
                             <button className='btn btn-submit' disabled>Valider</button>
+                            <span className='messageValid'>* Tous les champs doivent être renseignés</span>
                         </div>
                     )
                 }
             </form>
+            {message !== '' ? (<p>{message}</p>): null}
         </div>
     )
 }
