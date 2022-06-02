@@ -13,6 +13,7 @@
 }
 
 .btn:disabled {
+    cursor: no-drop;
     color: silver;
 }
 
@@ -25,14 +26,25 @@
     scale: 1.05;
 }
 
-.btn-logout {
+.btn-profil {
+    margin: 0;
+    padding: 0;
+}
+
+.btn-logout, .btn-account {
     position: absolute;
     top: 10px;
+}
+
+.btn-logout {
     right: 10px;
 }
 
+.btn-account {
+    right: 110px;
+}
+
 .btn-submit {
-    width: 60px;
     margin: 5px auto;
 }
 

@@ -30,6 +30,13 @@ export const btnSignup = {
     onClick: '{() => window.location.href="/signup"}'
 };
 
+export const btnAccount = {
+    name: 'Compte',
+    class: 'btn btn-account',
+    link: '/account',
+    title: 'Consulter mon profil',
+};
+
 // function Buttons() {
 
 //     const url = new URL(window.location);

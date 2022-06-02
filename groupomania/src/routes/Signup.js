@@ -26,7 +26,7 @@ function Signup() {
             e.target.style["border-color"] = "#34c924";
         }
         setFirstnameValue(firstname);
-    }
+    };
 
     function lastnameOnChange(e) {
         const lastname = e.target.value;
@@ -38,7 +38,7 @@ function Signup() {
             e.target.style["border-color"] = "#34c924";
         }
         setLastnameValue(lastname);
-    }
+    };
 
     function emailOnChange(e) {
         const email = e.target.value;
@@ -50,7 +50,7 @@ function Signup() {
             e.target.style["border-color"] = "#34c924";
         }
         setEmailValue(email.toLowerCase());
-    }
+    };
 
     function passwordOnChange(e) {
         const password = e.target.value;
@@ -64,7 +64,7 @@ function Signup() {
             e.target.style["border-color"] = "#34c924";
         }
         setPasswordValue(password);
-    }
+    };
 
     function verifPasswordOnChange(e) {
         const verifPass = e.target.value;
@@ -76,7 +76,7 @@ function Signup() {
             e.target.style["border-color"] = "#34c924";
         }
         setVerifPasswordValue(verifPass);
-    }
+    };
 
     const handleSubmit = (event) => {
         // prevents the submit button from refreshing the page
@@ -111,7 +111,7 @@ function Signup() {
             }
         }
         fetchData();
-    }
+    };
 
     return (
         <div className="signup">

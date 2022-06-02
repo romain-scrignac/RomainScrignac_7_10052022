@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../database/models');
+const { Comment, Post, User } = require('../database/models');
 const { validateUserPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
 const verifEmail = require('../functions/verifEmail');
@@ -201,6 +201,29 @@ exports.sendCode = async (req, res) => {
         verifEmail(findUser.user_email, findUser.user_firstname, findUser.user_code);
 
         res.status(200).json({ message: 'The code has been send back!'});
+    } catch (err) {
+        switchErrors(res, err);
+    }
+};
+
+exports.getProfil = async (req, res) => {
+    try {
+        if(!req.auth || !req.auth.userId) {
+            throw 'Unauthorized request!';
+        }
+
+        const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
+        const findUser = await User.findOne({ attributes: userAttr, where: {user_id: req.auth.userId},  });
+        if (findUser === null) throw 'User not found!';
+
+        const nbPosts = await Post.findAll({ where: {post_user_id: req.auth.userId} });
+        if (nbPosts === null) throw 'No posts found!';
+
+        const nbComs = await Comment.findAll({ where: {comment_user_id: req.auth.userId} });
+        if (nbComs === null) throw 'No comments found!';
+
+        res.status(200).json({ findUser, nbPosts, nbComs });
+
     } catch (err) {
         switchErrors(res, err);
     }

@@ -57,6 +57,7 @@ a {
 }
 
 .btn:disabled {
+  cursor: no-drop;
   color: silver;
 }
 
@@ -69,14 +70,25 @@ a {
   scale: 1.05;
 }
 
-.btn-logout {
+.btn-profil {
+  margin: 0;
+  padding: 0;
+}
+
+.btn-logout, .btn-account {
   position: absolute;
   top: 10px;
+}
+
+.btn-logout {
   right: 10px;
 }
 
+.btn-account {
+  right: 110px;
+}
+
 .btn-submit {
-  width: 60px;
   margin: 5px auto;
 }
 
@@ -336,6 +348,33 @@ footer {
     width: 60%;
     margin-bottom: 60px;
   }
+}
+
+.profil {
+  width: 60%;
+  margin: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.infos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px groove #4E5166;
+  border-radius: 10px;
+  width: 100%;
+  padding: 20px 0;
+}
+
+.infos img {
+  margin-bottom: 20px;
+}
+
+.infos p {
+  margin: 5px;
 }
 
 /*# sourceMappingURL=style.css.map */

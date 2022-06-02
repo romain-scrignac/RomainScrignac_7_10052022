@@ -1,14 +1,11 @@
 import { Outlet, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Header from './components/Header';
-import { btnLogin, btnLogout, btnReturn, btnSignup } from './components/Buttons';
-// import AllPosts from './AllPosts';
-// import Login from './Login';
-// import Logout from'./Logout';
-// import Signup from './Signup';
-// import Verification from './Verification';
+import { btnLogin, btnLogout, btnReturn, btnSignup, btnAccount } from './components/Buttons';
 
 const App = () => {
   document.title = 'Groupomania';
+  let params = useParams();
 
   return (
     <div>
@@ -24,23 +21,29 @@ const App = () => {
           </Link>
         </div>):
         (
-          <Link to="/logout">
-            <button className={btnLogout.class} title={btnLogout.title}>{btnLogout.name}</button>
-          </Link>
+          localStorage.session_token ? (
+            <div className="btn-profil">
+              <Link to="/logout">
+                <button className={btnLogout.class} title={btnLogout.title}>{btnLogout.name}</button>
+              </Link>
+              <Link to ='/account'>
+                <button className={btnAccount.class} title={btnAccount.title}>{btnAccount.name}</button>
+              </Link>
+            </div>
+          ): null
+          
         )
       }
-      <Link to="/">
-        <button className={btnReturn.class} title={btnReturn.title}>{btnReturn.name}</button>
-      </Link>
-        
+      {
+        params !== '/' ?
+        (
+          <Link to="/">
+            <button className={btnReturn.class} title={btnReturn.title}>{btnReturn.name}</button>
+          </Link>
+        ): null
+      }        
       </nav>
       <Outlet />
-      
-      {/* {pathName === '/' ? (<AllPosts />) : null}
-      {pathName === '/logout' ? (<Logout />) : null}
-      {pathName === '/login' ? (<Login />): null}
-      {pathName === '/signup' ? (<Signup />): null}
-      {pathName === '/verification' ? (<Verification />) : null} */}
     </div>
   )
 };

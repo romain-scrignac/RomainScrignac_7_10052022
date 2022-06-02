@@ -15,7 +15,6 @@ module.exports = async (req, res, next) => {
         if(findUser === null) {
             throw 'User not found!';
         } else if (findUser.user_last_connection < findUser.user_last_disconnection) {
-            console.log(req.auth)
             const erreur = [findUser.user_last_connection - findUser.user_last_disconnection];
             throw erreur;
         }

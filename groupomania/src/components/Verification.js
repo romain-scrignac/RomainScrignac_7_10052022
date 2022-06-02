@@ -40,7 +40,7 @@ const Verification = () => {
                     setMessage(true);
                     localStorage.setItem("session_firstname", responseJson.firstname);
                     localStorage.setItem("session_token", responseJson.token);
-                    // setTimeout(function(){ window.location.href="/" } , 5000);
+                    setTimeout(function(){ window.location.href="/" } , 5000);
 
                 } else {
                     alert(responseJson.err);

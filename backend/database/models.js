@@ -11,20 +11,23 @@ const User = sequelize.define('User', {              // User model
         primaryKey: true
     },
     user_firstname: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(75),
         allowNull: false
     },
     user_lastname: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(75),
         allowNull: false
     },
     user_email: {
-        type: DataTypes.STRING(50),
+        type: DataTypes.STRING(75),
         allowNull: false
     },
     user_password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    user_avatar: {
+        type: DataTypes.STRING,
     },
     user_rank: {
         type: DataTypes.TINYINT(4),
@@ -179,21 +182,24 @@ Like.belongsTo(User, {
 });
 
 Post.hasMany(Comment, {
-    foreignKey: 'comment_post_id'
+    foreignKey: 'comment_post_id',
+    onDelete: 'cascade'
 });
 Comment.belongsTo(Post, {
     foreignKey: 'comment_post_id'
 });
 
 Post.hasMany(Like, {
-    foreignKey: 'like_post_id'
+    foreignKey: 'like_post_id',
+    onDelete: 'cascade'
 });
 Like.belongsTo(Post, {
     foreignKey: 'like_post_id'
 });
 
 Comment.hasMany(Like, {
-    foreignKey: 'like_comment_id'
+    foreignKey: 'like_comment_id',
+    onDelete: 'cascade'
 });
 Like.belongsTo(Comment, {
     foreignKey: 'like_comment_id'

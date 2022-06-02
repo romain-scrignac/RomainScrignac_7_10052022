@@ -1,0 +1,26 @@
+.profil {
+    width: 60%;
+    margin: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.infos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px groove $tertiary;
+    border-radius: 10px;
+    width: 100%;
+    padding: 20px 0;
+}
+
+.infos img {
+    margin-bottom: 20px;
+}
+
+.infos p {
+    margin: 5px;
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Verification from '../components/Verification';
 
 const Login = () => {
     document.title = 'Login';
@@ -10,6 +11,7 @@ const Login = () => {
         password: ''
     });
     const [message, setMessage] = useState('');
+    const [verif, setVerif] = useState(true);
     const session = localStorage.session_token;
 
     function emailOnChange(e) {
@@ -61,9 +63,7 @@ const Login = () => {
                     if (responseJson.isVerified === false) {
                         localStorage.setItem('session_id', responseJson.userId);
                         setMessage('Vérification de l\'email nécessaire, veuillez patienter...');
-                        setTimeout(function(){ 
-                            window.location.href="/verification" 
-                        } , 5000);
+                        setVerif(false);
                     } else {
                         localStorage.setItem("session_firstname", responseJson.firstname);
                         localStorage.setItem('session_id', JSON.parse(responseJson.userId));
@@ -84,44 +84,48 @@ const Login = () => {
     };
 
     return (
-        <div className="login">
-            <h1>Connexion</h1>
-             <form className='login-form'>
-                <fieldset>
-                    <label htmlFor='email'>Email</label>
-                    <input
-                        id='email'
-                        name='email'
-                        value={email.toLowerCase()}
-                        onChange={emailOnChange}
-                    />
-                </fieldset>
-                <fieldset>
-                    <label htmlFor='password'>Password</label>
-                    <input
-                        id='password'
-                        name='password'
-                        type='password'
-                        value={password}
-                        onChange={passwordOnChange}
-                    />
-                </fieldset>
-                {
-                    isValid.email && isValid.password ?
-                    (
-                        <button className="btn btn-submit" onClick={handleSubmit} title="Connexion">
-                            Valider
-                        </button>
-                    ) : (
-                        <div className='submit'>
-                            <button className='btn btn-submit' disabled>Valider</button>
-                            <span className='messageValid'>* Tous les champs doivent être renseignés</span>
-                        </div>
-                    )
-                }
-            </form>
-            {message !== '' ? (<p>{message}</p>): null}
-        </div>
+        !verif ? (<Verification />):
+        (
+            <div className="login">
+                <h1>Connexion</h1>
+                <form className='login-form'>
+                    <fieldset>
+                        <label htmlFor='email'>Email</label>
+                        <input
+                            id='email'
+                            name='email'
+                            value={email.toLowerCase()}
+                            onChange={emailOnChange}
+                        />
+                    </fieldset>
+                    <fieldset>
+                        <label htmlFor='password'>Password</label>
+                        <input
+                            id='password'
+                            name='password'
+                            type='password'
+                            value={password}
+                            onChange={passwordOnChange}
+                        />
+                    </fieldset>
+                    {
+                        isValid.email && isValid.password ?
+                        (
+                            <button className="btn btn-submit" onClick={handleSubmit} title="Connexion">
+                                Valider
+                            </button>
+                        ) : (
+                            <div className='submit'>
+                                <button className='btn btn-submit' disabled>Valider</button>
+                                <span className='messageValid'>* Tous les champs doivent être renseignés</span>
+                            </div>
+                        )
+                    }
+                </form>
+                {message !== '' ? (<p>{message}</p>): null}
+            </div>
+        )
+        
     )
 }
 
