@@ -405,6 +405,15 @@ footer {
     margin-bottom: 60px;
   }
 }
+.allPosts .nbLikes {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 12px;
+  color: #4E5166;
+  font-weight: bold;
+  text-decoration: solid;
+}
 
 .profil {
   width: 90%;

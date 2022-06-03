@@ -2,16 +2,19 @@ const { Comment, Like, Post, User } = require('../database/models');
 const { validatePostPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
 const fs = require('fs');
+const url = require('url');
 
 // Fonction pour afficher tous les posts
 exports.getAllPosts = async (req, res) => {
+
+    // TODO use query strings instead of header for everything related to pagination, sorting (etc.) !!
+    const queryObject = url.parse(req.url, true).query;
+
     try {
-        // Sort by type
+        // Sort by date
         let sortByDate;
-        // console.log(req.headers.query)
-        let order;
-        if (req.headers.query && req.headers.query.match(/order true/)) {
-            order = req.headers.query.split(' ')[1];
+
+        if (queryObject.order === "date") {
             sortByDate = [['createdAt', 'ASC']];
         } else {
             sortByDate = [['createdAt', 'DESC']];

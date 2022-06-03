@@ -26,12 +26,12 @@ const storage = multer.diskStorage({
 
 module.exports = multer({
     storage,
-    fileFilter: function (req, file, callback) {    
-
+    fileFilter: function (req, file, callback) { 
         let success = true;
         try {
             if (req.body != undefined) {
                 const postObject = JSON.parse(req.body);
+                // TODO create one multer middleware for avatar images and another one for posts
                 validatePostPayload(req, postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
             } else {
                 success = false;
@@ -39,7 +39,7 @@ module.exports = multer({
             }
         } catch (error) {
             success = false;
-            callback(new Error(error));
+            callback(new Error(JSON.stringify(error)));
         }
         
         // Vérification du format de l'image
@@ -54,4 +54,4 @@ module.exports = multer({
     },
     limits: {   // Vérification du poids de l'image
         fileSize: 1024 * 1024
-}}).single('image');
+}}).single('file');

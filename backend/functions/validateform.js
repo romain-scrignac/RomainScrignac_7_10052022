@@ -70,7 +70,7 @@ const validatePostPayload = (authId, postObject) => {
         confirmPass,
         signup
     } = userObject;
-    
+
     if (signup) {
         if (!firstname || !lastname || !email || !password || !confirmPass) {
             throw 'Invalid form!';
