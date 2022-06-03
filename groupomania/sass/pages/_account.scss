@@ -1,10 +1,14 @@
 .profil {
-    width: 60%;
+    width: 90%;
     margin: auto;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @include desktop-only {
+        width: 60%;
+    }
 }
 
 .infos {
@@ -15,12 +19,11 @@
     border-radius: 10px;
     width: 100%;
     padding: 20px 0;
-}
 
-.infos img {
-    margin-bottom: 20px;
-}
-
-.infos p {
-    margin: 5px;
+    img {
+        margin-bottom: 20px;
+    }
+    p {
+        margin: 5px;
+    }
 }

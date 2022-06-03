@@ -5,92 +5,100 @@
     border-radius: 5px;
     font-weight: bold;
     font-size: 12px;
-}
 
-.btn:enabled {
-    background-color: $tertiary;
-    color: white;
-}
-
-.btn:disabled {
-    cursor: no-drop;
-    color: silver;
-}
-
-.btn:hover:enabled {
-    background-color: $secondary;
-    color: $tertiary;
-}
-
-.btn-submit:hover:enabled {
-    scale: 1.05;
-}
-
-.btn-profil {
-    margin: 0;
-    padding: 0;
-}
-
-.btn-logout, .btn-account {
-    position: absolute;
-    top: 10px;
-}
-
-.btn-logout {
-    right: 10px;
-}
-
-.btn-account {
-    right: 110px;
-}
-
-.btn-submit {
-    margin: 5px auto;
-}
-
-.btn-return {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
-
-.btn-fav {
-    width: 30px; 
-    height: 30px;
-    padding: 0;
-    bottom: -40px;
-    position: absolute;
-
-    .fav {
-        width: 100%; 
-        height: 100%;
-        background: none;
+    &:enabled {
+        background: linear-gradient($secondary, $primary);
+        color: white;
+    }
+    &:disabled {
+        cursor: no-drop;
+        color: silver;
+    }
+    &:hover:enabled {
+        box-shadow: 2px 3px 10px $tertiary;
+        color: white;
+    }
+    &-login, &-account {
+        margin-right: 15px;
+    }
+    &-logout, &-account, &-delete, &-update {
+        cursor: pointer;
+        background-color: unset;
         border: none;
-        position: relative;
-
-        .fav-after, .fav-before {
-            width: 30px;
-            height: 30px;
-            position: absolute;
-            bottom: 0;
-            left: 5px;
-        }
-        .fav-after {
-            background-image: linear-gradient(30deg, $secondary, $primary);
-            background-clip: text;
-            color: transparent;
+        img{
+            height: 23px;
         }
         &:hover {
-            cursor: pointer;
-            & > .fav-before {
-                transform: scale(1.05);
+            scale: 1.1;
+        }
+    }
+    &-delete {
+        position: absolute;
+        top: 35px;
+        right: 5px;
+    }
+    &-update {
+        position: absolute;
+        right: 20px;
+        bottom: 6px;
+    }
+    &-submit {
+        margin: 5px auto;
+    }
+    &-submit:hover:enabled {
+        scale: 1.05;
+    }
+    &-order {
+        margin: 20px 0;
+    }
+    &-fav {
+        width: 30px; 
+        height: 30px;
+        padding: 0;
+        bottom: -40px;
+        position: absolute;
+    
+        .fav {
+            width: 100%; 
+            height: 100%;
+            background: none;
+            border: none;
+            position: relative;
+    
+            &-after, &-before {
+                width: 30px;
+                height: 30px;
+                position: absolute;
+                bottom: 0;
+                left: 5px;
             }
-            & > .fav-after {
-                transform: scale(1.05);
+            &-after {
+                background-image: linear-gradient(30deg, $secondary, $primary);
+                background-clip: text;
+                color: transparent;
+            }
+            &:hover {
+                cursor: pointer;
+                & > .fav-before {
+                    transform: scale(1.05);
+                }
+                & > .fav-after {
+                    transform: scale(1.05);
+                }
+            }
+            i {
+                font-size: 24px;
             }
         }
-        i {
-            font-size: 24px;
-        }
+    }
+}
+
+.activeBtn .btn {
+    box-shadow: 2px 3px 10px $tertiary;
+
+    &:enabled {
+        background: unset;
+        background-color: $tertiary;
+        color: white;
     }
 }

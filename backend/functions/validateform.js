@@ -67,24 +67,42 @@ const validatePostPayload = (authId, postObject) => {
         lastname,
         email,
         password,
-        verifPass
+        confirmPass,
+        signup
     } = userObject;
     
-    if (!firstname || !lastname || !email || !password || !verifPass) {
-        throw 'Invalid form!';
-    } else if (typeof firstname !== 'string' || typeof lastname !== 'string' || typeof email !== 'string' 
-    || typeof password !== 'string' || typeof verifPass !== 'string') {
-        throw 'Invalid field(s)!';
-    } else if (password !== verifPass) {
-        throw 'Passwords do not match !';
-    } else if (!email.match(regexEmail)) {
-        throw 'Invalid email format!';
-    } else if (!password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/[0-9]/)
-    || password.length < 8) {
-        throw 'Password not strong enough !';
-    } else if (password.match(/\s|=|'|"/)) {
-        throw 'Espaces, =, \' or " characters are not allowed!';
+    if (signup) {
+        if (!firstname || !lastname || !email || !password || !confirmPass) {
+            throw 'Invalid form!';
+        } else if (typeof firstname !== 'string' || typeof lastname !== 'string' || typeof email !== 'string' 
+        || typeof password !== 'string' || typeof confirmPass !== 'string') {
+            throw 'Invalid field(s)!';
+        } else if (!email.match(regexEmail)) {
+            throw 'Invalid email format!';
+        } else if (password !== confirmPass) {
+            throw 'Passwords do not match !';
+        } else if (!password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/[0-9]/)
+        || password.length < 8) {
+            throw 'Password not strong enough !';
+        } else if (password.match(/\s|=|'|"/)) {
+            throw 'Espaces, =, \' or " characters are not allowed!';
+        }
+    } else {
+        if ((firstname && typeof firstname !== 'string') || (lastname && typeof lastname !== 'string') || email && typeof email !== 'string'
+        || (password && typeof password !== 'string' || typeof confirmPass !== 'string')) {
+            throw 'Invalid field(s)!';
+        } else if (email && !email.match(regexEmail)) {
+            throw 'Invalid email format!';
+        } else if (password && password !== confirmPass) {
+            throw 'Passwords do not match !';
+        } else if (password && (!password.match(/[a-z]/) || !password.match(/[A-Z]/) || !password.match(/[0-9]/)
+        || password.length < 8)) {
+            throw 'Password not strong enough !';
+        } else if (password && (password.match(/\s|=|'|"/))) {
+            throw 'Espaces, =, \' or " characters are not allowed!';
+        }
     }
+    
 };
 
 /**

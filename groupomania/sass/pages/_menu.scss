@@ -1,6 +1,22 @@
-.nav-buttons div{
-    width: 200px;
-    margin: 80px auto 0 auto;
+/* Nav */
+.nav-buttons {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: center;
+    margin-top: 60px;
+ 
+    .btn-profil {
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        align-content: center;
+        top: 10px;
+        width: 95%;
+        margin-bottom: 30px;
+
+        @include tablet-desktop {
+            width: unset;
+            margin: 0;
+            right: 20px;
+        }
+    }
 }

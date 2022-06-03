@@ -9,7 +9,7 @@ const Verification = () => {
 
     function codeOnChange(e) {
         const code = e.target.value;
-        if (code.length !== 6 || code.trim() === "") {
+        if (code.length !== 6 || code.trim() === "" || !code.match(/^[0-9]{6}$/)) {
             setIsValid(false);
         } else {
             setIsValid(true);
@@ -88,15 +88,22 @@ const Verification = () => {
                 ):
                 (
                     <div className="verif">
-                        <p>Veuillez saisir le code de vérification reçu dans votre boite mail</p>
                         <form className='verif-form'>
+                            <h1>Code de confirmation</h1>
+                            <span 
+                                className="issue"
+                                title="Veuillez saisir le code de vérification à 6 chiffres reçu dans votre boite mail"
+                            >
+                                ❔
+                            </span>
                             <fieldset>
-                                <label htmlFor='userCode'>Code:</label>
                                 <input
                                     id='userCode'
                                     name='userCode'
                                     value={userCode}
                                     onChange={codeOnChange}
+                                    maxLength="6"
+                                    size="6"
                                 />
                             </fieldset>
                             {
@@ -106,11 +113,16 @@ const Verification = () => {
                             }
                         </form>
                         {
-                            !sendMail ? (<a href="/" onClick={sendCode}>Renvoyer le code</a>):
-                            (<p>{sendMail}</p>)
+                            !sendMail ? 
+                            (
+                                <p className='sendCode'>
+                                        <a href="/" onClick={sendCode} title="Recevoir le code sur ma boite de messagerie">Renvoyer le code</a>
+                                </p>
+                            ):(
+                                <p>{sendMail}</p>
+                            )
                             
                         }
-                        
                     </div>
                 )
             }

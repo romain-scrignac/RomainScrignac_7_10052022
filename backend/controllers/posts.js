@@ -134,7 +134,7 @@ exports.modifyPost = async (req, res) => {
             throw 'Unauthorized request!';
         }
 
-        // On réucpère le nom de l'ancienne image pour suppression du serveur
+        // On récupère le nom de l'ancienne image pour suppression du serveur
         const fileName = findPost.post_image.split('images/')[1];
 
         // Si présence image on en définit l'url

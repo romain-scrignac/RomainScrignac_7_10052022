@@ -1,17 +1,22 @@
-/* All pages */
+/* Main */
+#main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .allPosts, .onePost, .profil {
+        margin-top: 50px;
+    }
+}
+
 .signup, .login, .verif {
-    margin-top: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-
-.signup h1, .login h1, .verif h1 {
-    margin: 30px auto;
-    color: $primary;
-    font-size: 20px;
-    text-align: center;
+    margin-top: 50px;
+    width: 100%;
 }
 
 .verif h3 {

@@ -11,7 +11,7 @@ const Login = () => {
         password: ''
     });
     const [message, setMessage] = useState('');
-    const [verif, setVerif] = useState(true);
+    const [confirm, setConfirm] = useState(true);
     const session = localStorage.session_token;
 
     function emailOnChange(e) {
@@ -63,7 +63,7 @@ const Login = () => {
                     if (responseJson.isVerified === false) {
                         localStorage.setItem('session_id', responseJson.userId);
                         setMessage('Vérification de l\'email nécessaire, veuillez patienter...');
-                        setVerif(false);
+                        setConfirm(false);
                     } else {
                         localStorage.setItem("session_firstname", responseJson.firstname);
                         localStorage.setItem('session_id', JSON.parse(responseJson.userId));
@@ -84,11 +84,11 @@ const Login = () => {
     };
 
     return (
-        !verif ? (<Verification />):
+        !confirm ? (<Verification />):
         (
             <div className="login">
-                <h1>Connexion</h1>
                 <form className='login-form'>
+                <h1>Connexion</h1>
                     <fieldset>
                         <label htmlFor='email'>Email</label>
                         <input
@@ -99,7 +99,7 @@ const Login = () => {
                         />
                     </fieldset>
                     <fieldset>
-                        <label htmlFor='password'>Password</label>
+                        <label htmlFor='password'>Mot de passe</label>
                         <input
                             id='password'
                             name='password'

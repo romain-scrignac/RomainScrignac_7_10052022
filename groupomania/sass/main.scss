@@ -3,12 +3,12 @@
 
 @import "./base/base";
 
+@import "./layout/header";
+@import "./layout/footer";
+
 @import "./components/buttons";
 @import "./components/animations";
 @import "./components/forms";
-
-@import "./layout/header";
-@import "./layout/footer";
 
 @import "./pages/app";
 @import "./pages/menu";

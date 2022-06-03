@@ -2,39 +2,40 @@
 .allPosts {
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     align-items: center;
     width: 100%;
     margin: 30px auto;
-}
 
-.addPost {
-    width: 100%;
     @include tablet-only {
-        width: 70%;
+        width: 80%;
     }
-    @include desktop-only {
-        width: 60%;
-        margin-bottom: 60px;
-    }
-}
 
-.addPost h2 {
-    font-size: medium;
-    margin: 0;
-    padding: 5px;
-    background-color: $tertiary;
-    color: white;
-}
-
-.post {
-    position: relative;
-    width: 100%;
-    border: 1px groove $tertiary;
-    @include tablet-only {
-        width: 70%;
-    }
     @include desktop-only {
-        width: 60%;
-        margin-bottom: 60px;
+        margin: 0;
+        width: 600px;
+    }
+
+    .addPost {
+        width: 100%;
+
+        h1 {
+            font-size: medium;
+            margin: 0;
+            padding: 5px 0 5px 10px;
+            background: linear-gradient(to right top, $primary, $secondary);
+            border-radius: 8px 8px 0 0;
+            color: white;
+            font-size: 15px;
+        }
+    }
+    .post {
+        position: relative;
+        width: 100%;
+        border: 1px groove $tertiary;
+
+        @include desktop-only {
+            margin-bottom: 60px;
+        }
     }
 }

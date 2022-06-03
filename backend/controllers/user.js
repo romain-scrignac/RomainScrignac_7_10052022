@@ -8,7 +8,7 @@ const verifEmail = require('../functions/verifEmail');
 // Fonction signup
 exports.signup = async (req, res) => {
     try {
-        if (!req.body || !req.body.firstname || !req.body.lastname || !req.body.email || !req.body.password) {
+        if (!req.body) {
             throw 'Invalid form!';
         }
         const userObject = req.body;
@@ -44,10 +44,11 @@ exports.signup = async (req, res) => {
 // Fonction modify user
 exports.modifyUser = async (req, res) => {
     try {
-        if (!req.body || !req.body.user) {
+        if (!req.body) {
             throw 'Bad request!';
         }
-        const userObject = req.body.user;
+
+        console.log(req.body)
         
         const findUser = await User.findOne({ where: {user_id: req.params.id} });
         if (findUser === null) throw 'User not found!';
@@ -55,19 +56,66 @@ exports.modifyUser = async (req, res) => {
         if (!req.auth || !req.auth.userId || req.auth.userId !== findUser.user_id
         || findUser.user_last_connection < findUser.user_last_disconnection) {
             throw 'Unauthorized request!';
-        } 
+        }
+
+        // Si présence image on en définit l'url
+        const userObject = req.file ?
+        {
+            ...JSON.parse(req.body),
+            avatarUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        } : { ...req.body, avatarUrl: findUser.user_avatar };
+
+        // On récupère le nom de l'ancien avatar pour suppression du serveur
+        const fileName = findUser.user_avatar.split('images/')[1];
 
         // vérification du formulaire
-        validateUserPayload(req, userObject);
+        validateUserPayload(userObject);
 
         // Mise à jour de l'utilisateur
-        const hash = await bcrypt.hash(userObject.password, 10);
+        let avatarUrl;
+        let firstname;
+        let lastname;
+        let email;
+        let hash;
+        
+        // Si nouvelle image on supprime l'ancienne
+        if (req.file && avatarUrl !== findUser.user_avatar && avatarUrl !== 'https://localhost/images/avatars/avatar.png') {
+            fs.unlink(`images/avatars/${fileName}`, (err) => {
+                if (err) throw err;
+                console.log(`Old image deleted (${fileName})`);
+            });
+        } else {
+            avatarUrl = findUser.user_avatar;
+        }
+        if (userObject.firstname && userObject.firstname !== findUser.user_firstname) {
+            firstname = userObject.firstname;
+        } else {
+            firstname = findUser.user_firstname;
+        }
+        if (userObject.lastname && userObject.lastname !== findUser.user_lastname) {
+            lastname = userObject.lastname;
+        } else {
+            lastname = findUser.user_lastname;
+        }
+        if (userObject.email && userObject.email !== findUser.user_email) {
+            email = userObject.email;
+        } else {
+            email = findUser.user_email;
+        }
+        if (userObject.password) {
+            hash = await bcrypt.hash(userObject.password, 10);
+        } else {
+            hash = findUser.user_password;
+        }
+
         const userAttributes = {
-            user_firstname: userObject.firstname,
-            user_lastname: userObject.lastname, 
-            user_email: userObject.email,
+            user_avatar: avatarUrl,
+            user_firstname: firstname,
+            user_lastname: lastname,
+            user_email: email,
             user_password: hash
         };
+
         await User.update(userAttributes, { where: {user_id: req.auth.userId} }, (err) => {
             if (err) throw err;
         });
@@ -212,7 +260,7 @@ exports.getProfil = async (req, res) => {
             throw 'Unauthorized request!';
         }
 
-        const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
+        const userAttr = ['user_firstname', 'user_lastname', 'user_email', 'user_avatar'];
         const findUser = await User.findOne({ attributes: userAttr, where: {user_id: req.auth.userId},  });
         if (findUser === null) throw 'User not found!';
 

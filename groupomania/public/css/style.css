@@ -42,6 +42,41 @@ a {
   width: 30%;
 }
 
+/* Header */
+.header {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+}
+.header .grpm-logo .logo-img {
+  width: 150px;
+  margin: 0 auto;
+}
+@media screen and (min-width: 600px) and (max-width: 991px) {
+  .header .grpm-logo .logo-img {
+    width: 200px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .header .grpm-logo .logo-img {
+    width: 220px;
+  }
+}
+.header .grpm-logo .logo-img:hover {
+  cursor: pointer;
+}
+
+/* Footer */
+footer {
+  display: flex;
+}
+
 /* Buttons */
 .btn {
   cursor: pointer;
@@ -50,54 +85,51 @@ a {
   font-weight: bold;
   font-size: 12px;
 }
-
 .btn:enabled {
-  background-color: #4E5166;
+  background: linear-gradient(#FFD7D7, #FD2D01);
   color: white;
 }
-
 .btn:disabled {
   cursor: no-drop;
   color: silver;
 }
-
 .btn:hover:enabled {
-  background-color: #FFD7D7;
-  color: #4E5166;
+  box-shadow: 2px 3px 10px #4E5166;
+  color: white;
 }
-
-.btn-submit:hover:enabled {
-  scale: 1.05;
+.btn-login, .btn-account {
+  margin-right: 15px;
 }
-
-.btn-profil {
-  margin: 0;
-  padding: 0;
+.btn-logout, .btn-account, .btn-delete, .btn-update {
+  cursor: pointer;
+  background-color: unset;
+  border: none;
 }
-
-.btn-logout, .btn-account {
+.btn-logout img, .btn-account img, .btn-delete img, .btn-update img {
+  height: 23px;
+}
+.btn-logout:hover, .btn-account:hover, .btn-delete:hover, .btn-update:hover {
+  scale: 1.1;
+}
+.btn-delete {
   position: absolute;
-  top: 10px;
+  top: 35px;
+  right: 5px;
 }
-
-.btn-logout {
-  right: 10px;
+.btn-update {
+  position: absolute;
+  right: 20px;
+  bottom: 6px;
 }
-
-.btn-account {
-  right: 110px;
-}
-
 .btn-submit {
   margin: 5px auto;
 }
-
-.btn-return {
-  position: absolute;
-  top: 10px;
-  left: 10px;
+.btn-submit:hover:enabled {
+  scale: 1.05;
 }
-
+.btn-order {
+  margin: 20px 0;
+}
 .btn-fav {
   width: 30px;
   height: 30px;
@@ -112,14 +144,14 @@ a {
   border: none;
   position: relative;
 }
-.btn-fav .fav .fav-after, .btn-fav .fav .fav-before {
+.btn-fav .fav-after, .btn-fav .fav-before {
   width: 30px;
   height: 30px;
   position: absolute;
   bottom: 0;
   left: 5px;
 }
-.btn-fav .fav .fav-after {
+.btn-fav .fav-after {
   background-image: linear-gradient(30deg, #FFD7D7, #FD2D01);
   background-clip: text;
   color: transparent;
@@ -137,6 +169,15 @@ a {
   font-size: 24px;
 }
 
+.activeBtn .btn {
+  box-shadow: 2px 3px 10px #4E5166;
+}
+.activeBtn .btn:enabled {
+  background: unset;
+  background-color: #4E5166;
+  color: white;
+}
+
 /* Forms */
 .post-form {
   position: relative;
@@ -145,7 +186,6 @@ a {
   margin: 0;
   width: 100%;
 }
-
 .post-form textarea {
   overflow: auto;
   resize: none;
@@ -161,72 +201,72 @@ a {
   height: 35px;
   padding: 0 5px;
 }
-
 .post-options label {
   height: 25px;
   margin: 0;
   padding: 0;
 }
-
 .post-options label:hover {
   cursor: pointer;
   height: 27px;
 }
-
 .post-options input[type=file] {
   display: none;
 }
-
 .post-options img {
   height: 100%;
   margin: 0;
 }
 
-.signup-form, .login-form, .verif-form {
+.login-form, .signup-form, .verif-form, .account-form {
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   border: 1px #4E5166 groove;
   border-radius: 10px;
-  padding: 20px 0 10px 0;
+  padding: 0 0 10px 0;
   width: 100%;
 }
-@media screen and (min-width: 600px) and (max-width: 991px) {
-  .signup-form, .login-form, .verif-form {
-    width: 70%;
-  }
-}
-@media screen and (min-width: 992px) {
-  .signup-form, .login-form, .verif-form {
+@media screen and (min-width: 600px) {
+  .login-form, .signup-form, .verif-form, .account-form {
     width: 400px;
   }
 }
-
-.signup-form fieldset, .login-form fieldset, .verif-form fieldset {
+.login-form h1, .signup-form h1, .verif-form h1, .account-form h1 {
+  color: white;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+  border-radius: 8px 8px 0 0;
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  margin: 0 0 20px 0;
+  padding: 5px 0;
+}
+.login-form fieldset, .signup-form fieldset, .verif-form fieldset, .account-form fieldset {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
+  flex-direction: column;
   align-items: center;
   border: none;
   color: #4E5166;
-  width: 95%;
+  width: 100%;
 }
-
-.signup-form label, .login-form label, .verif-form label {
-  display: flex;
-  width: 30%;
-  font-size: 14px;
-  text-decoration: underline;
+.login-form fieldset label, .signup-form fieldset label, .verif-form fieldset label, .account-form fieldset label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  text-align: center;
 }
-
-.signup-form input, .login-form input, .verif-form input {
+.login-form fieldset input, .signup-form fieldset input, .verif-form fieldset input, .account-form fieldset input {
   outline: none;
   border: 2px #f2f0f0 groove;
-  background-color: white;
-  width: 50%;
+  width: 70%;
 }
-
-.messageValid {
+.login-form .submit, .signup-form .submit, .verif-form .submit, .account-form .submit {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.login-form .messageValid, .signup-form .messageValid, .verif-form .messageValid, .account-form .messageValid {
   position: absolute;
   bottom: -20px;
   font-style: italic;
@@ -235,128 +275,149 @@ a {
   margin-left: 10px;
 }
 
-.submit {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  width: 100%;
-}
-
-.grpm-logo {
-  margin-top: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.grpm-logo-img {
-  width: 150px;
-}
-@media screen and (min-width: 600px) and (max-width: 991px) {
-  .grpm-logo-img {
-    width: 200px;
-  }
-}
-@media screen and (min-width: 992px) {
-  .grpm-logo-img {
-    width: 250px;
-  }
-}
-
-/* Footer */
-footer {
-  display: flex;
-}
-
-/* All pages */
-.signup, .login, .verif {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.signup h1, .login h1, .verif h1 {
-  margin: 30px auto;
+.verif .issue {
+  position: absolute;
+  font-size: 10px;
+  right: 10px;
+  top: 4px;
+  padding: 3px 5px;
   color: #FD2D01;
-  font-size: 20px;
-  text-align: center;
+  border: 1px groove #FFD7D7;
+  border-radius: 1em;
+}
+.verif .issue:hover {
+  cursor: help;
+  background-color: #FFD7D7;
+  scale: 1.05;
+}
+.verif .sendCode a {
+  color: #4E5166;
+  font-size: 14px;
+}
+.verif .sendCode a:hover {
+  color: #FD2D01;
+  text-decoration: underline;
+}
+.verif #userCode {
+  width: 7ch;
+}
+
+.account-form fieldset {
+  position: relative;
+}
+.account-form input[type=file] {
+  display: none;
+}
+.account-form .avatarUpload {
+  height: 80px;
+}
+.account-form .avatarUpload .avatar {
+  height: 80px;
+  cursor: pointer;
+}
+
+/* Main */
+#main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+#main .allPosts, #main .onePost, #main .profil {
+  margin-top: 50px;
+}
+
+.signup, .login, .verif {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  width: 100%;
 }
 
 .verif h3 {
   color: #FD2D01;
 }
 
-.nav-buttons div {
-  width: 200px;
-  margin: 80px auto 0 auto;
+/* Nav */
+.nav-buttons {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  margin-top: 60px;
+}
+.nav-buttons .btn-profil {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  top: 10px;
+  width: 95%;
+  margin-bottom: 30px;
+}
+@media screen and (min-width: 600px) {
+  .nav-buttons .btn-profil {
+    width: unset;
+    margin: 0;
+    right: 20px;
+  }
 }
 
 /* Posts */
 .allPosts {
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   align-items: center;
   width: 100%;
   margin: 30px auto;
 }
-
-.addPost {
-  width: 100%;
-}
 @media screen and (min-width: 600px) and (max-width: 991px) {
-  .addPost {
-    width: 70%;
+  .allPosts {
+    width: 80%;
   }
 }
 @media screen and (min-width: 992px) {
-  .addPost {
-    width: 60%;
-    margin-bottom: 60px;
+  .allPosts {
+    margin: 0;
+    width: 600px;
   }
 }
-
-.addPost h2 {
+.allPosts .addPost {
+  width: 100%;
+}
+.allPosts .addPost h1 {
   font-size: medium;
   margin: 0;
-  padding: 5px;
-  background-color: #4E5166;
+  padding: 5px 0 5px 10px;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+  border-radius: 8px 8px 0 0;
   color: white;
+  font-size: 15px;
 }
-
-.post {
+.allPosts .post {
   position: relative;
   width: 100%;
   border: 1px groove #4E5166;
 }
-@media screen and (min-width: 600px) and (max-width: 991px) {
-  .post {
-    width: 70%;
-  }
-}
 @media screen and (min-width: 992px) {
-  .post {
-    width: 60%;
+  .allPosts .post {
     margin-bottom: 60px;
   }
 }
 
 .profil {
-  width: 60%;
+  width: 90%;
   margin: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+@media screen and (min-width: 992px) {
+  .profil {
+    width: 60%;
+  }
 }
 
 .infos {
@@ -368,11 +429,9 @@ footer {
   width: 100%;
   padding: 20px 0;
 }
-
 .infos img {
   margin-bottom: 20px;
 }
-
 .infos p {
   margin: 5px;
 }

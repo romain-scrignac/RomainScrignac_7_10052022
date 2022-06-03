@@ -7,13 +7,14 @@ function Signup() {
     const [lastnameValue, setLastnameValue] = useState('')
     const [emailValue, setEmailValue] = useState('')
     const [passwordValue, setPasswordValue] = useState('')
-    const [verifPasswordValue, setVerifPasswordValue] = useState('')
+    const [confirmPasswordValue, setConfirmPasswordValue] = useState('')
     const [isValid, setIsValid] = useState({
         firstname: '',
         lastname: '',
         email: '',
         password: '',
-        verifPass: ''
+        confirmPass: '',
+        signup: true
     });
 
     function firstnameOnChange(e) {
@@ -66,16 +67,16 @@ function Signup() {
         setPasswordValue(password);
     };
 
-    function verifPasswordOnChange(e) {
-        const verifPass = e.target.value;
-        if(verifPass !== passwordValue) {
-            setIsValid(previousState => { return {...previousState, verifPass: ''}});
+    function confirmPasswordOnChange(e) {
+        const confirmPass = e.target.value;
+        if(confirmPass !== passwordValue) {
+            setIsValid(previousState => { return {...previousState, confirmPass: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
-            setIsValid(previousState => { return {...previousState, verifPass: verifPass}});
+            setIsValid(previousState => { return {...previousState, confirmPass: confirmPass}});
             e.target.style["border-color"] = "#34c924";
         }
-        setVerifPasswordValue(verifPass);
+        setConfirmPasswordValue(confirmPass);
     };
 
     const handleSubmit = (event) => {
@@ -90,13 +91,7 @@ function Signup() {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ 
-                        firstname: firstnameValue, 
-                        lastname: lastnameValue, 
-                        email: emailValue, 
-                        password: passwordValue,
-                        verifPass: verifPasswordValue
-                     })
+                    body: JSON.stringify({ isValid })
                 });
                 const responseJson = await response.json((err) => {
                     if (err) throw err;
@@ -115,10 +110,10 @@ function Signup() {
 
     return (
         <div className="signup">
-            <h1>Inscription</h1>
             <form className="signup-form">
+            <h1>Inscription</h1>
                 <fieldset>
-                    <label htmlFor="firstname">Prénom:</label>
+                    <label htmlFor="firstname">Prénom</label>
                     <input 
                         id="firstname"
                         name="firstname"
@@ -128,7 +123,7 @@ function Signup() {
                     />
                 </fieldset>
                 <fieldset>
-                    <label htmlFor="lastname">Nom:</label>
+                    <label htmlFor="lastname">Nom</label>
                     <input 
                         id="lastname"
                         name="lastname"
@@ -138,7 +133,7 @@ function Signup() {
                     />
                 </fieldset>
                 <fieldset>
-                    <label htmlFor="email">Email:</label>
+                    <label htmlFor="email">Email</label>
                     <input
                         id="email"
                         name="email"
@@ -148,7 +143,7 @@ function Signup() {
                     />
                 </fieldset>
                 <fieldset>
-                    <label htmlFor="password">Password:</label>
+                    <label htmlFor="password">Mot de passe</label>
                     <input
                         id="password"
                         name="password"
@@ -158,18 +153,18 @@ function Signup() {
                     />
                 </fieldset>
                 <fieldset>
-                    <label htmlFor="password">Vérification:</label>
+                    <label htmlFor="password">Confirmation du mot de passe</label>
                     <input
                         id="verifPassword"
                         name="verifPassword"
                         type="password"
-                        value={verifPasswordValue}
-                        onChange={verifPasswordOnChange}
+                        value={confirmPasswordValue}
+                        onChange={confirmPasswordOnChange}
                     />
                 </fieldset>
                 {   
                     isValid.firstname && isValid.lastname && isValid.email && isValid.password 
-                    && isValid.verifPass && passwordValue === verifPasswordValue ?
+                    && isValid.verifPass && passwordValue === confirmPasswordValue ?
                     (
                         <button className="btn btn-submit" onClick={handleSubmit} title="Inscription">
                             Valider

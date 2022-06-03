@@ -161,7 +161,7 @@ const AllPosts = () => {
     return (
         <div className="allPosts">
             <div className="addPost">
-                <h2>Publier</h2>
+                <h1>Envie de partager ?</h1>
                 <form className="post-form">                   
                     <textarea 
                         name="postText"
@@ -190,7 +190,7 @@ const AllPosts = () => {
 
             {
                 allPosts.length > 1 ? 
-                (<button className="btn-order" onClick={changeOrder}>Trier par date</button>): null
+                (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>): null
             }
             
             {allPosts.map(post => (

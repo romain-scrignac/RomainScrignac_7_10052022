@@ -11,7 +11,9 @@ const MIME_TYPES = {
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        callback(null, 'images')
+        let destination;
+        req.body.avatar ? destination = 'images/avatars' : destination = 'images';
+        callback(null, destination)
     },
     filename: (req, file, callback) => {
         const extension = MIME_TYPES[file.mimetype];    // Création de l'extension
@@ -28,8 +30,8 @@ module.exports = multer({
 
         let success = true;
         try {
-            if (req.body.post != undefined) {
-                const postObject = JSON.parse(req.body.post);
+            if (req.body != undefined) {
+                const postObject = JSON.parse(req.body);
                 validatePostPayload(req, postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
             } else {
                 success = false;
