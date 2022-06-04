@@ -16,7 +16,9 @@ const AllPosts = () => {
     });
     
     useEffect(() => {
-
+        /**
+         * @description this function communicates with the API to display all posts
+         */
         const getPosts = async () => {
             try{
                 const response = await fetch(`https://localhost/api/posts/${order}`, {
@@ -37,18 +39,16 @@ const AllPosts = () => {
                         }
                         return {...post, countLikes: likes}
                     });
-                    setAllPosts(postsFromApi);
-    
+                    setAllPosts(postsFromApi);    
                 }
             } catch (err) {
                 console.error(err);
             }        
-        };
-    
+        };    
         getPosts();
     }, [allLikes, allDislikes, order, newPost]);
 
-    function changeOrder() {
+    const changeOrder = () => {
         if (order === "?order=date") {
             setOrder("");
         } 
@@ -57,7 +57,7 @@ const AllPosts = () => {
         }
     };
 
-    function onChangeContent(e) {
+    const onChangeContent = (e) => {
         const content = e.target.value;
         if(content.length < 10) {
             setAddPost(previousState => { return {...previousState, content: ''}});
@@ -67,7 +67,7 @@ const AllPosts = () => {
         setPostContentValue(content);
     };
 
-    function onChangeImage(e) {
+    const onChangeImage = (e) => {
         const file = e.target.files[0];
         if(file.size > (1024 * 1024)) {
             setAddPost(previousState => { return {...previousState, image: null}});
@@ -77,23 +77,32 @@ const AllPosts = () => {
         setPostImageFile(file);
     };
 
-    function onSubmitPost(e) {
+    const onSubmitPost = (e) => {
         e.preventDefault();
         fetchPostData();
     };
 
-    function addLike(e) {
+    const addLike = (e) => {
         e.preventDefault();
         const postId = e.target.previousElementSibling.value;
         fetchLikeData(postId, "1");
     }
 
-    function removeLike(e) {
+    const removeLike = (e) => {
         e.preventDefault();
         const postId = e.target.previousElementSibling.value;
         fetchLikeData(postId, "0");
     }
 
+    const modifyPost = (e) => {
+        e.preventDefault();
+        const previousInput = e.target.parentNode.previousSibling;
+        console.log(previousInput.innerText)
+    }
+
+    /**
+     * @description this function communicates with the API when adding a post
+     */
     const fetchPostData = async () => {
         try {
             const response = await fetch(`https://localhost/api/posts/`, {
@@ -110,7 +119,8 @@ const AllPosts = () => {
                 if (err) throw err;
             });
 
-            if (!response.ok) {                
+            if (!response.ok) {
+                console.log(localStorage.session_id)
                 alert(responseJson.err);
             } else {
                 setNewPost(responseJson);
@@ -121,6 +131,12 @@ const AllPosts = () => {
         }
     };
 
+    /**
+     * @description this function communicates with the API when adding or removing a like
+     * 
+     * @param {String} postId the id of the publication
+     * @param {String} like the value of the like
+     */
     const fetchLikeData = async (postId, like) => {
         try {
             const response = await fetch(`https://localhost/api/posts/${postId}/like`, {
@@ -153,9 +169,58 @@ const AllPosts = () => {
             console.error(err);
         }
     }
-    
+
+    /**
+     * @description this function allows to switch between the different like buttons
+     * 
+     * @param {Array} post the publication to like
+     * @param {Object} like all likes of the publication
+     */
+    const switchButton = (post, like) => {
+        let favButton;
+        Object.entries(like).forEach(
+            ([key, value]) => key === "like_user_id" && value === parseInt(localStorage.session_id) ?
+            (
+                like.like_value === 0 ?
+                (
+                    favButton = (
+                        <div className="btn-fav" key={like.like_id}>
+                            <button 
+                                className="fav"
+                                title="J'aime"
+                            >
+                                <span className="nbLikes">{post.countLikes}</span>
+                                <span className="fav-before">
+                                    <input type="hidden" value={post.post_id} />
+                                    <i className="far fa-heart" onClick={addLike}></i>
+                                </span>
+                            </button>
+                        </div>
+                    )
+                ):(
+                    favButton = (
+                        <div className="btn-fav" key={like.like_id}>
+                            <button 
+                                className="fav"
+                                title="J'aime plus"
+                            >
+                                <span className="nbLikes">{post.countLikes > 0 ? post.countLikes : null}</span>
+                                <span className="fav-after">
+                                    <input type="hidden" value={post.post_id} />
+                                    <i className="fas fa-heart" onClick={removeLike} ></i>
+                                </span>
+                            </button>
+                        </div>
+                    )
+                )
+            ): null
+        )
+        return favButton
+    }
+
     return (
         <div className="allPosts">
+            {/* Formulaire d'ajout de post */}
             <div className="addPost">
                 <h1>Envie de partager ?</h1>
                 <form className="post-form">                   
@@ -183,55 +248,47 @@ const AllPosts = () => {
                     }
                 </form>
             </div>
-
             {
                 allPosts.length > 1 ? 
                 (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>): null
             }
-            
+
+            {/* Affichage des posts */}
             {allPosts.map(post => (                
                 <div className="post" key={post.post_id}>
                     <p className="post-content">Post n° {post.post_id}:</p>
                     <p>{post.post_content}</p>
-                    <span title= {post.User.user_email} className="post-name">{post.User.user_firstname}</span>
-                    {post.Likes.map( like => (
-                        // Si le post n'a aucun like qui appartient à l'user on affiche le bouton like
-                        post.countLikes === 0 || (like.like_value === 0 && like.like_user_id === parseInt(localStorage.session_id)) ? 
+                    {
+                        post.user_id !== parseInt(localStorage.session_id) ? 
                         (
-                            <div className="btn-fav" key={post.post_id}>
+                            <span className="btn-nav" title="Modifier le post">
+                                <i className="fas fa-edit" onClick={modifyPost}></i>
+                            </span>
+                        ): null
+                    }
+                    <span title= {post.User.user_email} className="post-name">{post.User.user_firstname}</span>
+                    
+                    {/* Affichage des likes */}
+                    {
+                        post.countLikes === 0 ?
+                        (
+                            <div className="btn-fav">
                                 <button 
                                     className="fav"
                                     title="J'aime"
                                 >
-                                    <span className="nbLikes">{post.countLikes > 0 ? post.countLikes : null}</span>
                                     <span className="fav-before">
                                         <input type="hidden" value={post.post_id} />
                                         <i className="far fa-heart" onClick={addLike}></i>
                                     </span>
                                 </button>
                             </div>
-                        ): null
-                    ))}
-
-                    {post.Likes.map( like => (
-                        // Si le post a un like qui appartient à l'user on affiche le bouton dislike
-                        like.like_value === 1 && like.like_user_id === parseInt(localStorage.session_id) ?
-                        (
-                            <div className="btn-fav" key={like.like_id}>
-                                {/* {post.countLikes > 0 ? (post.countLikes) : null} */}
-                                <button 
-                                    className="fav"
-                                    title="J'aime plus"
-                                >
-                                    <span className="nbLikes">{post.countLikes > 0 ? post.countLikes : null}</span>
-                                    <span className="fav-after">
-                                        <input type="hidden" value={post.post_id} />
-                                        <i className="fas fa-heart" onClick={removeLike} ></i>
-                                    </span>
-                                </button>
-                            </div>
-                        ): null
-                    ))}
+                        ):(
+                            post.Likes.map( like => (
+                                switchButton(post, like)
+                            ))
+                        )
+                    }
                 </div>
             ))}
         </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Verification from '../components/Verification';
 
 const Login = () => {
     document.title = 'Login';
+    const navigate = useNavigate();
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [email, setEmailValue] = useState('');
     const [password, setPasswordValue] = useState('');
@@ -12,12 +14,8 @@ const Login = () => {
     const [user, setUser] = useState({
         email: '',
         password: '',
-        session: ''
+        session: localStorage.session_token
     });
-
-    if (localStorage.session_token) {
-        setUser(previousState => { return {...previousState, session: localStorage.session_token} });
-    };
 
     const emailOnChange = (e) => {
         const email = e.target.value;
@@ -33,7 +31,7 @@ const Login = () => {
 
     const passwordOnChange = (e) => {
         const password = e.target.value;
-        if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
+        if (!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g)
         || password.length < 8 || password.match[/\s|=|'|"'/]) {
             setUser(previousState => { return {...previousState, password: ''}});
             e.target.style["border-color"] = "#FD2D01";
@@ -60,10 +58,11 @@ const Login = () => {
     };
 
     const handleSubmit = (event) => {
-        // prevents the submit button from refreshing the page
         event.preventDefault();
-
-        async function fetchData() {
+        /**
+         * @description this function communicate with the API to connect the user
+         */
+        const fetchData = async () =>{
             try {             
                 const response = await fetch('https://localhost/api/auth/login', {
                     method: "POST",
@@ -85,10 +84,10 @@ const Login = () => {
                         setConfirm(false);
                     } else {
                         localStorage.setItem("session_firstname", responseJson.firstname);
-                        localStorage.setItem('session_id', JSON.parse(responseJson.userId));
+                        localStorage.setItem("session_id", responseJson.userId);
                         localStorage.setItem("session_token", responseJson.token);
                         setMessage('Connexion ok, redirection en cours...');
-                        setTimeout(function(){ window.location.href="/" } , 5000);
+                        setTimeout(function(){ navigate("/") } , 5000);
                     }
                 } else {
                     setAlert(responseJson.err);
@@ -97,7 +96,7 @@ const Login = () => {
             } catch (err) {
                 console.error(err);
             }
-        }
+        };
         fetchData();
     };
 
@@ -147,7 +146,6 @@ const Login = () => {
                 { alert ? (<p className="alert">⚠️ {alert}</p>): null }
             </div>
         )
-        
     )
 }
 

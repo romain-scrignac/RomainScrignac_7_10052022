@@ -1,5 +1,8 @@
 const Logout = () => {
     document.title = 'Logout';
+    /**
+     * @description this function communicates with the API to disconnect the user
+     */
     const deconnexion = async () => {
         try {
             const userId = localStorage.session_id;
@@ -18,8 +21,8 @@ const Logout = () => {
         } catch (err) {
             console.log(err);
         }
-    }
-    deconnexion()
+    };
+    deconnexion();
 
     return (
         <div className="logout"><p className="message">Déconnexion en cours...</p></div>

@@ -1,4 +1,4 @@
-import { error404 } from '../datas/images';
+/* checking the user's session */
 
 const Session = () => {
     const url = new URL(window.location);
@@ -7,16 +7,16 @@ const Session = () => {
     const [message, setMessage] = useState('');
     const [isValidSession, setIsValidSession] = useState(true);
 
-    function verifSession() {
-    if(localStorage.session_token && (pathName === '/login' || pathName === '/signup' || pathName === '/verification')) {
-        setIsValidSession(false);
-        setMessage('Vous êtes déjà connecté !');
-    }
-    else if (!localStorage.session_token && pathName !== '/' && pathName !== '/login' && pathName !== '/signup') {
-        setIsValidSession(false);
-        setMessage('Vous n\'êtes pas connecté !');
-    }
-    }
+    const verifSession = () => {
+        if(localStorage.session_token && (pathName === '/login' || pathName === '/signup' || pathName === '/verification')) {
+            setIsValidSession(false);
+            setMessage('Vous êtes déjà connecté !');
+        }
+        else if (!localStorage.session_token && pathName !== '/' && pathName !== '/login' && pathName !== '/signup') {
+            setIsValidSession(false);
+            setMessage('Vous n\'êtes pas connecté !');
+        }
+    };
     verifSession();
 
     return (

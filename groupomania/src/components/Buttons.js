@@ -1,3 +1,5 @@
+/* Website buttons */
+
 export const btnLogin = {
     name: 'Connexion',
     class: 'btn btn-login',

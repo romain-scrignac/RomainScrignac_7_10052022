@@ -3,7 +3,7 @@ import axios from 'axios';
 import { iconDelete, iconUpdate } from '../datas/images';
 import { btnDelete, btnUpdate } from '../components/Buttons';
 
-const Account = ({onFileSelect}) => {
+const Account = () => {
     document.title = 'Account';
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [userInfos, setUserInfos] = useState({});
@@ -13,7 +13,6 @@ const Account = ({onFileSelect}) => {
     const [passwordValue, setPasswordValue] = useState('');
     const [verifPasswordValue, setVerifPasswordValue] = useState('');
     const [avatarValue, setAvatarValue] = useState('');
-    const [posts, setPosts] = useState({});
     const [isValid, setIsValid] = useState({
         avatar: '',
         firstname: '',
@@ -30,7 +29,6 @@ const Account = ({onFileSelect}) => {
 
     const avatarOnChange = (e) => {
         const file = e.target.files[0];
-
         if (file.size > (1024 * 1024)) {
             setIsValid(previousState => { return {...previousState, avatar: ''}});
             e.target.style["border-color"] = "#FD2D01";
@@ -108,6 +106,9 @@ const Account = ({onFileSelect}) => {
         modifyAccount();
     }
 
+    /**
+     * @description this function checks the account modification and updates the css
+     */
     const handleUpdate = (e) => {
         e.preventDefault();
         const previousInput = e.target.parentNode.previousSibling;
@@ -121,7 +122,6 @@ const Account = ({onFileSelect}) => {
             previousInput.disabled = true;
             previousInput.style["borderColor"] = "";
         }
-
         if (previousInput.name === "password") {
             fieldsetConfim.style["display"] = "flex";
         } 
@@ -132,6 +132,9 @@ const Account = ({onFileSelect}) => {
         }
     }
 
+    /**
+     * @description this function communicates with the API to display the user's informations
+     */
     const getUserData = async () => {
         try {
             const response = await fetch(`https://localhost/api/auth/account`, {
@@ -144,13 +147,15 @@ const Account = ({onFileSelect}) => {
             const responseJson = await response.json();
             if (response.ok) {
                 setUserInfos(responseJson.findUser);
-                setPosts({nbPosts: responseJson.nbPosts.length, nbComs: responseJson.nbComs.length});
             }
         } catch (err) {
             console.error(err);
         }
     };
 
+    /**
+     * @description this function communicates with the API to modify the user's informations
+     */
     const modifyAccount = () => {
         const text = "Confirmez-vous la modification de votre profil ?";
         if (window.confirm(text)) {
@@ -206,6 +211,9 @@ const Account = ({onFileSelect}) => {
         }
     };
 
+    /**
+     * @description this function communicate with the API to delete the user's account
+     */
     const handleDelete = async (e) => {
         e.preventDefault();
 

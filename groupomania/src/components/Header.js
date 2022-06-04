@@ -19,33 +19,33 @@ const Header = () => {
             </div>
             <nav className="nav-buttons">
             {
-            !localStorage.session_token ? 
-            (
-                <div className="btn-log">
-                    <NavLink to="/login" className={({ isActive }) => isActive ? activeClassName : undefined}>
-                        <button className={btnLogin.class} title={btnLogin.title}>{btnLogin.name}</button>
-                    </NavLink>
-                    <NavLink to="/signup" className={({ isActive }) => isActive ? activeClassName : undefined}>
-                        <button className={btnSignup.class} title={btnSignup.title}>{btnSignup.name}</button>
-                    </NavLink>
-                </div>
-            ):(
-                localStorage.session_token ? 
+                !localStorage.session_token ? 
                 (
-                    <div className="btn-profil">
-                        <NavLink to ='/account'>
-                            <button className={btnAccount.class} title={btnAccount.title}>
-                                <img src={iconAccount.cover} alt={iconAccount.name} />
-                            </button>
+                    <div className="btn-log">
+                        <NavLink to="/login" className={({ isActive }) => isActive ? activeClassName : undefined}>
+                            <button className={btnLogin.class} title={btnLogin.title}>{btnLogin.name}</button>
                         </NavLink>
-                        <NavLink to="/logout">
-                            <button className={btnLogout.class} title={btnLogout.title}>
-                                <img src={iconLogout.cover} alt={iconLogout.name} />
-                            </button>
+                        <NavLink to="/signup" className={({ isActive }) => isActive ? activeClassName : undefined}>
+                            <button className={btnSignup.class} title={btnSignup.title}>{btnSignup.name}</button>
                         </NavLink>
                     </div>
-                ): null
-            )
+                ):(
+                    localStorage.session_token ? 
+                    (
+                        <div className="btn-profil">
+                            <NavLink to ='/account'>
+                                <button className={btnAccount.class} title={btnAccount.title}>
+                                    <img src={iconAccount.cover} alt={iconAccount.name} />
+                                </button>
+                            </NavLink>
+                            <NavLink to="/logout">
+                                <button className={btnLogout.class} title={btnLogout.title}>
+                                    <img src={iconLogout.cover} alt={iconLogout.name} />
+                                </button>
+                            </NavLink>
+                        </div>
+                    ): null
+                )
             }       
             </nav>
             <Outlet />

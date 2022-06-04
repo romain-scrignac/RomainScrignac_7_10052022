@@ -139,12 +139,12 @@ footer {
 .btn-order {
   margin: 20px 0;
 }
-.btn-fav {
+.btn-fav, .btn-nav {
+  position: absolute;
   width: 30px;
   height: 30px;
   padding: 0;
   bottom: -40px;
-  position: absolute;
 }
 .btn-fav .fav {
   width: 100%;
@@ -176,6 +176,18 @@ footer {
 }
 .btn-fav .fav i {
   font-size: 24px;
+}
+.btn-nav {
+  right: 0;
+  opacity: 0.6;
+}
+.btn-nav i {
+  font-size: 24px;
+}
+.btn-nav:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  opacity: 1;
 }
 
 .activeBtn .btn {

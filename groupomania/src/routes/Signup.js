@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Signup() {
+const Signup = () => {
     document.title = 'Signup';
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [firstnameValue, setFirstnameValue] = useState('');
@@ -19,7 +19,7 @@ function Signup() {
         signup: true
     });
 
-    function firstnameOnChange(e) {
+    const firstnameOnChange = (e) => {
         const firstname = e.target.value;
         if (firstname.length < 3) {
             setUser(previousState => { return {...previousState, firstname: ''}});
@@ -31,7 +31,7 @@ function Signup() {
         setFirstnameValue(firstname);
     };
 
-    function lastnameOnChange(e) {
+    const lastnameOnChange = (e) => {
         const lastname = e.target.value;
         if (lastname.length < 3) {
             setUser(previousState => { return {...previousState, lastname: ''}});
@@ -43,7 +43,7 @@ function Signup() {
         setLastnameValue(lastname);
     };
 
-    function emailOnChange(e) {
+    const emailOnChange = (e) => {
         const email = e.target.value;
         if (!email.match(regexEmail)) {
             setUser(previousState => { return {...previousState, email: ''}});
@@ -55,7 +55,7 @@ function Signup() {
         setEmailValue(email.toLowerCase());
     };
 
-    function passwordOnChange(e) {
+    const passwordOnChange = (e) => {
         const password = e.target.value;
         if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
         || password.length < 8 || password.match[/\s|=|'|"'/]) {
@@ -69,7 +69,7 @@ function Signup() {
         setPasswordValue(password);
     };
 
-    function confirmPasswordOnChange(e) {
+    const confirmPasswordOnChange = (e) => {
         const confirmPass = e.target.value;
         if(confirmPass !== passwordValue) {
             setUser(previousState => { return {...previousState, confirmPass: ''}});
@@ -96,10 +96,11 @@ function Signup() {
     };
 
     const handleSubmit = (event) => {
-        // prevents the submit button from refreshing the page
         event.preventDefault();
-
-        async function fetchData() {
+        /**
+         * @description this function communicates with the API to register the user
+         */
+        const fetchData = async () => {
             try {
                 const response = await fetch('https://localhost/api/auth/signup', {
                     method: 'POST',
@@ -122,7 +123,7 @@ function Signup() {
             } catch (err) {
                 console.error(err);
             }
-        }
+        };
         fetchData();
     };
 

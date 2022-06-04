@@ -8,7 +8,7 @@ const Verification = () => {
     const [message, setMessage] = useState('');
     const [alert, setAlert] = useState('');
 
-    function codeOnChange(e) {
+    const codeOnChange = (e) => {
         const code = e.target.value;
         if (code.length !== 6 || code.trim() === "" || !code.match(/^[0-9]{6}$/)) {
             setIsValid(false);
@@ -18,11 +18,12 @@ const Verification = () => {
         setUserCode(code);
     };
     
-    const handleSubmit = (event) => {
-        // prevents the submit button from refreshing the page
-        event.preventDefault();
-
-        async function fetchData() {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        /**
+         * @description this function communicates with the API to check the email authentication code
+         */
+        const fetchData = async () => {
             try {
                 const response = await fetch('https://localhost/api/auth/verification', {
                     method: "POST",
@@ -49,14 +50,16 @@ const Verification = () => {
             } catch (err) {
                 console.error(err);
             }
-        }
+        };
         fetchData();
     };
 
     const sendCode = (event) => {
         event.preventDefault();
-
-        async function fetchData() {
+        /**
+         * @description this function sends the authentication code again
+         */
+        const fetchData = async () => {
             try {
                 const response = await fetch('https://localhost/api/auth/sendcode', {
                     method: 'POST',
@@ -73,14 +76,13 @@ const Verification = () => {
             } catch (err) {
                 console.error(err);
             }
-        }
+        };
         fetchData();
     };
 
     return (
         <div>
-            {
-                message ? 
+            {message ? 
                 (
                     <div className="verif">
                         <p>{message}</p>
@@ -116,12 +118,17 @@ const Verification = () => {
                             !sendMail ? 
                             (
                                 <p className='sendCode'>
-                                        <a href="/" onClick={sendCode} title="Recevoir le code sur ma boite de messagerie">Renvoyer le code</a>
+                                    <a 
+                                        href="/" 
+                                        onClick={sendCode} 
+                                        title="Recevoir le code sur ma boite de messagerie"
+                                    >
+                                        Renvoyer le code
+                                    </a>
                                 </p>
                             ):(
                                 <p>{sendMail}</p>
                             )
-                            
                         }
                         {alert ? (<p className="alert">⚠️ {alert}</p>): null}
                     </div>
