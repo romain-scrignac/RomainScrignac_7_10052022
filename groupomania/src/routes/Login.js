@@ -6,39 +6,58 @@ const Login = () => {
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [email, setEmailValue] = useState('');
     const [password, setPasswordValue] = useState('');
-    const [isValid, setIsValid] = useState({
-        email: '',
-        password: ''
-    });
-    const [message, setMessage] = useState('');
     const [confirm, setConfirm] = useState(true);
-    const session = localStorage.session_token;
+    const [message, setMessage] = useState('');
+    const [alert, setAlert] = useState('');
+    const [user, setUser] = useState({
+        email: '',
+        password: '',
+        session: ''
+    });
 
-    function emailOnChange(e) {
+    if (localStorage.session_token) {
+        setUser(previousState => { return {...previousState, session: localStorage.session_token} });
+    };
+
+    const emailOnChange = (e) => {
         const email = e.target.value;
         if (!email.match(regexEmail)) {
-            setIsValid(previousState => { return {...previousState, email: ''}});
+            setUser(previousState => { return {...previousState, email: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
-            setIsValid(previousState => { return {...previousState, email: email}});
+            setUser(previousState => { return {...previousState, email: email}});
             e.target.style["border-color"] = "#34c924";
         }
         setEmailValue(email.toLowerCase())
-    }
+    };
 
-    function passwordOnChange(e) {
+    const passwordOnChange = (e) => {
         const password = e.target.value;
         if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
         || password.length < 8 || password.match[/\s|=|'|"'/]) {
-            setIsValid(previousState => { return {...previousState, password: ''}});
+            setUser(previousState => { return {...previousState, password: ''}});
             e.target.style["border-color"] = "#FD2D01";
         }
         else {
-            setIsValid(previousState => { return {...previousState, password: password}});
+            setUser(previousState => { return {...previousState, password: password}});
             e.target.style["border-color"] = "#34c924";
         }
-        setPasswordValue(password)
-    }
+        setPasswordValue(password);
+    };
+
+    const onView = (e) => {
+        e.preventDefault();
+        const previousInput = e.target.parentNode.previousElementSibling;
+        if (previousInput.type === "password") {
+            previousInput.type = "text";
+            e.target.style["opacity"] = "0.5";
+            e.target.title = "Cacher";
+        } else {
+            previousInput.type = "password";
+            e.target.style["opacity"] = "1";
+            e.target.title = "Afficher";
+        }
+    };
 
     const handleSubmit = (event) => {
         // prevents the submit button from refreshing the page
@@ -52,7 +71,7 @@ const Login = () => {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ email, password, session })
+                    body: JSON.stringify({ user })
                 });
 
                 const responseJson = await response.json((err) => {
@@ -69,12 +88,11 @@ const Login = () => {
                         localStorage.setItem('session_id', JSON.parse(responseJson.userId));
                         localStorage.setItem("session_token", responseJson.token);
                         setMessage('Connexion ok, redirection en cours...');
-                        setTimeout(function(){ 
-                            window.location.href="/" 
-                        } , 5000);
+                        setTimeout(function(){ window.location.href="/" } , 5000);
                     }
                 } else {
-                    alert(responseJson.err);
+                    setAlert(responseJson.err);
+                    setTimeout(function(){ setAlert('') } , 8000);
                 }
             } catch (err) {
                 console.error(err);
@@ -107,9 +125,12 @@ const Login = () => {
                             value={password}
                             onChange={passwordOnChange}
                         />
+                        <span className="icon-eye">
+                            <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
+                        </span>
                     </fieldset>
                     {
-                        isValid.email && isValid.password ?
+                        user.email && user.password ?
                         (
                             <button className="btn btn-submit" onClick={handleSubmit} title="Connexion">
                                 Valider
@@ -122,7 +143,8 @@ const Login = () => {
                         )
                     }
                 </form>
-                {message !== '' ? (<p>{message}</p>): null}
+                { message !== '' ? (<p className="message">{message}</p>): null }
+                { alert ? (<p className="alert">⚠️ {alert}</p>): null }
             </div>
         )
         

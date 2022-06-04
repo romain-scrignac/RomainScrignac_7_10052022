@@ -21,7 +21,7 @@ const Header = () => {
             {
             !localStorage.session_token ? 
             (
-                <div className="">
+                <div className="btn-log">
                     <NavLink to="/login" className={({ isActive }) => isActive ? activeClassName : undefined}>
                         <button className={btnLogin.class} title={btnLogin.title}>{btnLogin.name}</button>
                     </NavLink>

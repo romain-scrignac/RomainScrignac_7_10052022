@@ -134,7 +134,6 @@
 }
 
 .account-form {
-
     fieldset {
         position: relative;
     }
@@ -147,6 +146,27 @@
         .avatar {
             height: 80px;
             cursor: pointer;
+        }
+    }
+}
+
+.login-form, .signup-form {
+    fieldset {
+        position: relative;
+    }
+
+    .icon-eye {
+        position: absolute;
+        right: 20px;
+        bottom: 0;
+        height: 30px;
+        width: 30px;
+
+        i {
+            font-size: 15px;    
+            &:hover {
+                cursor: pointer;
+            }
         }
     }
 }

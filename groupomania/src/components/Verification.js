@@ -4,8 +4,9 @@ const Verification = () => {
 
     const [userCode, setUserCode] = useState('');
     const [isValid, setIsValid] = useState(false);
-    const [message, setMessage] = useState(false);
     const [sendMail, setSendmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [alert, setAlert] = useState('');
 
     function codeOnChange(e) {
         const code = e.target.value;
@@ -37,13 +38,13 @@ const Verification = () => {
                 });
 
                 if (response.ok) {
-                    setMessage(true);
+                    setMessage('Bienvenue ! Redirection vers la page d\'accueil en cours...');
                     localStorage.setItem("session_firstname", responseJson.firstname);
                     localStorage.setItem("session_token", responseJson.token);
                     setTimeout(function(){ window.location.href="/" } , 5000);
 
                 } else {
-                    alert(responseJson.err);
+                    setAlert(responseJson.err);
                 }
             } catch (err) {
                 console.error(err);
@@ -82,8 +83,7 @@ const Verification = () => {
                 message ? 
                 (
                     <div className="verif">
-                        <h3>Bienvenue !</h3>
-                        <p>Redirection vers la page d'accueil en cours...</p>
+                        <p>{message}</p>
                     </div>
                 ):
                 (
@@ -123,6 +123,7 @@ const Verification = () => {
                             )
                             
                         }
+                        {alert ? (<p className="alert">⚠️ {alert}</p>): null}
                     </div>
                 )
             }

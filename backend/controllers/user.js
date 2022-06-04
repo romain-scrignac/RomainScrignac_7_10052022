@@ -8,10 +8,10 @@ const verifEmail = require('../functions/verifEmail');
 // Fonction signup
 exports.signup = async (req, res) => {
     try {
-        if (!req.body) {
+        if (!req.body || !req.body.user) {
             throw 'Invalid form!';
         }
-        const userObject = req.body;
+        const userObject = req.body.user;
 
         // Vérification du formulaire
         validateUserPayload(userObject);
@@ -33,7 +33,7 @@ exports.signup = async (req, res) => {
         });
 
         // Envoi d'un mail de confirmation
-        verifEmail(userObject.email, userObject.firstname, userCode);
+        //verifEmail(userObject.email, userObject.firstname, userCode);
 
         res.status(201).json({ message: 'User created!' });
     } catch (err) {
@@ -154,26 +154,28 @@ exports.deleteUser = async (req, res) => {
 // fonction login
 exports.login = async (req, res) => {
     try {
-        if (!req.body || !req.body.email || !req.body.password) {
+        if (!req.body || !req.body.user || !req.body.user.email || !req.body.user.password) {
             throw 'Invalid form!';
         }
 
+        const userObject = req.body.user;
+
         let session = false;
-        if(req.body.session && session !== undefined) {
+        if(userObject.session && userObject.session !== undefined) {
             session = true;
         }
 
-        const findUser = await User.findOne({ where: { user_email: req.body.email } });
+        const findUser = await User.findOne({ where: { user_email: userObject.email } });
         if (findUser === null) throw 'User not found!';
         if (session && findUser.user_last_connection > findUser.user_last_disconnection) {
             throw 'User already connected!';
         } 
 
         // on compare les mots de passe
-        const compare = await bcrypt.compare(req.body.password, findUser.user_password);
+        const compare = await bcrypt.compare(userObject.password, findUser.user_password);
         if (!compare) throw 'Wrong password!';
 
-        if (findUser.isVerified === 0) {
+        if (findUser.isVerified === 0) {        // Si l'utilisateur n'a pas encore vérifier son adresse mail
             res.status(200).json({ userId: findUser.user_id, isVerified: false });
         } else {
             await User.update({ user_last_connection: Date() }, { where: {user_id: findUser.user_id} }, (err) => {

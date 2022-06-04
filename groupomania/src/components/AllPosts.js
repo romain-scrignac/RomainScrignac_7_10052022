@@ -196,7 +196,7 @@ const AllPosts = () => {
                     <span title= {post.User.user_email} className="post-name">{post.User.user_firstname}</span>
                     {post.Likes.map( like => (
                         // Si le post n'a aucun like qui appartient à l'user on affiche le bouton like
-                        post.countLikes === 0 || like.like_value === 0 && like.like_user_id === parseInt(localStorage.session_id) ? 
+                        post.countLikes === 0 || (like.like_value === 0 && like.like_user_id === parseInt(localStorage.session_id)) ? 
                         (
                             <div className="btn-fav" key={post.post_id}>
                                 <button 

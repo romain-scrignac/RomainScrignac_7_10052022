@@ -102,7 +102,6 @@ const validatePostPayload = (authId, postObject) => {
             throw 'Espaces, =, \' or " characters are not allowed!';
         }
     }
-    
 };
 
 /**

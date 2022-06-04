@@ -37,9 +37,18 @@ a {
   justify-content: center;
   margin: 100px auto;
 }
-
 .grpm-err404 img {
   width: 30%;
+}
+
+.alert {
+  font-weight: bold;
+  color: #FD2D01;
+  font-size: 14px;
+}
+
+.message {
+  color: #4E5166;
 }
 
 /* Header */
@@ -316,6 +325,23 @@ footer {
   cursor: pointer;
 }
 
+.login-form fieldset, .signup-form fieldset {
+  position: relative;
+}
+.login-form .icon-eye, .signup-form .icon-eye {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  height: 30px;
+  width: 30px;
+}
+.login-form .icon-eye i, .signup-form .icon-eye i {
+  font-size: 15px;
+}
+.login-form .icon-eye i:hover, .signup-form .icon-eye i:hover {
+  cursor: pointer;
+}
+
 /* Main */
 #main {
   display: flex;
@@ -361,6 +387,9 @@ footer {
     margin: 0;
     right: 20px;
   }
+}
+.nav-buttons .btn-log {
+  margin-top: 70px;
 }
 
 /* Posts */

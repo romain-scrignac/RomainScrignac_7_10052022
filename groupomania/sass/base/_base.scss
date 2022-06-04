@@ -36,8 +36,18 @@ a {
     display: flex;
     justify-content: center;
     margin: 100px auto;
+
+    img {
+        width: 30%;
+    }
 }
 
-.grpm-err404 img {
-    width: 30%;
+.alert {
+    font-weight: bold;
+    color: $primary;
+    font-size: 14px;
+}
+
+.message {
+    color: $tertiary;
 }
