@@ -184,11 +184,11 @@ exports.deletePost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body.postId || req.body.postId != req.params.id) {
+        } else if (!req.body || !req.body.postId) {
             throw 'Bad request!';
         }
-
         const postId = req.body.postId;
+
         const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';
         else if (findPost.post_user_id !== req.auth.userId) {
@@ -204,21 +204,11 @@ exports.deletePost = async (req, res) => {
             });
         }
 
-        // Suppression de tous les likes du post
-        await Like.destroy({ where: {like_post_id: postId} }, (err) => {
-            if (err) throw err;
-        });
-
-        // Suppression de tous les commentaires du post
-        await Comment.destroy({ where: {comment_post_id: postId} }, (err) => {
-            if (err) throw err;
-        });
-
         // Suppression du post
         await Post.destroy({ where: {post_id: postId} }, (err) => {
             if (err) throw err;
         });
-        res.status(200).json({ message: 'Post deleted!' });
+        res.status(200).json({ message: `Post ${postId} deleted!` });
     } catch (err) {
         switchErrors(res, err);
     }

@@ -7,11 +7,33 @@
     width: 100%;
 
     textarea {
-        overflow: auto;
-        resize: none;
         outline: none;
-        height: 100px;
     }
+}
+
+.post-comment {
+    textarea {
+        border: 1px ridge silver;
+        border-radius: 8px;
+        padding: 12px 8px 0 8px;
+        &:focus {
+            outline: 1px solid $tertiary;
+        }
+    }
+    &-submit {
+        i {
+            font-size: 20px;
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.post-form textarea, .post-comment textarea {
+    resize: none;
+    overflow: auto;
 }
 
 .post-options {

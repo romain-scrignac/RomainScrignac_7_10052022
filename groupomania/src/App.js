@@ -6,6 +6,7 @@ import Logout from './routes/Logout';
 import Account from './routes/Account';
 import AllPosts from './components/AllPosts'
 import OnePost from './components/OnePost';
+import Message from './routes/Message';
 import { error404 } from './datas/images';
 
 const App = () => {
@@ -23,6 +24,7 @@ const App = () => {
             }
             <Route path="logout" element={<Logout />} />
             <Route path="account" element={<Account />} />
+            <Route path="message" element={<Message />} />
           </Route>
         ):(
           <Route path="/" element={<Header />}>

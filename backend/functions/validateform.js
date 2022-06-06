@@ -31,24 +31,21 @@ const validatePostPayload = (authId, postObject) => {
 /**
  * @description This function checks the validity of the comment form
  * 
- * @param {Number} authId the user id of the token
  * @param {JSON} commentObject the body of the request
  **/
- const validateCommentPayload = (authId, commentObject) => {
+ const validateCommentPayload = (commentObject) => {
     const {
         content,
-        userId,
         postId
     } = commentObject;
 
     if (!commentObject) {
         throw 'Bad request !';
-    } else if (!content || !userId || !postId) {
+    } else if (!content || !postId) {
         throw 'Invalid form !';
-    } else if (typeof content !== "string" || typeof postId !== "number" 
-    || typeof userId !== "string" || userId !== authId) {
+    } else if (typeof content !== "string" || typeof postId !== "number") {
         throw 'Invalid field(s)!';
-    } else if (content.trim() === "" || userId.trim() === "" || postId === "") {
+    } else if (content.trim() === "" || postId === "") {
         throw 'Missing field(s)!';
     } else if (content.length < 3 || content.length >= 255) {
         throw 'Invalid number of characters !';

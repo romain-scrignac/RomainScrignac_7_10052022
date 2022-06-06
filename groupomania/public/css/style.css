@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital@0;1&display=swap");
 html {
   margin: 0;
   padding: 0;
@@ -139,56 +140,6 @@ footer {
 .btn-order {
   margin: 20px 0;
 }
-.btn-fav, .btn-nav {
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  bottom: -40px;
-}
-.btn-fav .fav {
-  width: 100%;
-  height: 100%;
-  background: none;
-  border: none;
-  position: relative;
-}
-.btn-fav .fav-after, .btn-fav .fav-before {
-  width: 30px;
-  height: 30px;
-  position: absolute;
-  bottom: 0;
-  left: 5px;
-}
-.btn-fav .fav-after {
-  background-image: linear-gradient(30deg, #FFD7D7, #FD2D01);
-  background-clip: text;
-  color: transparent;
-}
-.btn-fav .fav:hover {
-  cursor: pointer;
-}
-.btn-fav .fav:hover > .fav-before {
-  transform: scale(1.05);
-}
-.btn-fav .fav:hover > .fav-after {
-  transform: scale(1.05);
-}
-.btn-fav .fav i {
-  font-size: 24px;
-}
-.btn-nav {
-  right: 0;
-  opacity: 0.6;
-}
-.btn-nav i {
-  font-size: 24px;
-}
-.btn-nav:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-  opacity: 1;
-}
 
 .activeBtn .btn {
   box-shadow: 2px 3px 10px #4E5166;
@@ -208,10 +159,27 @@ footer {
   width: 100%;
 }
 .post-form textarea {
-  overflow: auto;
-  resize: none;
   outline: none;
-  height: 100px;
+}
+
+.post-comment textarea {
+  border: 1px ridge silver;
+  border-radius: 8px;
+  padding: 12px 8px 0 8px;
+}
+.post-comment textarea:focus {
+  outline: 1px solid #4E5166;
+}
+.post-comment-submit i {
+  font-size: 20px;
+}
+.post-comment-submit i:hover {
+  cursor: pointer;
+}
+
+.post-form textarea, .post-comment textarea {
+  resize: none;
+  overflow: auto;
 }
 
 .post-options {
@@ -412,6 +380,7 @@ footer {
   align-items: center;
   width: 100%;
   margin: 30px auto;
+  color: #4E5166;
 }
 @media screen and (min-width: 600px) and (max-width: 991px) {
   .allPosts {
@@ -438,22 +407,131 @@ footer {
 }
 .allPosts .post {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
+  margin-bottom: 60px;
   border: 1px groove #4E5166;
+  border-radius: 8px;
 }
-@media screen and (min-width: 992px) {
-  .allPosts .post {
-    margin-bottom: 60px;
-  }
+.allPosts .post-author {
+  background: 1px groove black;
+  padding: 7px 10px;
+  color: #FD2D01;
+  width: 0;
+  font-weight: bold;
 }
-.allPosts .nbLikes {
+.allPosts .post-author:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.allPosts .post-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 60px;
+  padding: 0 10px 10px 10px;
+}
+.allPosts .post-allComments {
+  display: none;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0 10px;
+}
+.allPosts .post-allComments .oneComment {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  width: fit-content;
+  padding: 5px 15px 7px 15px;
+  background-color: rgba(255, 215, 215, 0.4);
+  border-radius: 15px;
+}
+.allPosts .post-allComments .oneComment-author {
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+.allPosts .post-comment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+}
+.allPosts .post-comment-submit {
+  display: none;
+}
+.allPosts .post-various {
+  height: 50px;
+  width: 100%;
+  padding: 10px 0;
+}
+.allPosts .post-various__edit, .allPosts .post-various__delete, .allPosts .post-various__emotes {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+}
+.allPosts .post-various__edit, .allPosts .post-various__delete {
+  opacity: 0.6;
+}
+.allPosts .post-various__edit i, .allPosts .post-various__delete i {
+  font-size: 18px;
+}
+.allPosts .post-various__edit:hover, .allPosts .post-various__delete:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+  opacity: 1;
+}
+.allPosts .post-various__edit {
+  right: 15px;
+}
+.allPosts .post-various__delete {
+  right: 45px;
+}
+.allPosts .post-various__emotes {
+  left: 15px;
+}
+.allPosts .post-various__emotes .fav-after, .allPosts .post-various__emotes .fav-before {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+}
+.allPosts .post-various__emotes .fav-after:hover, .allPosts .post-various__emotes .fav-before:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+.allPosts .post-various__emotes .fav-after i, .allPosts .post-various__emotes .fav-before i {
+  font-size: 24px;
+}
+.allPosts .post-various__emotes .fav-after {
+  background-image: linear-gradient(30deg, #FFD7D7, #FD2D01);
+  background-clip: text;
+  color: transparent;
+}
+.allPosts .post-various__emotes .nbLikes {
   position: absolute;
   bottom: 0;
   left: 0;
   font-size: 12px;
-  color: #4E5166;
   font-weight: bold;
   text-decoration: solid;
+}
+.allPosts .post-split {
+  border: 1px groove #4E5166;
+  opacity: 0.5;
+  width: 95%;
+  margin: 0 auto;
+}
+.allPosts .post .displayComments {
+  padding: 7px 15px 0 15px;
+  font-size: 15px;
+  font-style: italic;
+}
+.allPosts .post .displayComments:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .profil {

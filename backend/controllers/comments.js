@@ -33,21 +33,20 @@ exports.addComment = async (req, res) => {
     try{
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if(!req.body || !req.body.comment) {
+        } else if(!req.body || !req.body.content || !req.body.postId) {
             throw 'Bad request!';
         }
         
-        const commentObject = req.body.comment;
-        const authId = req.auth.userId;
+        const commentObject = req.body;
 
         // Validation du formulaire
-        validateCommentPayload(authId, commentObject);
+        validateCommentPayload(commentObject);
 
         // Création du commentaire
         const commentAttributes = { 
-            comment_content: commentObject.content,
-            comment_user_id: commentObject.userId,
-            comment_post_id: commentObject.postId
+            comment_post_id: commentObject.postId,
+            comment_user_id: req.auth.userId,
+            comment_content: commentObject.content
         };
 
         await Comment.create(commentAttributes, (err) => {
