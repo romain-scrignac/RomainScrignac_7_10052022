@@ -30,12 +30,12 @@ exports.getAllPosts = async (req, res) => {
                     model: Comment, separate: true, order: [['createdAt', 'ASC']], 
                     include: [
                         { model: User, attributes: userAttr }, 
-                        { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id'] }
+                        { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id', 'like_type'] }
                     ],
                     attributes: { exclude: ['comment_post_id'] }
                 },
                 { 
-                    model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id']
+                    model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id', 'like_type']
                 }
             ]
             // {all: true, nested: true, attributes: {exclude: ['user_password', 'User.Comment']}}, limit: 100
@@ -85,14 +85,14 @@ exports.addPost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body || !req.body.content) {
+        } else if (!req.body) {
             throw 'Bad request!';
         }
 
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
-            ...JSON.parse(req.body),
+            ...req.body,
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body, imageUrl: null };
 
@@ -102,13 +102,13 @@ exports.addPost = async (req, res) => {
         else { videoUrl = postObject.video; }
 
         // Validation du formulaire
-        const authId = req.auth.userId;
-        validatePostPayload(authId, postObject);
+        const file = false;
+        validatePostPayload(postObject);
 
         // Création du post
-        const postAttributes = { 
+        const postAttributes = {
+            post_user_id: req.auth.userId,
             post_content: postObject.content,
-            post_user_id: postObject.userId, 
             post_image: postObject.imageUrl,
             post_video: videoUrl
         };        
@@ -129,8 +129,8 @@ exports.modifyPost = async (req, res) => {
         } else if (!req.body || !req.body.postId || req.body.postId != req.params.id) {
             throw 'Bad request!';
         }
-
         const postId = req.params.id;
+        
         const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';
         if (findPost.post_user_id !== req.auth.userId) {
@@ -220,15 +220,14 @@ exports.likePost = async (req, res) => {
         console.log(req.body)
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body.like || !req.body.postId || !req.body.userId || req.body.userId != req.auth.userId) {
+        } else if (!req.body.like || !req.body.postId || !req.body.type || !req.body.userId || req.body.userId != req.auth.userId) {
             throw 'Bad request!';
         }
 
         const postId = parseInt(req.body.postId);
         const like = parseInt(req.body.like);
         const userId = parseInt(req.body.userId);
-
-        console.log("like: "+like)
+        const type = req.body.type;
         
         const findPost = await Post.findOne({ where: {post_id: req.body.postId} });
         if (findPost === null) throw 'Post not found!';
@@ -240,23 +239,25 @@ exports.likePost = async (req, res) => {
         const findUserLike = await Like.findOne({  where: {like_user_id: userId, like_post_id: postId} });
 
         // Si l'utilisateur n'a pas encore like
-        if (findUserLike === null && like === 1) {
-            await Like.create({ like_post_id: postId, like_user_id: req.auth.userId, like_value: like }, (err) => {
+        if (like === 1 && findUserLike === null) {
+            await Like.create({ like_post_id: postId, like_user_id: req.auth.userId, like_value: like, like_type: type }, (err) => {
                 if (err) throw err;
             });
         }
         // Sinon, on met à jour like_value
         else if (findUserLike !== null) {
             if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
-                await Like.update({like_value: like}, { where: {like_post_id: req.body.postId, like_user_id: req.auth.userId} },
-                 (err) => {
-                    if (err) throw err;
-                 });
+                await Like.update(
+                    {like_value: like, like_type: type}, {
+                        where: {like_post_id: req.body.postId, like_user_id: req.auth.userId}
+                    },(err) => {
+                        if (err) throw err;
+                    }
+                );
             } else {
                 throw 'Bad request!';
             }
-        }
-        else {
+        } else {
             throw 'Bad request!';
         }
         // Personnalisation du message suivant les cas

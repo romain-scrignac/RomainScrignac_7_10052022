@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import { iconImg } from '../datas/images';
+import { switchLikeButton, switchLoveButton, switchLaughButton } from './Emojis';
 
 const AllPosts = () => {
     document.title = 'Groupomania';
@@ -38,18 +39,23 @@ const AllPosts = () => {
                 });
                 if (response.ok) {
                     const responseJson = await response.json();
+                    // Ajout de compteurs de likes
                     const postsFromApi = responseJson.allPosts.map(post => {
-                        if (post.Likes.length > 0) {
-                            let likes = 0;
-                            for (let i = 0; i < post.Likes.length; i++) {
-                                if (post.Likes[i].like_value === 1) {
-                                    likes++;
-                                }
+                        let likes = 0;
+                        let loves = 0;
+                        let laughs = 0;
+                        for (let i = 0; i < post.Likes.length; i++) {
+                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "like") {
+                                likes++;
                             }
-                            return {...post, countLikes: likes}
-                        } else {
-                            return {...post, countLikes: null}
+                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "love") {
+                                loves++;
+                            }
+                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "laugh") {
+                                laughs++;
+                            }
                         }
+                        return {...post, countLikes: likes, countLoves: loves, countLaughs: laughs}
                     });
                     setAllPosts(postsFromApi);
                 }
@@ -97,11 +103,6 @@ const AllPosts = () => {
         setPostImageFile(file);
     };
 
-    const onSubmitPost = (e) => {
-        e.preventDefault();
-        fetchPostData();
-    };
-
     const onModifyPost = (e) => {
         e.preventDefault();
         const previousInput = e.target.parentNode.previousSibling;
@@ -114,28 +115,40 @@ const AllPosts = () => {
         if (window.confirm(text)) {
             fetchDeletePost(postId);
         }
+    };
+
+    const onSubmitPost = (e) => {
+        e.preventDefault();
+        fetchPostData();
+    };
+    
+    const resetPost = () => {
+        setAddPost({ content: "", image: "" });
+        document.getElementById('postText').value = '';
+        document.getElementById('file').value = '';
+        document.getElementById('isFile').innerText = '';
     }
 
     const sendMessage = (userId) => {
         navigate('/message?userId='+userId);
     };
 
-    const addLike = (e) => {
-        e.preventDefault();
+    // Likes
+    const addEmoji = (e, type) => {
         const postId = e.target.previousElementSibling.value;
-        fetchLikeData(postId, "1");
+        fetchLikeData(type, postId, "1");
     };
 
-    const removeLike = (e) => {
-        e.preventDefault();
+    const removeEmoji = (e, type) => {
         const postId = e.target.previousElementSibling.value;
-        fetchLikeData(postId, "0");
+        fetchLikeData(type, postId, "0");
     };
 
     // Comments
     const displayComments = (e) => {
+        e.preventDefault();
         const allComments = e.target.nextSibling;
-        console.log(e.target.title)
+
         if (!allComments.style["display"]) {
             e.target.title = "Cacher"
             allComments.style["display"] = "flex";
@@ -147,21 +160,35 @@ const AllPosts = () => {
     }
 
     const onChangeComment = (e) => {
-        const content = e.target.value;        
-        const previousComment = e.target.nextSibling;
-        //console.log(e.target.parentElement.firstChild)
+        e.preventDefault();
+        const content = e.target.value;
+        const submitBtn = e.target.nextSibling;
 
         if(content.trim() === "") {
             setAddComment(previousState => { return {...previousState, content: ''}});
+            submitBtn.style["display"] = "none";
+
         } else {
-            if (content.length > 3 && previousComment.style["display"] === "none") {
-                previousComment.style["display"] = "block";
-            } else if (content.length < 3) {
-                previousComment.style["display"] = "none";
-            }
             setAddComment(previousState => { return {...previousState, content: content}});
+            submitBtn.style["display"] = "unset";
         }
         setCommentValue(content);
+    };
+
+    // const displayCommentoptions = (e) => {
+    //     e.preventDefault();
+    // };
+
+    const onModifyComment = (e, commentId) => {
+
+    };
+
+    const onDeleteComment = (e, commentId) => {
+        e.preventDefault();
+        const text = "Confirmez-vous la suppression du commentaire ?";
+        if (window.confirm(text)) {
+            fetchDeleteComment(commentId);
+        }
     };
 
     const onSubmitComment = (e, postId) => {
@@ -170,13 +197,86 @@ const AllPosts = () => {
     };
 
     const resetComment = (postId) => {
+        setAddComment({ comment: '' });
         document.getElementById(`content-${postId}`).value = '';
-    }
+    };
+
+    /**
+     * @description this function communicates with the API when adding a post
+     */
+    const fetchPostData = async () => {
+        try {
+            let response;
+            if (addPost.image) {
+                const formData = new FormData();
+                formData.append("content", addPost.content)
+                formData.append("file", addPost.image);
+                formData.append('fileName', addPost.image.name);
+
+                response = await fetch(`https://localhost/api/posts/`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.session_token}`
+                    },
+                    body: formData
+                });
+            } else {
+                response = await fetch(`https://localhost/api/posts/`, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.session_token}`
+                    },
+                    body: JSON.stringify({ content: addPost.content })
+                });
+            }
+            const responseJson = await response.json((err) => {
+                if (err) throw err;
+            });
+            if (response.ok) {
+                resetPost();
+                setNewPost(responseJson);
+            } else {
+                alert(responseJson.err);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    /**
+     * @description this function communicates with the API when deleting a post
+     */
+    const fetchDeletePost = async (postId) => {
+        try {
+            const response = await fetch(`https://localhost/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.session_token}`
+                },
+                body: JSON.stringify({ postId: postId })
+            });
+            const responseJson = await response.json((err) => {
+                if (err) throw err;
+            });
+            if (response.ok) {
+                setNewPost(`Post ${postId} deleted`);
+                console.log(responseJson.message);
+            } else {
+                alert(responseJson.err);
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     /**
      * @description this function communicates with the API when adding a comment
      */
-    const fetchCommentData = async (postId) => {
+     const fetchCommentData = async (postId) => {
         try {
             const response = await fetch(`https://localhost/api/comments/`, {
                 method: 'POST',
@@ -202,26 +302,25 @@ const AllPosts = () => {
     };
 
     /**
-     * @description this function communicates with the API when adding a post
+     * @description this function communicates with the API when deleting a comment
      */
-    const fetchPostData = async () => {
+    const fetchDeleteComment = async (commentId) => {
         try {
-            const response = await fetch(`https://localhost/api/posts/`, {
-                method: 'POST',
+            const response = await fetch(`https://localhost/api/comments/${commentId}`, {
+                method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.session_token}`
                 },
-                body: JSON.stringify({ content: addPost.content, image: addPost.image, userId: localStorage.session_id })
+                body: JSON.stringify({ commentId: commentId })
             });
-
             const responseJson = await response.json((err) => {
                 if (err) throw err;
             });
-
             if (response.ok) {
-                setNewPost(responseJson);
+                setNewComment(`Comment ${commentId} deleted`);
+                console.log(responseJson.message);
             } else {
                 alert(responseJson.err);
             }
@@ -230,38 +329,13 @@ const AllPosts = () => {
         }
     };
 
-    const fetchDeletePost = async (postId) => {
-        try {
-            const response = await fetch(`https://localhost/api/posts/${postId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.session_token}`
-                },
-                body: JSON.stringify({ postId: postId })
-            });
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
-            if (response.ok) {
-                setNewPost(`${postId} deleted`);
-                alert(responseJson.message);
-            } else {
-                alert(responseJson.err);
-            }
-        } catch (err) {
-            console.error(err);
-        }
-    }
-
     /**
      * @description this function communicates with the API when adding or removing a like
      * 
      * @param {String} postId the id of the publication
      * @param {String} like the value of the like
      */
-    const fetchLikeData = async (postId, like) => {
+     const fetchLikeData = async (type, postId, like) => {
         try {
             const response = await fetch(`https://localhost/api/posts/${postId}/like`, {
                 method: 'POST',
@@ -270,16 +344,12 @@ const AllPosts = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.session_token}`
                 },
-                body: JSON.stringify({ like: like, postId: postId, userId: localStorage.session_id })
+                body: JSON.stringify({ like: like, postId: postId, userId: localStorage.session_id, type: type })
             });
-            const responseJson = await response.json();
-            if(responseJson.err) {
-                alert(responseJson.err);
-            }
             if (response.ok) {
                 if (like === "1") {
                     setAllLikes(previousState => {
-                        return {...previousState, postId: postId, like: like, userId: localStorage.session_id} 
+                        return {...previousState, postId: postId, like: like, userId: localStorage.session_id}
                     });
                 }
                 if (like === "0") {
@@ -287,79 +357,39 @@ const AllPosts = () => {
                         return {...previousState, postId: postId, like: like, userId: localStorage.session_id} 
                     });
                 }
-                
             }
         } catch (err) {
             console.error(err);
         }
     }
 
-    /**
-     * @description this function allows to switch between the different like buttons
-     * 
-     * @param {Array} post the publication to like
-     * @param {Object} like all likes of the publication
-     */
-    const switchLikeButton = (post) => {
-        let favButton;
-        if (post.countLikes === null) {
-            favButton = (
-                <span className="fav-before">
-                    <input type="hidden" value={post.post_id} />
-                    <i className="far fa-heart" onClick={addLike} title="J'adore"></i>
-                </span>
-            )
-        } else {
-            for (let i = 0; i < post.Likes.length; i++) {
-                const likeArray = Object.entries(post.Likes[i]);
-                let userId = parseInt(localStorage.session_id);
-
-                if (post.Likes[i].like_value === 0 && post.Likes[i].like_user_id === userId) {
-                    favButton = (
-                        <span className="fav-before">
-                            <input type="hidden" value={post.post_id} />
-                            <i className="far fa-heart" onClick={addLike} title="J'adore"></i>
-                        </span>
-                    )
-                } else if (post.Likes[i].like_value === 1 && post.Likes[i].like_user_id === userId) {
-                    favButton = (
-                        <span className="fav-after">
-                            <input type="hidden" value={post.post_id} />
-                            <i className="fas fa-heart" onClick={removeLike} title="J'adore plus"></i>
-                        </span>
-                    )
-                }
-            }
-        }
-        return favButton
-    }        
-
     return (
         <div className="allPosts">
-            {/* Formulaire d'ajout de post */}
+            {/* Publication form */}
             <div className="addPost">
                 <h1>Envie de partager ?</h1>
                 <form className="post-form">                   
                     <textarea 
+                        id="postText"
                         name="postText"
                         placeholder="Écrivez quelque chose..."
                         onChange={onChangeContent}
                         rows="5"
                     >
                     </textarea>
-                    <div className="post-options">
-                        <label htmlFor="file" className="btn-uploadImg">
+                    <div className="post-form__options">
+                        <label htmlFor="file" className="uploadImg">
                             <img
                                 src={iconImg.cover}
                                 alt={iconImg.name}
                                 title="Insérer une image"
                             />
-                            <span className="isFile">{postImageFile ? (postImageFile.name): null}</span>
+                            <span id="isFile" className="isFile">{postImageFile ? (postImageFile.name): null}</span>
                         </label>
-                        <input type="file" id="file" accept="image/*" onChange={onChangeImage} />
+                        <input id="file" type="file" accept="image/*" onChange={onChangeImage} />
                     </div>
                     { 
-                        addPost.content ? 
+                        addPost.content || addPost.image ? 
                         (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
                         (<button className="btn btn-submit-post" disabled>Publier</button>)
                     }
@@ -369,8 +399,7 @@ const AllPosts = () => {
                 allPosts.length > 1 ? 
                 (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>): null
             }
-
-            {/* Affichage des posts */}
+            {/* Display of publications */}
             {allPosts.map(post => (                
                 <div className="post" key={post.post_id}>
                     <span 
@@ -380,7 +409,16 @@ const AllPosts = () => {
                     >
                         {post.User.user_firstname}
                     </span>
-                    <div className="post-content">{post.post_content}</div>
+                    {
+                        post.post_image ? 
+                        (<span className="post-image">
+                            <img src={post.post_image} alt="Illustration du post" />
+                        </span>) : null
+                    }
+                    {
+                        post.post_content ?
+                        (<div className="post-content">{post.post_content}</div>): null
+                    }                    
                     <hr className="post-split"></hr>
                     <div className="post-various"> 
                         {
@@ -397,11 +435,16 @@ const AllPosts = () => {
                             ): null
                         }
                         <div className="post-various__emotes" key={post.post_id}>
+                            <span className="nbLoves">{post.countLoves > 0 ? post.countLoves : null}</span>
+                            { switchLikeButton(post, addEmoji, removeEmoji) }
                             <span className="nbLikes">{post.countLikes > 0 ? post.countLikes : null}</span>
-                            { switchLikeButton(post) }
+                            { switchLoveButton(post, addEmoji, removeEmoji) }
+                            <span className="nbLaughs">{post.countLaughs > 0 ? post.countLaughs : null}</span>
+                            { switchLaughButton(post, addEmoji, removeEmoji) }
                         </div>
                     </div>
                     <hr className="post-split"></hr>
+                    {/* Display of comments */}
                     {
                         post.Comments.length > 0 ?
                         (
@@ -410,23 +453,42 @@ const AllPosts = () => {
                                 onClick={displayComments}
                                 title="Afficher"
                             >
-                                {post.Comments.length} {post.Comments.length > 1 ? ("Commentaires"):("Commentaire")}
+                                {post.Comments.length} {post.Comments.length > 1 ? ("Commentaires") : ("Commentaire")}
                             </span>
                         ): null
                     }
                     <div className="post-allComments">
                         {
                             post.Comments.map(comment => (
-                                <span className="oneComment" key={comment.comment_id}>
+                                <div className="oneComment" key={comment.comment_id}>
                                     <span className="oneComment-author">{comment.User.user_firstname}</span>
-                                    {comment.comment_content}
-                                </span>
+                                    <span>{comment.comment_content}</span>
+                                    {
+                                        comment.comment_user_id === parseInt(localStorage.session_id) ?
+                                        (
+                                            <div className="oneComment-options">
+                                                <div className="oneComment-options--display">
+                                                    <span className="oneComment-options--dots">...</span>
+                                                    <div className="oneComment-options--choices">
+                                                        <span title="Modifier le commentaire" onClick={onModifyComment}>
+                                                            Modifier
+                                                        </span>
+                                                        <span title="Supprimer le commentaire" onClick={onDeleteComment}>
+                                                            Supprimer
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : null
+                                    }
+                                    
+                                </div>
                             ))
                         }
                     </div>
-                    <form className="post-comment">
+                    <form className="post-addComment">
                         <textarea id={`content-${post.post_id}`} onChange={onChangeComment} rows="1" placeholder="Écrire un commentaire..."></textarea>
-                        <span className="post-comment-submit" onClick={(e) => onSubmitComment(e, post.post_id)}>
+                        <span className="post-addComment__submit" onClick={(e) => onSubmitComment(e, post.post_id)}>
                             <i className="fas fa-check-circle" title="Envoyer le commentaire"></i>
                         </span>
                     </form>

@@ -11,9 +11,7 @@ const MIME_TYPES = {
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        let destination;
-        req.body.avatar ? destination = 'images/avatars' : destination = 'images';
-        callback(null, destination)
+        callback(null, 'images')
     },
     filename: (req, file, callback) => {
         const extension = MIME_TYPES[file.mimetype];    // Création de l'extension
@@ -26,13 +24,13 @@ const storage = multer.diskStorage({
 
 module.exports = multer({
     storage,
-    fileFilter: function (req, file, callback) { 
+    fileFilter: function (req, file, callback) {
         let success = true;
         try {
-            if (req.body != undefined) {
-                const postObject = JSON.parse(req.body);
+            if (req.body !== undefined) {
+                const postObject = req.body;
                 // TODO create one multer middleware for avatar images and another one for posts
-                validatePostPayload(req, postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
+                validatePostPayload(postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
             } else {
                 success = false;
                 callback(new Error("Invalid Form !"));
@@ -41,7 +39,7 @@ module.exports = multer({
             success = false;
             callback(new Error(JSON.stringify(error)));
         }
-        
+
         // Vérification du format de l'image
         if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
             success = false;

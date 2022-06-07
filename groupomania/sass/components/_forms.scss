@@ -7,60 +7,77 @@
     width: 100%;
 
     textarea {
-        outline: none;
+        resize: none;
+        overflow: auto;
+        margin-top: 0;
+        padding: 8px;
+        border: 1px ridge silver;
+        border-top: none;
+
+        &:focus {
+            outline: none;
+            border-color: $primary;
+        }
+    }
+    &__options {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 35px;
+        padding: 0 5px;
+        margin: 5px 0;
+    
+        .uploadImg {
+            height: 25px;
+            margin: 0;
+            padding: 0;
+    
+            &:hover {
+                cursor: pointer;
+                height: 27px;
+                box-shadow: 2px 2px 5px $tertiary;
+            }
+        }
+        input[type=file] {
+            display: none;
+        }    
+        img {
+            height: 100%;
+            margin: 0;
+        }
     }
 }
 
-.post-comment {
+.post-addComment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+
     textarea {
         border: 1px ridge silver;
         border-radius: 8px;
         padding: 12px 8px 0 8px;
+        resize: none;
+        overflow: auto;
+
         &:focus {
             outline: 1px solid $tertiary;
         }
     }
-    &-submit {
+    &__submit {
+        display: none;
+        position: absolute;
+        right: -2px;
+        bottom: -2px;
         i {
-            font-size: 20px;
-
+            font-size: 22px;
             &:hover {
                 cursor: pointer;
+                transform: scale(1.05);
             }
         }
-    }
-}
-
-.post-form textarea, .post-comment textarea {
-    resize: none;
-    overflow: auto;
-}
-
-.post-options {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 35px;
-    padding: 0 5px;
-
-    label {
-        height: 25px;
-        margin: 0;
-        padding: 0;
-
-        &:hover {
-            cursor: pointer;
-            height: 27px;
-        }
-    }
-    input[type=file] {
-        display: none;
-    }
-
-    img {
-        height: 100%;
-        margin: 0;
     }
 }
 
@@ -176,7 +193,6 @@
     fieldset {
         position: relative;
     }
-
     .icon-eye {
         position: absolute;
         right: 20px;

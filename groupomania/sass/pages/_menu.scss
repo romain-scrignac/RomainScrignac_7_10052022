@@ -2,24 +2,16 @@
 .nav-buttons {
     display: flex;
     justify-content: center;
-    margin-top: 60px;
+    z-index: 1;
  
     .btn-profil {
-        position: absolute;
+        position: fixed;
         display: flex;
         justify-content: space-between;
         align-content: center;
         top: 10px;
-        width: 95%;
-        margin-bottom: 30px;
-
-        @include tablet-desktop {
-            width: unset;
-            margin: 0;
-            right: 20px;
-        }
+        right: 10px;
     }
-
     .btn-log {
         margin-top: 70px;
     }

@@ -125,6 +125,9 @@ const Like = sequelize.define('Like', {             // Like model
     like_value: {
         type: TINYINT(1),
         allowNull: false
+    },
+    like_type: {
+        type: SMALLINT(10)
     }
 },{
     // Other model options go here

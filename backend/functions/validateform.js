@@ -1,27 +1,25 @@
 /**
  * @description This function checks the validity of the post form
  * 
- * @param {Number} authId the user id of the token
  * @param {JSON | FormData} postObject the body of the request
  **/
-const validatePostPayload = (authId, postObject) => {
+const validatePostPayload = (postObject) => {
     const regexVideoUrl = /^https?:\/\/$/;
     const {
         content,
-        video,
-        userId
+        imageUrl,
+        video
     } = postObject;
-    
+
     if (!postObject) {
         throw 'Bad request!';
-    } else if (!content || !userId) {
+    } else if (imageUrl === null && !content) {
         throw 'Invalid form !';
-    } else if (typeof content !== "string" || (video && typeof video !== "string") 
-    || typeof userId !== "string" || userId != authId) {
+    } else if (typeof content !== "string" || (video && typeof video !== "string")) {
         throw 'Invalid field(s)!';
-    } else if (content.trim() === "" || userId.trim() === "") {
+    } else if (imageUrl === null && content.trim() === "") {
         throw 'Missing field(s)!';
-    } else if (content.length < 3 || content.length >= 255) {
+    } else if (imageUrl === null && (content.length < 3 || content.length >= 255)) {
         throw 'Invalid number of characters!';
     } else if (video !== undefined && !video.match(regexVideoUrl)) {
         throw 'Bad video url!';
@@ -47,7 +45,7 @@ const validatePostPayload = (authId, postObject) => {
         throw 'Invalid field(s)!';
     } else if (content.trim() === "" || postId === "") {
         throw 'Missing field(s)!';
-    } else if (content.length < 3 || content.length >= 255) {
+    } else if (content.length >= 255) {
         throw 'Invalid number of characters !';
     }
 };
