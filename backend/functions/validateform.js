@@ -4,7 +4,7 @@
  * @param {JSON | FormData} postObject the body of the request
  **/
 const validatePostPayload = (postObject) => {
-    const regexVideoUrl = /^https?:\/\/$/;
+    const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([a-zA-Z0-9]{2,})?$/
     const {
         content,
         imageUrl,
@@ -19,9 +19,9 @@ const validatePostPayload = (postObject) => {
         throw 'Invalid field(s)!';
     } else if (imageUrl === null && content.trim() === "") {
         throw 'Missing field(s)!';
-    } else if (imageUrl === null && (content.length < 3 || content.length >= 255)) {
+    } else if (imageUrl === null && (content.length < 3)) {
         throw 'Invalid number of characters!';
-    } else if (video !== undefined && !video.match(regexVideoUrl)) {
+    } else if (video !== undefined && !video.match(regexVideo)) {
         throw 'Bad video url!';
     }
 };

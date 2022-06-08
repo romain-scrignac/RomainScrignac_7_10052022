@@ -52,6 +52,13 @@
                 text-decoration: underline;
             }
         }
+        &-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px 0 25px 0;
+            padding: 0 15px;
+        }
         &-image {
             display: flex;
             justify-content: center;
@@ -65,12 +72,10 @@
                 border-radius: 8px;
             }
         }
-        &-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin: 10px 0 25px 0;
-            padding: 0 15px;
+        &-video {
+            width: 95%;
+            height: 300px;
+            margin: 0 auto;
         }
         &-allComments {
             display: none;
@@ -148,30 +153,35 @@
             width: 100%;
             padding: 10px 0;
 
-            &__edit, &__delete, &__emotes {
+            &--options {
                 position: absolute;
-                width: 30px; 
-                height: 30px;
-            }
-            &__edit, &__delete {
-                opacity: 0.6;
-                i {
-                    font-size: 18px;
-                }
-                &:hover {
-                    cursor: pointer;
-                    transform: scale(1.05);
-                    opacity: 1;
-                }
-            }
-            &__edit {
+                top: 10px;
                 right: 15px;
-            }
-            &__delete {
-                right: 45px;
+
+                &__edit, &__delete {
+                    width: 30px; 
+                    height: 30px;
+                    opacity: 0.6;
+
+                    i {
+                        font-size: 18px;
+                    }
+                    &:hover {
+                        cursor: pointer;
+                        transform: scale(1.05);
+                        opacity: 1;
+                    }
+                }
+                &__edit {
+                    margin-right: 10px;
+                }
             }
             &__emotes {
+                width: 30px; 
+                height: 30px;
+                position: absolute;
                 left: 15px;
+
                 .laugh-after, .laugh-before, .like-after, .like-before, .love-after, .love-before {
                     width: 30px;
                     height: 30px;

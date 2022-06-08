@@ -220,16 +220,16 @@ exports.likePost = async (req, res) => {
         console.log(req.body)
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body.like || !req.body.postId || !req.body.type || !req.body.userId || req.body.userId != req.auth.userId) {
+        } else if (!req.body.like || !req.body.postId || !req.body.type) {
             throw 'Bad request!';
         }
 
         const postId = parseInt(req.body.postId);
         const like = parseInt(req.body.like);
-        const userId = parseInt(req.body.userId);
+        const userId = parseInt(req.auth.userId);
         const type = req.body.type;
         
-        const findPost = await Post.findOne({ where: {post_id: req.body.postId} });
+        const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';
 
         if (like !== 0 && like !== 1) {
@@ -240,7 +240,7 @@ exports.likePost = async (req, res) => {
 
         // Si l'utilisateur n'a pas encore like
         if (like === 1 && findUserLike === null) {
-            await Like.create({ like_post_id: postId, like_user_id: req.auth.userId, like_value: like, like_type: type }, (err) => {
+            await Like.create({ like_post_id: postId, like_user_id: userId, like_value: like, like_type: type }, (err) => {
                 if (err) throw err;
             });
         }
@@ -249,7 +249,7 @@ exports.likePost = async (req, res) => {
             if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
                 await Like.update(
                     {like_value: like, like_type: type}, {
-                        where: {like_post_id: req.body.postId, like_user_id: req.auth.userId}
+                        where: {like_post_id: postId, like_user_id: userId}
                     },(err) => {
                         if (err) throw err;
                     }

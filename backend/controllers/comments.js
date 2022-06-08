@@ -101,21 +101,16 @@ exports.deleteComment = async (req, res) => {
     try{
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if(!req.body || !req.body.comment) {
+        } else if(!req.body || !req.body.commentId) {
             throw 'Bad request!';
         }
+        const commentId = req.body.commentId;
 
-        const commentId = req.params.id;
         const findComment = await Comment.findOne({ where: {comment_id: commentId} });
         if (findComment === null) throw 'Comment not found!';
         if (findComment.comment_user_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
-
-        // Suppression de tous les likes du commentaire
-        await Like.destroy({ where: {like_comment_id: commentId} }, (err) => {
-            if (err) throw err;
-        });
 
         // Suppression du commentaire
         await Comment.destroy({ where: {comment_id: commentId} }, (err) => {
@@ -132,16 +127,16 @@ exports.likeComment = async (req, res) => {
     try{
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body.like || !req.body.commentId || req.body.commentId != req.params.id) {
+        } else if (!req.body.like || !req.body.commentId) {
             throw 'Bad request!';
         }
-
         const commentId = req.body.commentId;
+
         const findComment = await Post.findOne({ where: {comment_id: commentId} });
         if (findComment === null) throw 'Comment not found!';
 
         const like = parseInt(req.body.like);
-        if (like !== -1 && like !== 0 && like !== 1) {
+        if (like !== 0 && like !== 1) {
             throw 'Invalid value!';
         }
 
@@ -154,8 +149,7 @@ exports.likeComment = async (req, res) => {
         }
         // Sinon, on met à jour like_value
         else if (findUserLike !== null) {
-            if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1) 
-            || (findUserLike.like_value === -1 && like !== -1)) {
+            if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
                 await Like.update({like_value: like}, { where: {like_comment_id: commentId, like_user_id: req.auth.userId} },
                  (err) => {
                     if (err) throw err;
@@ -171,25 +165,11 @@ exports.likeComment = async (req, res) => {
         let likeMessage;
         switch (like) {
             case 1:
-                if (findUserLike.like_value === -1) {
-                    likeMessage = 'Dislike removed / Like added !';
-                } else {
-                    likeMessage = 'Like added !';
-                }
+                likeMessage = 'Like added !';
                 break;
             case 0:
-                if (findUserLike.like_value === 1) {
-                    likeMessage = 'Like removed!';
-                } else if (findUserLike.like_value === -1) {
-                    likeMessage = 'Dislike removed!';
-                }
+                likeMessage = 'Like removed!';
                 break;
-            case -1:
-                if (findUserLike.like_value === 1) {
-                    likeMessage = 'Like removed / Dislike added !';
-                } else {
-                    likeMessage = 'Dislike added !';
-                }
         }
         res.status(200).json({ message: likeMessage });
     }catch (err) {

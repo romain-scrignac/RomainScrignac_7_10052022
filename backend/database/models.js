@@ -1,4 +1,4 @@
-const { DataTypes, TINYINT, UUIDV4, SMALLINT } = require("sequelize");
+const { DataTypes, TINYINT, SMALLINT } = require("sequelize");
 const sequelize = require('./config');
 
 "use strict";
@@ -28,6 +28,7 @@ const User = sequelize.define('User', {              // User model
     },
     user_avatar: {
         type: DataTypes.STRING,
+        defaultValue: 'https://localhost/images/avatars/avatar.svg'
     },
     user_rank: {
         type: DataTypes.TINYINT(4),
@@ -71,7 +72,7 @@ const Post = sequelize.define('Post', {             // post model
         allowNull: false
     },
     post_image: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING
     },
     post_video: {
         type: DataTypes.STRING

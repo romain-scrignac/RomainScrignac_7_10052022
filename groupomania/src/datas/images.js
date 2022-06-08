@@ -1,5 +1,4 @@
 import Logo from '../assets/grpm-logo.svg';
-import FileImg from '../assets/icons/icon-image.svg';
 import Err404 from '../assets/err404.png';
 import Logout from '../assets/icons/icon-logout.png';
 import Account from '../assets/icons/icon-account.svg';
@@ -10,12 +9,6 @@ export const grpmLogo = {
     name: 'Logo Groupamania',
     cover: Logo,
     class: 'logo-img'
-};
-
-export const iconImg = {
-    name: 'Icon image',
-    cover: FileImg,
-    class: 'icon-img'
 };
 
 export const error404 = {
