@@ -96,21 +96,19 @@ exports.addPost = async (req, res) => {
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body, imageUrl: null };
 
-        // Si aucune vidéo on définit videoUrl à null
-        let videoUrl;
-        if (postObject.video === undefined) { videoUrl = null; }
-        else { videoUrl = postObject.video; }
+        if(!postObject.video || postObject.video === 'null') {
+            postObject.video = null;
+        }
 
         // Validation du formulaire
-        const file = false;
-        validatePostPayload(postObject);
+        validatePostPayload(req.auth.userId, postObject);
 
         // Création du post
         const postAttributes = {
             post_user_id: req.auth.userId,
             post_content: postObject.content,
             post_image: postObject.imageUrl,
-            post_video: videoUrl
+            post_video: postObject.video
         };        
         await Post.create(postAttributes, (err) => {
             if (err) throw err;
@@ -122,14 +120,14 @@ exports.addPost = async (req, res) => {
 }
 
 // Fonction pour modifier un post
-exports.modifyPost = async (req, res) => {
+exports.modifyPost = async (req, res) => {    
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body || !req.body.postId || req.body.postId != req.params.id) {
+        } else if (!req.body || !req.body.postId) {
             throw 'Bad request!';
         }
-        const postId = req.params.id;
+        const postId = req.body.postId;
         
         const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';
@@ -137,39 +135,65 @@ exports.modifyPost = async (req, res) => {
             throw 'Unauthorized request!';
         }
 
-        // On récupère le nom de l'ancienne image pour suppression du serveur
-        const fileName = findPost.post_image.split('images/')[1];
-
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
-            ...JSON.parse(req.body.post),
+            ...req.body,
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body.post, imageUrl: null };
+        } : { ...req.body, imageUrl: null };
 
-        // Si aucune vidéo on définit videoUrl à null
-        let videoUrl;
-        if (postObject.video === undefined) { videoUrl = null; }
-        else { videoUrl = postObject.video; }
+        if(!postObject.video || postObject.video === 'null') {
+            postObject.video = null;
+        }
 
         // Validation du formulaire
         const authId = req.auth.userId;
         validatePostPayload(authId, postObject);
 
-        // Si nouvelle image on supprime l'ancienne
-        if (req.file) {
+        // Si ancienne image, on la supprime si nouvel ajout
+        if (findPost.post_image !== null && req.file) {
+            const fileName = findPost.post_image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
                 if (err) throw err;
                 console.log(`Old image deleted (${fileName})`);
             });
         }
 
+        let newContent;
+        let newImage;
+        let newVideo;
+        
+        if(findPost.post_content && !postObject.content) {
+            newContent = '';
+        }
+        if (postObject.content === findPost.post_content) {
+            newContent = findPost.post_content;
+        } else {
+            newContent = postObject.content;
+        }
+        if(findPost.post_image && imageUrl === null) {
+            newImage = null;
+        } else if (postObject.imageUrl !== null) {
+            newImage = postObject.imageUrl;
+        } else {
+            newImage = findPost.post_image;
+        }
+        if(findPost.post_video && postObject.video === null) {
+            newVideo = null;
+        } else if (postObject.video === findPost.post_video) {
+            newVideo = findPost.post_video; 
+        } else {
+            newVideo = postObject.video;
+        }
+        
         // Mise à jour du post
         const postAttributes = {
-            post_content: postObject.content,
-            post_image: postObject.imageUrl,
-            post_video: videoUrl
-        };        
+            post_content: newContent,
+            post_image: newImage,
+            post_video: newVideo
+        };
+        console.log(postAttributes)
+
         await Post.update( postAttributes, { where: {post_id: postId} }, (err) => {
             if (err) throw err;
         });

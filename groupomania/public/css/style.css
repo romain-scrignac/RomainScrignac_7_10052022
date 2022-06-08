@@ -163,19 +163,23 @@ footer {
   margin: 0;
   width: 100%;
 }
-.post-form textarea {
+.post-form textarea, .post-form--modify textarea {
   resize: none;
   overflow: auto;
   margin-top: 0;
   padding: 8px;
   border: 1px ridge silver;
   border-top: none;
+  font-size: 14px;
 }
-.post-form textarea:focus {
+.post-form textarea:focus, .post-form--modify textarea:focus {
   outline: none;
   border-color: #FD2D01;
 }
-.post-form__options {
+.post-form textarea::placeholder, .post-form--modify textarea::placeholder {
+  font-style: italic;
+}
+.post-form__options, .post-form--modify__options {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -185,59 +189,88 @@ footer {
   padding: 0 5px;
   margin: 5px 0 10px 0;
 }
-.post-form__options .uploadFile {
+.post-form__options .uploadFile, .post-form--modify__options .uploadFile {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 0 7px;
   padding: 0;
 }
-.post-form__options .uploadFile-image i, .post-form__options .uploadFile-video i {
+.post-form__options .uploadFile-image i, .post-form__options .uploadFile-video i, .post-form--modify__options .uploadFile-image i, .post-form--modify__options .uploadFile-video i {
   font-size: 30px;
 }
-.post-form__options .uploadFile-image i:hover, .post-form__options .uploadFile-video i:hover {
+.post-form__options .uploadFile-image i:hover, .post-form__options .uploadFile-video i:hover, .post-form--modify__options .uploadFile-image i:hover, .post-form--modify__options .uploadFile-video i:hover {
   cursor: pointer;
   color: rgba(253, 45, 1, 0.7);
   transform: scale(1.05);
 }
-.post-form__options #image-file, .post-form__options #video-link {
+.post-form__options #image-file, .post-form__options #video-link, .post-form__options .modify__image, .post-form__options .modify__video-link, .post-form--modify__options #image-file, .post-form--modify__options #video-link, .post-form--modify__options .modify__image, .post-form--modify__options .modify__video-link {
   display: none;
 }
-.post-form__options #video-link {
+.post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
   margin: 0 0 0 10px;
   height: 20px;
   width: 170px;
   max-width: 90%;
 }
 @media screen and (min-width: 600px) {
-  .post-form__options #video-link {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
     height: unset;
     width: 230px;
   }
 }
 @media screen and (min-width: 600px) and (max-width: 991px) {
-  .post-form__options #video-link {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
     margin: 0 0 0 20px;
   }
 }
 @media screen and (min-width: 992px) {
-  .post-form__options #video-link {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
     position: absolute;
     right: 0;
     margin: 0;
   }
 }
-.post-form__options #video-link:focus {
+.post-form__options #video-link:focus, .post-form__options .modify__video-link:focus, .post-form--modify__options #video-link:focus, .post-form--modify__options .modify__video-link:focus {
   outline: 1px groove #4E5166;
 }
-.post-form__options #video-link::placeholder {
+.post-form__options #video-link::placeholder, .post-form__options .modify__video-link::placeholder, .post-form--modify__options #video-link::placeholder, .post-form--modify__options .modify__video-link::placeholder {
   font-style: italic;
   opacity: 0.4;
   font-size: 12px;
 }
-.post-form__options img {
+.post-form__options img, .post-form--modify__options img {
   height: 100%;
   margin: 0;
+}
+.post-form--modify {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  padding: 10px;
+  top: 0;
+  border-radius: 7px;
+  background-color: rgba(78, 81, 102, 0.9);
+}
+.post-form--modify textarea {
+  width: 100%;
+  border: none;
+}
+.post-form--modify__options .uploadFile {
+  color: white;
+}
+.post-form--modify__options .uploadFile-image i:hover, .post-form--modify__options .uploadFile-video i:hover {
+  color: #FFD7D7;
+}
+.post-form--modify__options__image, .post-form--modify__options__video {
+  display: none;
+}
+.post-form--modify .confirm-modify button {
+  margin: 0 5px;
 }
 
 .post-addComment {
@@ -252,9 +285,13 @@ footer {
   padding: 12px 8px 0 8px;
   resize: none;
   overflow: auto;
+  font-size: 14px;
 }
 .post-addComment textarea:focus {
   outline: 1px solid #4E5166;
+}
+.post-addComment textarea::placeholder {
+  font-style: italic;
 }
 .post-addComment__submit {
   display: none;
@@ -469,6 +506,9 @@ footer {
   border-radius: 8px;
   box-shadow: 2px 2px 10px rgb(144, 143, 143);
 }
+.allPosts .post .modify-form {
+  display: none;
+}
 .allPosts .post-author {
   background: 1px groove black;
   padding: 10px;
@@ -526,8 +566,7 @@ footer {
 .allPosts .post-allComments .oneComment-options {
   position: absolute;
   display: flex;
-  align-items: flex-start;
-  right: -30px;
+  right: -10px;
   top: 0;
   font-size: 18px;
   height: 100%;

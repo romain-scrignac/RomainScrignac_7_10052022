@@ -30,14 +30,14 @@ module.exports = multer({
             if (req.body !== undefined) {
                 const postObject = req.body;
                 // TODO create one multer middleware for avatar images and another one for posts
-                validatePostPayload(postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
+                validatePostPayload(req.auth.userId, postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
             } else {
                 success = false;
                 callback(new Error("Invalid Form !"));
             }
-        } catch (error) {
+        } catch (err) {
             success = false;
-            callback(new Error(JSON.stringify(error)));
+            callback(new Error(err));
         }
 
         // Vérification du format de l'image
@@ -51,5 +51,5 @@ module.exports = multer({
         }
     },
     limits: {   // Vérification du poids de l'image
-        fileSize: 1024 * 1024
+        fileSize: 1024 * 1024 * 5
 }}).single('file');

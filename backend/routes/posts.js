@@ -10,7 +10,7 @@ const multerMiddleware = (req, res, next) => {multer(req, res, err => {
         if (!err.message) {
             err.message = err;
         }
-        res.status(400).json({ error: err.message });
+        res.status(400).json({ err: err.message });
     } else {
         next();
     }

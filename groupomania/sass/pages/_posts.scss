@@ -40,6 +40,10 @@
         border-radius: 8px;
         box-shadow: 2px 2px 10px rgb(144, 143, 143);
 
+        .modify-form {
+            display: none;
+        }
+
         &-author {
             background: 1px groove black;
             padding: 10px;
@@ -100,8 +104,7 @@
                 &-options {
                     position: absolute;
                     display: flex;
-                    align-items: flex-start; 
-                    right: -30px;
+                    right: -10px;
                     top: 0;
                     font-size: 18px;
                     height: 100%;
