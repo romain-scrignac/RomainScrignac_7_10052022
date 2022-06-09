@@ -1,11 +1,11 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Header from './components/Header';
+import AllPosts from './routes/AllPosts';
+import OnePost from './routes/OnePost';
 import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Logout from './routes/Logout';
 import Account from './routes/Account';
-import AllPosts from './components/AllPosts'
-import OnePost from './components/OnePost';
 import Message from './routes/Message';
 import { error404 } from './datas/images';
 

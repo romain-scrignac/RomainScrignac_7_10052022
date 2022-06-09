@@ -110,14 +110,15 @@ exports.addPost = async (req, res) => {
             post_image: postObject.imageUrl,
             post_video: postObject.video
         };        
-        await Post.create(postAttributes, (err) => {
+        const addPost = await Post.create(postAttributes, (err) => {
             if (err) throw err;
         });
-        res.status(201).json({ message: 'New post added!' });
+
+        res.status(201).json({ message: 'New post added!', postId: addPost.post_id });
     } catch (err) {
         switchErrors(res, err);
     }
-}
+};
 
 // Fonction pour modifier un post
 exports.modifyPost = async (req, res) => {    
@@ -192,7 +193,6 @@ exports.modifyPost = async (req, res) => {
             post_image: newImage,
             post_video: newVideo
         };
-        console.log(postAttributes)
 
         await Post.update( postAttributes, { where: {post_id: postId} }, (err) => {
             if (err) throw err;
@@ -232,7 +232,7 @@ exports.deletePost = async (req, res) => {
         await Post.destroy({ where: {post_id: postId} }, (err) => {
             if (err) throw err;
         });
-        res.status(200).json({ message: `Post ${postId} deleted!` });
+        res.status(200).json({ message: `Post deleted!` });
     } catch (err) {
         switchErrors(res, err);
     }
