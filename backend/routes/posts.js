@@ -2,15 +2,15 @@ const express = require('express');
 const router = express.Router();
 const postsCtrl = require('../controllers/posts');
 const auth = require('../middleware/auth');
-const multer = require('../middleware/multer-config');
+const {imageFile} = require('../middleware/multer-config');
 
 // Middleware pour renvoyer les erreurs multer au format json
-const multerMiddleware = (req, res, next) => {multer(req, res, err => {
+const multerMiddleware = (req, res, next) => {imageFile(req, res, err => {
     if (err) {
         if (!err.message) {
             err.message = err;
         }
-        res.status(400).json({ err: err.message });
+        res.status(400).json({ error: err.message });
     } else {
         next();
     }

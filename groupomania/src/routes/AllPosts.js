@@ -37,7 +37,7 @@ const AllPosts = () => {
                 });
                 if (response.ok) {
                     const responseJson = await response.json();
-                    // Ajout de compteurs de likes
+                    // Likes counters
                     const postsFromApi = responseJson.allPosts.map(post => {
                         let likes = 0;
                         let loves = 0;
@@ -229,7 +229,7 @@ const AllPosts = () => {
                 setNewMessage(`Post added ${responseJson.postId}`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.err);
+                alert(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -257,7 +257,7 @@ const AllPosts = () => {
                 setNewMessage(`Post ${postId} deleted`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.err);
+                alert(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -287,7 +287,9 @@ const AllPosts = () => {
                             </span>
                         </label>
                         <input id="image-file" type="file" accept="image/*" onChange={onChangeImage} />
-                        <span id="isFile" className="isFile">{postImageFile ? (postImageFile.name): null}</span>
+                        <span id="isFile" className="isFile">
+                            {postImageFile ? (postImageFile.name): null}
+                        </span>
                         <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
                             <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
                                 <i className="far fa-file-video"></i>

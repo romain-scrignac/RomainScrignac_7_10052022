@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
 const { Comment, Post, User } = require('../database/models');
 const { validateUserPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
@@ -44,64 +45,64 @@ exports.signup = async (req, res) => {
 // Fonction modify user
 exports.modifyUser = async (req, res) => {
     try {
-        if (!req.body) {
+        if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
+            throw 'Unauthorized request!';
+        }
+        else if (!req.body || !req.body.account) {
             throw 'Bad request!';
         }
-
-        console.log(req.body)
         
-        const findUser = await User.findOne({ where: {user_id: req.params.id} });
+        const findUser = await User.findOne({ where: {user_id: req.auth.userId} });
         if (findUser === null) throw 'User not found!';
-
-        if (!req.auth || !req.auth.userId || req.auth.userId !== findUser.user_id
-        || findUser.user_last_connection < findUser.user_last_disconnection) {
-            throw 'Unauthorized request!';
+        if (findUser.user_last_connection < findUser.user_last_disconnection) {
+            throw 'You are not logged in!';
         }
 
         // Si présence image on en définit l'url
         const userObject = req.file ?
         {
-            ...JSON.parse(req.body),
-            avatarUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body, avatarUrl: findUser.user_avatar };
+            ...JSON.parse(req.body.account),
+            avatarUrl: `${req.protocol}://${req.get('host')}/images/avatars/${req.file.filename}`
+        } : { ...JSON.parse(req.body.account), avatarUrl: findUser.user_avatar };
 
         // On récupère le nom de l'ancien avatar pour suppression du serveur
-        const fileName = findUser.user_avatar.split('images/')[1];
+        const fileName = findUser.user_avatar.split('avatars/')[1];
 
         // vérification du formulaire
         validateUserPayload(userObject);
-
-        // Mise à jour de l'utilisateur
-        let avatarUrl;
+        
+        // Si nouvelle image on supprime l'ancienne
+        if (req.file && fileName !== 'avatar.svg') {
+            fs.unlink(`images/avatars/${fileName}`, (err) => {
+                if (err) {
+                    console.log('Avatar not found!');
+                } else {
+                    console.log(`Old avatar deleted (${fileName})`);
+                }
+            });
+        }
+        
         let firstname;
         let lastname;
         let email;
         let hash;
         
-        // Si nouvelle image on supprime l'ancienne
-        if (req.file && avatarUrl !== findUser.user_avatar && avatarUrl !== 'https://localhost/images/avatars/avatar.png') {
-            fs.unlink(`images/avatars/${fileName}`, (err) => {
-                if (err) throw err;
-                console.log(`Old image deleted (${fileName})`);
-            });
-        } else {
-            avatarUrl = findUser.user_avatar;
-        }
+        // Vérification de champs non vides et différents de ceux dans la bdd avant sauvegarde
         if (userObject.firstname && userObject.firstname !== findUser.user_firstname) {
             firstname = userObject.firstname;
         } else {
             firstname = findUser.user_firstname;
-        }
+        }        
         if (userObject.lastname && userObject.lastname !== findUser.user_lastname) {
             lastname = userObject.lastname;
         } else {
             lastname = findUser.user_lastname;
-        }
+        }        
         if (userObject.email && userObject.email !== findUser.user_email) {
             email = userObject.email;
         } else {
             email = findUser.user_email;
-        }
+        }        
         if (userObject.password) {
             hash = await bcrypt.hash(userObject.password, 10);
         } else {
@@ -109,7 +110,7 @@ exports.modifyUser = async (req, res) => {
         }
 
         const userAttributes = {
-            user_avatar: avatarUrl,
+            user_avatar: userObject.avatarUrl,
             user_firstname: firstname,
             user_lastname: lastname,
             user_email: email,
@@ -128,21 +129,24 @@ exports.modifyUser = async (req, res) => {
 // fonction delete user
 exports.deleteUser = async (req, res) => {
     try {
-        const findUser = await User.findOne({ where: {user_id: req.auth.userId} });
-        if (findUser === null) throw 'User not found!';
-
-        if (!req.auth || !req.auth.userId || req.auth.userId !== findUser.user_id 
-        || findUser.user_last_connection < findUser.user_last_disconnection) {
+        if (!req.auth | !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
             throw 'Unauthorized request!';
+        }
+        const userId = req.auth.userId;
+
+        const findUser = await User.findOne({ where: {user_id: userId} });
+        if (findUser === null) throw 'User not found!';
+        if (findUser.user_last_connection < findUser.user_last_disconnection) {
+            throw 'You are not logged in!';
         }
 
         // On compare les mot de passe
-        if (!req.body.user.password) throw 'Password required!';
-        const compare = await bcrypt.compare(req.body.user.password, findUser.user_password);
+        if (!req.body.password) throw 'Password required!';
+        const compare = await bcrypt.compare(req.body.password, findUser.user_password);
         if (!compare) throw 'Wrong password!';
 
-        // Suppression de l'utilisateur
-        await User.destroy({ where: {user_id: req.auth.userId} }, (err) => {
+        // Suppression du compte
+        await User.destroy({ where: {user_id: userId} }, (err) => {
             if (err) throw err;
         })
         res.status(200).json({ message: 'User deleted!'});
@@ -238,6 +242,7 @@ exports.verifCode = async (req, res) => {
     }
 };
 
+// Fonction send code
 exports.sendCode = async (req, res) => {
     try {
         if(!req.body || !req.body.userId) {
@@ -256,24 +261,25 @@ exports.sendCode = async (req, res) => {
     }
 };
 
+// Fonction get profil account
 exports.getProfil = async (req, res) => {
     try {
-        if(!req.auth || !req.auth.userId) {
+        if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
             throw 'Unauthorized request!';
         }
+        const userId = req.auth.userId;
 
         const userAttr = ['user_firstname', 'user_lastname', 'user_email', 'user_avatar'];
-        const findUser = await User.findOne({ attributes: userAttr, where: {user_id: req.auth.userId},  });
+        const findUser = await User.findOne({ attributes: userAttr, where: {user_id: userId},  });
         if (findUser === null) throw 'User not found!';
 
-        const nbPosts = await Post.findAll({ where: {post_user_id: req.auth.userId} });
+        const nbPosts = await Post.findAll({ where: {post_user_id: userId} });
         if (nbPosts === null) throw 'No posts found!';
 
-        const nbComs = await Comment.findAll({ where: {comment_user_id: req.auth.userId} });
+        const nbComs = await Comment.findAll({ where: {comment_user_id: userId} });
         if (nbComs === null) throw 'No comments found!';
 
-        res.status(200).json({ findUser, nbPosts, nbComs });
-
+        res.status(200).json({ message: findUser, nbPosts: nbPosts, nbComs: nbComs });
     } catch (err) {
         switchErrors(res, err);
     }

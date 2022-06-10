@@ -77,7 +77,7 @@ const Comments = ({ post, setNewMessage }) => {
                 setNewMessage(`Comment ${responseJson.commentId} added`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.err);
+                alert(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -105,7 +105,7 @@ const Comments = ({ post, setNewMessage }) => {
                 setNewMessage(`Comment ${commentId} deleted`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.err);
+                alert(responseJson.error);
             }
         } catch (err) {
             console.error(err);

@@ -3,7 +3,7 @@
  * 
  * @param {JSON | FormData} postObject the body of the request
  **/
-const validatePostPayload = (authId, postObject) => {
+const validatePostPayload = (postObject) => {
     const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/
     const {
         content,

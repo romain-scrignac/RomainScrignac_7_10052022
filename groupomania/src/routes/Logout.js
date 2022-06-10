@@ -1,5 +1,5 @@
 const Logout = () => {
-    document.title = 'Logout';
+    document.title = 'Groupomania - Logout';
     /**
      * @description this function communicates with the API to disconnect the user
      */

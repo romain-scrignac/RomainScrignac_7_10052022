@@ -71,7 +71,7 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
                 resetModify(e, postId);
                 setNewMessage(`Post ${postId} modified`);
             } else {
-                alert(responseJson.err);
+                alert(responseJson.error);
             }
         } catch (err) {
             console.error(err);

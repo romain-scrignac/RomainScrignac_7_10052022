@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Verification from '../components/Verification';
 
 const Login = () => {
-    document.title = 'Login';
+    document.title = 'Groupomania - Login';
     const navigate = useNavigate();
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [email, setEmailValue] = useState('');
@@ -90,7 +90,7 @@ const Login = () => {
                         setTimeout(function(){ navigate("/") } , 5000);
                     }
                 } else {
-                    setAlert(responseJson.err);
+                    setAlert(responseJson.error);
                     setTimeout(function(){ setAlert('') } , 8000);
                 }
             } catch (err) {

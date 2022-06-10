@@ -45,7 +45,7 @@ const Verification = () => {
                     setTimeout(function(){ window.location.href="/" } , 5000);
 
                 } else {
-                    setAlert(responseJson.err);
+                    setAlert(responseJson.error);
                 }
             } catch (err) {
                 console.error(err);

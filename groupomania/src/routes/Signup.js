@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const Signup = () => {
-    document.title = 'Signup';
+    document.title = 'Groupomania - Signup';
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
     const [firstnameValue, setFirstnameValue] = useState('');
     const [lastnameValue, setLastnameValue] = useState('');
@@ -9,7 +9,7 @@ const Signup = () => {
     const [passwordValue, setPasswordValue] = useState('');
     const [confirmPasswordValue, setConfirmPasswordValue] = useState('');
     const [message, setMessage] = useState('');
-    const [alert, setAlert] = useState('');
+    const [newAlert, setNewAlert] = useState('');
     const [user, setUser] = useState({
         firstname: '',
         lastname: '',
@@ -117,8 +117,8 @@ const Signup = () => {
                     setMessage('Bienvenue ! Un code de confirmation vient de vous être envoyé, veuillez vérifier votre boite email');
                     setTimeout(function(){ window.location.href="/login" } , 5000);
                 } else {
-                    setAlert(responseJson.err);
-                    setTimeout(function(){ setAlert('') } , 8000);
+                    setNewAlert(responseJson.error);
+                    setTimeout(function(){ setNewAlert('') } , 8000);
                 }
             } catch (err) {
                 console.error(err);
@@ -209,7 +209,7 @@ const Signup = () => {
                     </form>
                 )
             }
-            {alert ? (<p className="alert">⚠️ {alert}</p>): null}
+            {newAlert ? (<p className="alert">⚠️ {newAlert}</p>): null}
         </div>
     )
 }

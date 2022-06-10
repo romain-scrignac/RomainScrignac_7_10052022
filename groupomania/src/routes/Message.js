@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 
 const Message = () => {
-    document.title = 'Envoyer un message';
+    document.title = 'Groupomania - Messagerie';
     let location = useLocation();
     console.log(location)
     let userId;

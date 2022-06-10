@@ -33,7 +33,7 @@ const switchErrors = (res, err) => {
         default:
             statusCode = 400;
     }
-    res.status(statusCode).json({ err });
+    res.status(statusCode).json({ error: err });
 };
 
 module.exports = switchErrors;
