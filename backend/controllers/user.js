@@ -45,7 +45,10 @@ exports.signup = async (req, res) => {
 // Fonction modify user
 exports.modifyUser = async (req, res) => {
     try {
-        if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
+        if (!req.params.id) {
+            throw 'Bad request!';
+        }
+        else if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
             throw 'Unauthorized request!';
         }
         else if (!req.body || !req.body.account) {
@@ -63,7 +66,7 @@ exports.modifyUser = async (req, res) => {
         {
             ...JSON.parse(req.body.account),
             avatarUrl: `${req.protocol}://${req.get('host')}/images/avatars/${req.file.filename}`
-        } : { ...JSON.parse(req.body.account), avatarUrl: findUser.user_avatar };
+        } : { ...req.body.account, avatarUrl: findUser.user_avatar };
 
         // On récupère le nom de l'ancien avatar pour suppression du serveur
         const fileName = findUser.user_avatar.split('avatars/')[1];
@@ -129,7 +132,10 @@ exports.modifyUser = async (req, res) => {
 // fonction delete user
 exports.deleteUser = async (req, res) => {
     try {
-        if (!req.auth | !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
+        if (!req.params.id) {
+            throw 'Bad request!';
+        }
+        else if (!req.auth | !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
             throw 'Unauthorized request!';
         }
         const userId = req.auth.userId;
@@ -264,7 +270,10 @@ exports.sendCode = async (req, res) => {
 // Fonction get profil account
 exports.getProfil = async (req, res) => {
     try {
-        if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
+        if (!req.params.id) {
+            throw 'Bad request!';
+        }
+        else if(!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
             throw 'Unauthorized request!';
         }
         const userId = req.auth.userId;

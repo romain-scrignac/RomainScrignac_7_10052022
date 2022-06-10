@@ -1,21 +1,36 @@
+import { 
+    GrinTearsButtonEmpty, GrinTearsButtonFilled, 
+    ThumbUpButtonEmpty, ThumbUpButtonFilled,
+    HeartButtonEmpty, HeartButtonFilled 
+} from "./Buttons";
+
+// Verification of reactions values
+const userHasLaughedThisPost = (post, userId) => {
+    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'laugh');
+};
+const userHasLikedThisPost = (post, userId) => {
+    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'like');
+};
+const userHasLovedThisPost = (post, userId) => {
+    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'love');
+};
+
 const Emojis = ({ post, setNewMessage }) => {
-    
     const addEmoji = (e, type) => {
         const postId = e.target.previousElementSibling.value;
         fetchLikeData(type, postId, "1");
-    };
-
+    };    
     const removeEmoji = (e, type) => {
         const postId = e.target.previousElementSibling.value;
         fetchLikeData(type, postId, "0");
     };
 
     /**
-     * @description this function communicates with the API when adding or removing a like
+     * @description this function communicates with the API when adding or removing a reaction to the publication
      * 
      * @param {String} postId the id of the publication
-     * @param {String} like the value of the like
-     * @param {String} type the type of the like
+     * @param {String} like the value of the reaction
+     * @param {String} type the type of the reaction
      */
      const fetchLikeData = async (type, postId, like) => {
         try {
@@ -36,168 +51,68 @@ const Emojis = ({ post, setNewMessage }) => {
         }
     };
 
+    const userId = parseInt(localStorage.session_id);
     const postId = post.post_id;
-    const Likes = post.Likes;
     const countLaughs = post.countLaughs;
     const countLikes = post.countLikes;
     const countLoves = post.countLoves;
 
     /**
-     * @description this function allows to switch between the different laugh buttons
+     * @description this function allows to switch between the different grin-tears buttons
      * 
      * @param {Array} post the publication to laugh
      */
-    const switchLaughButton = () => {
-        let laughButton;
+    const switchGrinTearsButton = () => {
         const type = "laugh";
-        const userId = parseInt(localStorage.session_id);
 
-        if (countLaughs === 0) {
-            laughButton = (
-                <span className="laugh-before">
-                    <input type="hidden" value={postId} />
-                    <i className="far fa-grin-tears" onClick={(e) => addEmoji(e, type)} title="Haha"></i>
-                </span>
-            )
-        } else {            
-            Likes.map(like => {
-                if (like.like_user_id === userId && like.like_type === "laugh") {
-                    if (like.like_value === 0) {
-                        laughButton = (
-                            <span className="laugh-before">
-                                <input type="hidden" value={postId} />
-                                <i className="far fa-grin-tears" onClick={(e) => addEmoji(e, type)} title="Haha"></i>
-                            </span>
-                        )
-                    } else if (like.like_value === 1) {
-                        laughButton = (
-                            <span className="laugh-after">
-                                <input type="hidden" value={postId} />
-                                <i className="fas fa-grin-tears" onClick={(e) => removeEmoji(e, type)} title="C'est plus marrant"></i>
-                            </span>
-                        )
-                    }
-                } 
-                else {
-                    laughButton = (
-                        <span className="laugh-before">
-                            <input type="hidden" value={postId} />
-                            <i className="far fa-grin-tears" onClick={(e) => addEmoji(e, type)} title="Haha"></i>
-                        </span>
-                    )
-                }
-                return laughButton;
-            });
+        // si l'utilisateur n'a jamais "laugh" ce post ou qu'il est redevenu neutre
+        if (!userHasLaughedThisPost(post, userId) || countLaughs === 0) {
+            return <GrinTearsButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
+        } else {
+            return <GrinTearsButtonFilled postId={postId} type={type} removeEmoji={removeEmoji}/>
         }
-        return laughButton;
     };
 
     /**
-     * @description this function allows to switch between the different like buttons
+     * @description this function allows to switch between the different thumb-up buttons
      * 
      * @param {Array} post the publication to like
      */
-    const switchLikeButton = () => {
-        let likeButton;
+    const switchThumbUpButton = () => {
         const type = "like";
-        const userId = parseInt(localStorage.session_id);
 
-        if (countLikes === 0) {
-            likeButton = (
-                <span className="like-before">
-                    <input type="hidden" value={postId} />
-                    <i className="far fa-thumbs-up" onClick={(e) => addEmoji(e, type)} title="J'aime"></i>
-                </span>
-            )
+        // si l'utilisateur n'a jamais "like" ce post ou qu'il est redevenu neutre
+        if (!userHasLikedThisPost(post, userId) || countLikes === 0) {
+            return <ThumbUpButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
         } else {
-            Likes.map(like => {
-                if (like.like_user_id === userId && like.like_type === "like") {
-                    if (like.like_value === 0) {
-                        likeButton = (
-                            <span className="like-before">
-                                <input type="hidden" value={postId} />
-                                <i className="far fa-thumbs-up" onClick={(e) => addEmoji(e, type)} title="J'aime"></i>
-                            </span>
-                        )
-                    } else if (like.like_value === 1) {
-                        likeButton = (
-                            <span className="like-after">
-                                <input type="hidden" value={postId} />
-                                <i className="fas fa-thumbs-up" onClick={(e) => removeEmoji(e, type)} title="J'aime plus"></i>
-                            </span>
-                        )
-                    }
-                } else {
-                    likeButton = (
-                        <span className="like-before">
-                            <input type="hidden" value={postId} />
-                            <i className="far fa-thumbs-up" onClick={(e) => addEmoji(e, type)} title="J'aime"></i>
-                        </span>
-                    )
-                }
-                return likeButton;
-            })
+            return <ThumbUpButtonFilled postId={postId} type={type} removeEmoji={removeEmoji}/>
         }
-        return likeButton;
     };
 
     /**
-     * @description this function allows to switch between the different love buttons
+     * @description this function allows to switch between the different heart buttons
      * 
      * @param {Array} post the publication to love
      */
-    const switchLoveButton = () => {
-        let loveButton;
+    const switchHeartButton = () => {
         const type = "love";
-        const userId = parseInt(localStorage.session_id);
 
-        if (countLoves === 0) {
-            loveButton = (
-                <span className="love-before">
-                    <input type="hidden" value={postId} />
-                    <i className="far fa-heart" onClick={(e) => addEmoji(e, type)} title="J'adore"></i>
-                </span>
-            )
+        // si l'utilisateur n'a jamais "love" ce post ou qu'il est redevenu neutre
+        if (!userHasLovedThisPost(post, userId) || countLoves === 0) {
+            return <HeartButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
         } else {
-            Likes.map(like => {
-                if (like.like_user_id === userId && like.like_type === "love") {
-                    if (like.like_value === 0) {
-                        loveButton = (
-                            <span className="love-before">
-                                <input type="hidden" value={postId} />
-                                <i className="far fa-heart" onClick={(e) => addEmoji(e, type)} title="J'adore"></i>
-                            </span>
-                        )
-                    } else if (like.like_value === 1) {
-                        loveButton = (
-                            <span className="love-after">
-                                <input type="hidden" value={postId} />
-                                <i className="fas fa-heart" onClick={(e) => removeEmoji(e, type)} title="J'adore plus"></i>
-                            </span>
-                        )
-                    }
-                } else {
-                    loveButton = (
-                        <span className="love-before">
-                            <input type="hidden" value={postId} />
-                            <i className="far fa-heart" onClick={(e) => addEmoji(e, type)} title="J'adore"></i>
-                        </span>
-                    )
-                }
-                return loveButton;
-            });
+            return <HeartButtonFilled postId={postId} type={type} removeEmoji={removeEmoji}/>
         }
-        return loveButton;
     };
 
     return (
         <div className="post-various__emotes" key={postId}>
             <span className="nbLaughs">{countLaughs > 0 ? countLaughs : null}</span>
-            {switchLaughButton()}
+            {switchGrinTearsButton()}
             <span className="nbLikes">{countLikes > 0 ? countLikes : null}</span>
-            {switchLikeButton()}
+            { switchThumbUpButton()}
             <span className="nbLoves">{countLoves > 0 ? countLoves : null}</span>
-            {switchLoveButton()}
+            {switchHeartButton()}
         </div>
     )
 };

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { iconDelete, iconUpdate } from '../datas/images';
-import { btnDelete, btnUpdate } from '../components/Buttons';
+import { btnDelete, btnUpdate } from '../datas/buttons';
 
 const Account = () => {
     document.title = 'Groupomania - Account';

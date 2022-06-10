@@ -26,98 +26,66 @@ const storage = multer.diskStorage({
     }
 });
 
-// module.exports = multer({
-//     storage,
-//     fileFilter: function (req, file, callback) {
-//         let success = true;
-//         try {
-//             if (req.body !== undefined) {
-//                 const postObject = req.body;
-//                 // TODO create one multer middleware for avatar images and another one for posts
-//                 validatePostPayload(req.auth.userId, postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
-//             } else {
-//                 success = false;
-//                 callback(new Error("Invalid Form !"));
-//             }
-//         } catch (err) {
-//             success = false;
-//             callback(new Error(err));
-//         }
-
-//         // Vérification du format de l'image
-//         if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
-//             success = false;
-//             callback({ message: "Invalid Image !" }, false);
-//         }
-
-//         if (success) {
-//             callback(null, true);
-//         }
-//     },
-//     limits: {   // Vérification du poids de l'image
-//         fileSize: 1024 * 1024 * 5
-// }}).single('file');
-
 const imageFile = multer({
-        storage,
-        fileFilter: function (req, file, callback) {
-            let success = true;
-            try {
-                if (req.body) {
-                    const postObject = req.body;
-                    validatePostPayload(postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
-                } else {
-                    success = false;
-                    callback(new Error("Invalid Form !"));
-                }
-            } catch (err) {
+    storage,
+    fileFilter: function (req, file, callback) {
+        let success = true;
+        try {
+            if (req.body.post) {
+                const postObject = JSON.parse(req.body.post);
+                validatePostPayload(postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
+            } else {
                 success = false;
-                callback(new Error(err));
+                callback(new Error("Invalid Form !"));
             }
-    
-            // Vérification du format de l'image
-            if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
-                success = false;
-                callback({ message: "Invalid Image !" }, false);
-            }
-    
-            if (success) {
-                callback(null, true);
-            }
-        },
-        limits: {   // Vérification du poids de l'image
-            fileSize: 1024 * 1024 * 5
-    }}).single('file');
+        } catch (err) {
+            success = false;
+            callback(new Error(err));
+        }
+
+        // Vérification du format de l'image
+        if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
+            success = false;
+            callback({ message: "Invalid Image !" }, false);
+        }
+
+        if (success) {
+            callback(null, true);
+        }
+    },
+    limits: {   // Vérification du poids de l'image
+        fileSize: 1024 * 1024 * 5
+}}).single('file');
 
 const avatarFile = multer({
-        storage,
-        fileFilter: function (req, file, callback) {
-            let success = true;
-            try {
-                if (req.body.account) {
-                    const postObject = JSON.parse(req.body.account);
-                    validateUserPayload(postObject);   // Check du formulaire avant de sauvegarder l'avatar sur le serveur
-                } else {
-                    success = false;
-                    callback(new Error("Invalid Form !"));
-                }
-            } catch (err) {
+    storage,
+    fileFilter: function (req, file, callback) {
+        let success = true;
+        try {
+            if (req.body.account) {
+                const postObject = JSON.parse(req.body.account);
+                validateUserPayload(postObject);   // Check du formulaire avant de sauvegarder l'avatar sur le serveur
+            } else {
                 success = false;
-                callback(new Error(err));
+                callback(new Error("Invalid Form !"));
             }
-    
-            // Vérification du format de l'image
-            if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
-                success = false;
-                callback({ message: "Invalid Image !" }, false);
-            }
-    
-            if (success) {
-                callback(null, true);
-            }
-        },
-        limits: {   // Vérification du poids de l'image
-            fileSize: 1024 * 1024
-    }}).single('avatarFile');
+        } catch (err) {
+            success = false;
+            callback(new Error(err));
+        }
+
+        // Vérification du format de l'image
+        if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
+            success = false;
+            callback({ message: "Invalid Image !" }, false);
+        }
+
+        if (success) {
+            callback(null, true);
+        }
+    },
+    limits: {   // Vérification du poids de l'image
+        fileSize: 1024 * 1024
+}}).single('avatarFile');
 
 module.exports = { imageFile, avatarFile };

@@ -24,15 +24,20 @@
         }
     }
     &__options, &--modify__options {
+        position: relative;
         display: flex;
         justify-content: center;
         align-items: center;
         flex-wrap: wrap;
         width: 100%;
-        height: 40px;
-        padding: 0 5px;
-        margin: 5px 0 10px 0;
-    
+        padding: 10px 5px;
+        margin: 5px 0;
+
+        &-upload {
+            display: flex;
+            justify-content: center;
+            
+        }
         .uploadFile {
             display: flex;
             justify-content: center;
@@ -50,6 +55,22 @@
                     }
                 }
             }            
+        }
+        .displayFileName {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            .isFile, .modify__isFile {
+                display: none;
+                bottom: -10px;
+                font-size: 12px;
+                padding-top: 10px;
+            }
+            .modify__isFile{
+                color: white;
+            }
         }
         #image-file, #video-link, .modify__image, .modify__video-link {
             display: none;
@@ -276,9 +297,6 @@
                 cursor: pointer;
                 border-radius: 3em;
             }
-            
-            
-            
         }
     }
 }

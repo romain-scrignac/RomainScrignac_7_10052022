@@ -43,19 +43,28 @@
         .modify-form {
             display: none;
         }
+        &-infos-user {
+            display: flex;
+            align-items: center;
+            &__avatar {
+                height: 10px;
+            }
 
-        &-author {
-            background: 1px groove black;
-            padding: 10px;
-            color: $primary;
-            width: 0;
-            font-weight: bold;
-
-            &:hover {
-                cursor: pointer;
-                text-decoration: underline;
+            &__author {
+                background: 1px groove black;
+                padding: 10px;
+                color: $primary;
+                width: 0;
+                font-weight: bold;
+    
+                &:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
             }
         }
+
+        
         &-content {
             display: flex;
             flex-direction: column;
@@ -67,7 +76,8 @@
             display: flex;
             justify-content: center;
             width: 95%;
-            margin: 0 auto 10px auto;
+            max-height: 500px;
+            margin: 10px auto;
             //margin-bottom: 10px;
 
             img {

@@ -1,4 +1,5 @@
-const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeImage, onChangeVideo, setNewMessage }) => {
+const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile, modifyPostValues, setModifyPostValues, 
+    onChangeContent, onChangeImage, onChangeVideo, setNewMessage }) => {
 
     const displayModifyVideo = (e, post) => {
         e.preventDefault();
@@ -13,7 +14,7 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
 
     const onSubmitModifyPost = (e, postId) => {
         e.preventDefault();
-        console.log(postValue);
+        console.log(modifyPostValues); 
         fetchModifyPost(e, postId);
     };
 
@@ -28,7 +29,9 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
         content.value = content.defaultValue;
         image.file = null;
         video.value = video.defaultValue;
-        setPostValue({ content: "", image: null, video: null });
+        setModifyImageFile(null);
+        setIsModifPost(false);
+        setModifyPostValues({ content: "", video: null });
         setNewMessage('Cancelled modification');
     };
 
@@ -38,13 +41,11 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
      const fetchModifyPost = async (e, postId) => {
         try {
             let response;
-            if (postValue.image) {
+            if (modifyImageFile) {
                 const formData = new FormData();
-                formData.append("postId", postId);
-                formData.append("content", postValue.content);
-                formData.append("video", postValue.video);
-                formData.append("file", postValue.image);
-                formData.append('fileName', postValue.image.name);
+                formData.append("post", JSON.stringify(modifyPostValues));
+                formData.append("file", modifyImageFile);
+                formData.append('fileName', modifyImageFile.name);
 
                 response = await fetch(`https://localhost/api/posts/${postId}`, {
                     method: 'PUT',
@@ -61,7 +62,7 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
                         'Content-type': 'application/json',
                         'Authorization': `Bearer ${localStorage.session_token}`
                     },
-                    body: JSON.stringify({ postId: postId, content: postValue.content, video: postValue.video })
+                    body: JSON.stringify({ post: modifyPostValues })
                 });
             }
             const responseJson = await response.json((err) => {
@@ -89,43 +90,52 @@ const ModifyPost = ({ post, postValue, setPostValue, onChangeContent, onChangeIm
                 >
                 </textarea>
                 <div className="post-form--modify__options">
-                    <label 
-                        htmlFor={`modify__image-${post.post_id}`}
-                        className="uploadFile"
-                    >
-                        <span className="uploadFile-image" title="Insérer une image">
-                            <i className="far fa-file-image"></i>
+                    <div className="post-form__options-upload">
+                        <label 
+                            htmlFor={`modify__image-${post.post_id}`}
+                            className="uploadFile"
+                        >
+                            <span className="uploadFile-image" title="Insérer une image">
+                                <i className="far fa-file-image"></i>
+                            </span>
+                        </label>
+                        <input 
+                            id={`modify__image-${post.post_id}`} 
+                            className="modify__image" 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={(e) => onChangeImage(e, post.post_id)}
+                        />
+                        <label 
+                            htmlFor={`modify__video-${post.post_id}`} 
+                            className="uploadFile" 
+                            onClick={(e) => displayModifyVideo(e, post)}
+                        >
+                            <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
+                                <i className="far fa-file-video"></i>
+                            </span>
+                        </label>
+                        <input 
+                            id={`modify__video-${post.post_id}`}
+                            className="modify__video-link"
+                            type="url" 
+                            defaultValue={post.post_video}
+                            placeholder="http(s)://" 
+                            onChange={onChangeVideo}
+                        />
+                    </div>
+                    <div className="displayFileName">
+                        <span 
+                            id={`modify__isFile-${post.post_id}`} 
+                            className="modify__isFile"
+                        >
+                            {modifyImageFile ? (modifyImageFile.name): null}
                         </span>
-                    </label>
-                    <input 
-                        id={`modify__image-${post.post_id}`} 
-                        className="modify__image" 
-                        type="file" 
-                        accept="image/*" 
-                        onChange={onChangeImage}
-                    />
-                    <span className="modify__isFile">{postValue.image ? (postValue.image.name): null}</span>
-                    <label 
-                        htmlFor={`modify__video-${post.post_id}`} 
-                        className="uploadFile" 
-                        onClick={(e) => displayModifyVideo(e, post)}
-                    >
-                        <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
-                            <i className="far fa-file-video"></i>
-                        </span>
-                    </label>
-                    <input 
-                        id={`modify__video-${post.post_id}`}
-                        className="modify__video-link"
-                        type="url" 
-                        defaultValue={post.post_video}
-                        placeholder="http(s)://" 
-                        onChange={onChangeVideo}
-                    />
+                    </div>
                 </div>
                 <div className="confirm-modify">
                     { 
-                        postValue.content || postValue.image ? 
+                        modifyPostValues.content || modifyPostValues.video || modifyImageFile ? 
                         (
                             <button 
                                 className="btn btn-submit" 

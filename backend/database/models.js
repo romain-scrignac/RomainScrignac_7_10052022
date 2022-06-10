@@ -3,6 +3,8 @@ const sequelize = require('./config');
 
 "use strict";
 
+// TODO simpler naming
+
 const User = sequelize.define('User', {              // User model
     // Model attributes are defined here
     user_id: {

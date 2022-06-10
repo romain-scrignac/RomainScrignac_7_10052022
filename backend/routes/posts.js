@@ -17,7 +17,7 @@ const multerMiddleware = (req, res, next) => {imageFile(req, res, err => {
 })};
 
 router.get('/', auth, postsCtrl.getAllPosts);                       // Requête pour récupérer tous les posts
-router.get('/:id', auth, postsCtrl.getOnePost);                     // Requête pour récupérer un seul post
+// router.get('/:id', auth, postsCtrl.getOnePost);                     // Requête pour récupérer un seul post
 router.post('/', auth, multerMiddleware, postsCtrl.addPost);        // Requête pour créer un post
 router.put('/:id', auth, multerMiddleware, postsCtrl.modifyPost);   // Requête pour modifier un post
 router.delete('/:id', auth, postsCtrl.deletePost);                  // Requête pour supprimer un post

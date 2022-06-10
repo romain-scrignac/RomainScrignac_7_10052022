@@ -10,10 +10,11 @@ const validatePostPayload = (postObject) => {
         imageUrl,
         video
     } = postObject;
+    console.log(postObject)
 
     if (!postObject) {
         throw 'Bad request!';
-    } else if (imageUrl === null && !content) {
+    } else if (!content && !imageUrl && !video) {
         throw 'Invalid form !';
     } else if (typeof content !== "string" || (video && typeof video !== "string")) {
         throw 'Invalid field(s)!';
@@ -21,7 +22,7 @@ const validatePostPayload = (postObject) => {
         throw 'Missing field(s)!';
     } else if (content && (content.length < 3)) {
         throw 'Invalid number of characters!';
-    } else if (video !== null && video !== 'null' && !video.match(regexVideo)) {
+    } else if (video && !video.match(regexVideo)) {
         throw 'Wrong video url!';
     }
 };

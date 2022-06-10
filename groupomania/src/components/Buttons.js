@@ -1,41 +1,55 @@
-/* Website buttons */
+/* Emoji button components  */
 
-export const btnLogin = {
-    name: 'Connexion',
-    class: 'btn btn-login',
-    link: '/login',
-    title: 'Se connecter'
+export const GrinTearsButtonEmpty = ({ addEmoji, postId, type }) => {
+    return (
+        <span className="laugh-before">
+            <input type="hidden" value={postId} />
+            <i className="far fa-grin-tears" onClick={(e) => addEmoji(e, type)} title="Haha"></i>
+        </span>
+    )
+}
+
+export const GrinTearsButtonFilled = ({ removeEmoji, postId, type }) => {
+    return (
+        <span className="laugh-after">
+            <input type="hidden" value={postId} />
+            <i className="fas fa-grin-tears" onClick={(e) => removeEmoji(e, type)} title="C'est plus marrant"></i>
+        </span>
+    )
+}
+
+export const ThumbUpButtonEmpty = ({ addEmoji, postId, type }) => {
+    return(
+        <span className="like-before">
+            <input type="hidden" value={postId} />
+            <i className="far fa-thumbs-up" onClick={(e) => addEmoji(e, type)} title="J'aime"></i>
+        </span>
+    )
 };
 
-export const btnLogout = {
-    name: 'Déconnexion',
-    class: 'btn-logout',
-    link: '/logout',
-    title: 'Se déconnecter'
+export const ThumbUpButtonFilled = ({ removeEmoji, postId, type }) => {
+    return (
+        <span className="like-after">
+            <input type="hidden" value={postId} />
+            <i className="fas fa-thumbs-up" onClick={(e) => removeEmoji(e, type)} title="J'aime plus"></i>
+        </span>
+    )
 };
 
-export const btnSignup = {
-    name: 'Inscription',
-    class: 'btn btn-signup',
-    link: '/signup',
-    title: 'Créer un compte'
+export const HeartButtonEmpty = ({ addEmoji, postId, type  }) => {
+    return (
+        <span className="love-before">
+            <input type="hidden" value={postId} />
+            <i className="far fa-heart" onClick={(e) => addEmoji(e, type)} title="J'adore"></i>
+        </span>
+    )
 };
 
-export const btnAccount = {
-    name: 'Compte',
-    class: 'btn-account',
-    link: '/account',
-    title: 'Mon profil'
-};
-
-export const btnDelete = {
-    name: 'Suppression',
-    class: 'btn-delete',
-    title: 'Supprimer mon compte'
-};
-
-export const btnUpdate = {
-    name: 'Modification',
-    class: 'btn-update',
-    title: 'Mofifier'
+export const HeartButtonFilled = ({ removeEmoji, postId, type }) => {
+    return (
+        <span className="love-after">
+            <input type="hidden" value={postId} />
+            <i className="fas fa-heart" onClick={(e) => removeEmoji(e, type)} title="J'adore plus"></i>
+        </span>
+    )
 };

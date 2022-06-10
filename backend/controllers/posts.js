@@ -9,25 +9,27 @@ exports.getAllPosts = async (req, res) => {
 
     // TODO use query strings instead of header for everything related to pagination, sorting (etc.) !!
     const queryObject = url.parse(req.url, true).query;
+    console.log(req.url)
 
     try {
         // Sort by date
         let sortByDate;
 
-        if (queryObject.order === "date") {
+        if (queryObject.order === "dateAsc") {
             sortByDate = [['createdAt', 'ASC']];
-        } else {
+        } else if (queryObject.order === "dateDesc") {
             sortByDate = [['createdAt', 'DESC']];
         }
 
-        const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
+        const offset = parseInt(queryObject.offset);
+        const userAttr = ['user_firstname', 'user_lastname', 'user_email', 'user_avatar'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['post_id'],
             include: [
                 { 
                     model: User, attributes: userAttr 
                 },
                 { 
-                    model: Comment, separate: true, order: [['createdAt', 'ASC']], 
+                    model: Comment, separate: true, order: [['createdAt', 'ASC']],
                     include: [
                         { model: User, attributes: userAttr }, 
                         { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id', 'like_type'] }
@@ -37,7 +39,8 @@ exports.getAllPosts = async (req, res) => {
                 { 
                     model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id', 'like_type']
                 }
-            ]
+            ], offset: offset, limit: 10
+            
             // {all: true, nested: true, attributes: {exclude: ['user_password', 'User.Comment']}}, limit: 100
         });
         if (allPosts === null || allPosts.length === 0) {
@@ -50,58 +53,54 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
-// Fonction pour afficher un seul post
-exports.getOnePost = async (req, res) => {
-    try {
-        const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
-        const onePost = await Post.findOne({ 
-            where: {post_id: req.params.id},
-            include: [
-                { 
-                    model: User, attributes: userAttr 
-                },
-                { 
-                    model: Comment, separate: true, order: [['comment_date', 'ASC']], 
-                    include: [
-                        { model: User, attributes: userAttr }, 
-                        { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id'] }
-                    ],
-                    attributes: { exclude: ['comment_post_id'] }
-                },
-                { 
-                    model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id']
-                }
-            ]
-        });
-        if (onePost === null) throw 'Post not found!';
-        res.status(200).json({ onePost });
-    } catch (err) {
-        switchErrors(res, err);
-    }
-};
+// // Fonction pour afficher un seul post
+// exports.getOnePost = async (req, res) => {
+//     try {
+//         const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
+//         const onePost = await Post.findOne({ 
+//             where: {post_id: req.params.id},
+//             include: [
+//                 { 
+//                     model: User, attributes: userAttr 
+//                 },
+//                 { 
+//                     model: Comment, separate: true, order: [['comment_date', 'ASC']], 
+//                     include: [
+//                         { model: User, attributes: userAttr }, 
+//                         { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id'] }
+//                     ],
+//                     attributes: { exclude: ['comment_post_id'] }
+//                 },
+//                 { 
+//                     model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id']
+//                 }
+//             ]
+//         });
+//         if (onePost === null) throw 'Post not found!';
+//         res.status(200).json({ onePost });
+//     } catch (err) {
+//         switchErrors(res, err);
+//     }
+// };
 
 // Fonction pour ajouter un post
 exports.addPost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body) {
+        } else if (!req.body.post) {
             throw 'Bad request!';
         }
 
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
-            ...req.body,
+            ...JSON.parse(req.body.post),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body, imageUrl: null };
-
-        if(!postObject.video || postObject.video === 'null') {
-            postObject.video = null;
-        }
+        } : { ...req.body.post, imageUrl: null };
 
         // Validation du formulaire
-        validatePostPayload(req.auth.userId, postObject);
+        validatePostPayload(postObject);
 
         // Création du post
         const postAttributes = {
@@ -125,10 +124,10 @@ exports.modifyPost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body || !req.body.postId) {
+        } else if (!req.params.id || !req.body.post) {
             throw 'Bad request!';
         }
-        const postId = req.body.postId;
+        const postId = req.params.id;
         
         const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';
@@ -139,17 +138,12 @@ exports.modifyPost = async (req, res) => {
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
-            ...req.body,
+            ...JSON.parse(req.body.post),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body, imageUrl: null };
-
-        if(!postObject.video || postObject.video === 'null') {
-            postObject.video = null;
-        }
+        } : { ...req.body.post, imageUrl: null };
 
         // Validation du formulaire
-        const authId = req.auth.userId;
-        validatePostPayload(authId, postObject);
+        validatePostPayload(postObject);
 
         // Si ancienne image, on la supprime si nouvel ajout
         if (findPost.post_image !== null && req.file) {
@@ -208,10 +202,10 @@ exports.deletePost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if (!req.body || !req.body.postId) {
+        } else if (!req.params.id) {
             throw 'Bad request!';
         }
-        const postId = req.body.postId;
+        const postId = req.params.id;
 
         const findPost = await Post.findOne({ where: {post_id: postId} });
         if (findPost === null) throw 'Post not found!';

@@ -1,5 +1,5 @@
 import { Outlet, Link, NavLink } from "react-router-dom";
-import { btnLogin, btnLogout, btnSignup, btnAccount } from '../components/Buttons';
+import { btnLogin, btnLogout, btnSignup, btnAccount } from '../datas/buttons';
 import { grpmLogo, iconLogout, iconAccount } from '../datas/images';
 
 const Header = () => {

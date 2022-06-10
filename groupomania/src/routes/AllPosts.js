@@ -7,18 +7,23 @@ const Emojis = lazy(() => import('../components/Emojis'));
 const Comments = lazy(() => import('../components/Comments'));
 
 const AllPosts = () => {
+
     document.title = 'Groupomania';
 
     const navigate = useNavigate();
-    const [order, setOrder] = useState('');
+    const [order, setOrder] = useState('dateDesc');
+    const [offset, setOffset] = useState(0);
     const [allPosts, setAllPosts] = useState([]);
-    const [postContentValue, setPostContentValue] = useState('');
-    const [postImageFile, setPostImageFile] = useState(null);
-    const [postVideoLink, setPostVideoLink] = useState(null);
-    const [postValue, setPostValue] = useState({
-        content: postContentValue,
-        image: postImageFile,
-        video: postVideoLink
+    const [isModifPost, setIsModifPost] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
+    const [postValues, setPostValues] = useState({
+        content: '',
+        video: null
+    });
+    const [modifyImageFile, setModifyImageFile] = useState(null);
+    const [modifyPostValues, setModifyPostValues] = useState({
+        content: '',
+        video: null
     });
     const [newMessage, setNewMessage] = useState('');
     
@@ -26,9 +31,9 @@ const AllPosts = () => {
         /**
          * @description this function communicates with the API to display all posts
          */
-        const getPosts = async () => {
+        const getPosts = async () => {            
             try{
-                const response = await fetch(`https://localhost/api/posts/${order}`, {
+                const response = await fetch(`https://localhost/api/posts/?offset=${offset}&order=${order}`, {
                     headers: { 
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -62,15 +67,21 @@ const AllPosts = () => {
             }        
         };    
         getPosts();
-    }, [order, newMessage]);
+    }, [order, offset, newMessage]);
+    
+
+    // Pagination
+    const changeOffset = () => {
+        setOffset(offset + 10);
+    };
 
     // Order of posts
     const changeOrder = () => {
-        if (order === "?order=date") {
-            setOrder("");
-        } 
-        if (order === "") {
-            setOrder("?order=date");
+        if (order === "dateDesc") {
+            setOrder("dateAsc");
+        }
+        if (order === "dateAsc") {
+            setOrder("dateDesc");
         }
     };
 
@@ -86,22 +97,40 @@ const AllPosts = () => {
 
         if (oldContent !== content) {
             if(content.length < 3 || content.trim() === "") {
-                setPostValue(previousState => { return {...previousState, content: ''}});
+                if (!isModifPost) {
+                    setPostValues(previousState => { return {...previousState, content: ''}});
+                } else {
+                    setModifyPostValues(previousState => { return {...previousState, content: ''}});
+                }
             } else {
-                setPostValue(previousState => { return {...previousState, content: content}});
+                if (!isModifPost) {
+                    setPostValues(previousState => { return {...previousState, content: content}});
+                } else {
+                    setModifyPostValues(previousState => { return {...previousState, content: content}});
+                }
             }
-            setPostContentValue(content);
         };
     };
 
-    const onChangeImage = (e) => {
+    const onChangeImage = (e, postId) => {
         const file = e.target.files[0];
         if(file.size > (1024 * 1024 * 5)) {
-            setPostValue(previousState => { return {...previousState, image: null}});
+            if (!isModifPost) {
+                setImageFile(null);
+                document.getElementById('isFile').style["display"] = "none";
+            } else {
+                setModifyImageFile(null);
+                document.getElementById(`modify__isFile-${postId}`).style["display"] = "none";
+            }
         } else {
-            setPostValue(previousState => { return {...previousState, image: file}});
+            if (!isModifPost) {
+                setImageFile(file);
+                document.getElementById('isFile').style["display"] = "block";
+            } else {
+                setModifyImageFile(file);
+                document.getElementById(`modify__isFile-${postId}`).style["display"] = "block";
+            }
         }
-        setPostImageFile(file);
     };
 
     const onChangeVideo = (e) => {
@@ -112,11 +141,18 @@ const AllPosts = () => {
         if (oldVideoLink !== videoLink) {
             console.log("test")
             if (!videoLink.match(regexVideo)) {
-                setPostValue(previousState => { return {...previousState, video: null}});
+                if (!isModifPost) {
+                    setPostValues(previousState => { return {...previousState, video: null}});
+                } else {
+                    setModifyPostValues(previousState => { return {...previousState, video: null}});
+                }
             } else {
-                setPostValue(previousState => { return {...previousState, video: videoLink}});
+                if (!isModifPost) {
+                    setPostValues(previousState => { return {...previousState, video: videoLink}});
+                } else {
+                    setModifyPostValues(previousState => { return {...previousState, video: videoLink}});
+                }
             }
-            setPostVideoLink(videoLink);
         }
     };
 
@@ -134,18 +170,10 @@ const AllPosts = () => {
     const onModifyPost = (e, postId) => {
         e.preventDefault();
         const form = document.getElementById(`modify-form-${postId}`);
-        const content = document.getElementById(`modify__content-${postId}`);
-        const image = document.getElementById(`modify__image-${postId}`);
-        const video = document.getElementById(`modify__video-${postId}`);
-        setPostValue({
-            content: content.defaultValue,
-            image: image.defaultValue,
-            video: video.defaultValue
-        });
-
         if (form.style["display"] === "") {
             form.style["display"] = "flex";
         }
+        setIsModifPost(true);
     };
 
     const onDeletePost = (e, postId) => {
@@ -158,12 +186,12 @@ const AllPosts = () => {
 
     const onSubmitPost = (e) => {
         e.preventDefault();
-        console.log(postValue)
         fetchPostData();
     };
     
     const resetPost = () => {
-        setPostValue({ content: "", image: null, video: null });
+        setImageFile(null);
+        setPostValues({ content: "", video: null });
         document.getElementById('postText').value = '';
         document.getElementById('image-file').file = null;
         document.getElementById('isFile').innerText = '';
@@ -196,12 +224,11 @@ const AllPosts = () => {
     const fetchPostData = async () => {
         try {
             let response;
-            if (postValue.image) {
+            if (imageFile) {
                 const formData = new FormData();
-                formData.append("content", postValue.content);
-                formData.append("video", postValue.video);
-                formData.append("file", postValue.image);
-                formData.append('fileName', postValue.image.name);
+                formData.append("post", JSON.stringify(postValues));
+                formData.append("file", imageFile);
+                formData.append('fileName', imageFile.name);
 
                 response = await fetch(`https://localhost/api/posts/`, {
                     method: 'POST',
@@ -218,7 +245,7 @@ const AllPosts = () => {
                         'Content-type': 'application/json',
                         'Authorization': `Bearer ${localStorage.session_token}`
                     },
-                    body: JSON.stringify({ content: postValue.content, video: postValue.video })
+                    body: JSON.stringify({ post: postValues })
                 });
             }
             const responseJson = await response.json((err) => {
@@ -229,7 +256,7 @@ const AllPosts = () => {
                 setNewMessage(`Post added ${responseJson.postId}`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.error);
+                console.error(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -247,8 +274,7 @@ const AllPosts = () => {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.session_token}`
-                },
-                body: JSON.stringify({ postId: postId })
+                }
             });
             const responseJson = await response.json((err) => {
                 if (err) throw err;
@@ -257,7 +283,7 @@ const AllPosts = () => {
                 setNewMessage(`Post ${postId} deleted`);
                 console.log(responseJson.message);
             } else {
-                alert(responseJson.error);
+                console.error(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -281,24 +307,28 @@ const AllPosts = () => {
                     >
                     </textarea>
                     <div className="post-form__options">
-                        <label htmlFor="image-file" className="uploadFile">
-                            <span className="uploadFile-image" title="Insérer une image">
-                                <i className="far fa-file-image"></i>
+                        <div className="post-form__options-upload">
+                            <label htmlFor="image-file" className="uploadFile">
+                                <span className="uploadFile-image" title="Insérer une image">
+                                    <i className="far fa-file-image"></i>
+                                </span>
+                            </label>
+                            <input id="image-file" type="file" accept="image/*" onChange={onChangeImage} />
+                            <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
+                                <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
+                                    <i className="far fa-file-video"></i>
+                                </span>
+                            </label>
+                            <input id="video-link" type="url" placeholder="http(s)://" onChange={onChangeVideo} />
+                        </div>
+                        <div className="displayFileName">
+                            <span id="isFile" className="isFile">
+                                {imageFile ? (imageFile.name): null}
                             </span>
-                        </label>
-                        <input id="image-file" type="file" accept="image/*" onChange={onChangeImage} />
-                        <span id="isFile" className="isFile">
-                            {postImageFile ? (postImageFile.name): null}
-                        </span>
-                        <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
-                            <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
-                                <i className="far fa-file-video"></i>
-                            </span>
-                        </label>
-                        <input id="video-link" type="url" placeholder="http(s)://" onChange={onChangeVideo} />
+                        </div>
                     </div>
                     { 
-                        postValue.content || postValue.image ? 
+                        postValues.content || postValues.video || imageFile ? 
                         (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
                         (<button className="btn btn-submit-post" disabled>Publier</button>)
                     }
@@ -312,13 +342,18 @@ const AllPosts = () => {
             {/* Display of publications */}
             {allPosts.map(post => (                
                 <div className="post" key={post.post_id}>
-                    <span 
-                        className="post-author"
-                        onClick={() => sendMessage(post.post_user_id)}
-                        title="Envoyer un message"
-                    >
-                        {post.User.user_firstname}
-                    </span>
+                    <div className="post-infos-user">
+                        <span className='infos-user__avatar'>
+                            <img src={post.User.user_avatar} alt ={`Avatar ${post.User.user_firstname}`} />
+                        </span>
+                        <span 
+                            className="infos-user__author"
+                            onClick={() => sendMessage(post.post_user_id)}
+                            title="Envoyer un message"
+                        >
+                            {post.User.user_firstname}
+                        </span>
+                    </div>
                     {
                         post.post_image ? 
                         (<span className="post-image">
@@ -335,14 +370,16 @@ const AllPosts = () => {
                     {/* Modify post form */}
                     <ModifyPost 
                         post={post}
-                        postValue={postValue}
-                        setPostValue={setPostValue}
+                        setIsModifPost={setIsModifPost}
+                        modifyImageFile={modifyImageFile}
+                        setModifyImageFile={setModifyImageFile}
+                        modifyPostValues={modifyPostValues}
+                        setModifyPostValues={setModifyPostValues}
                         onChangeContent={onChangeContent}
                         onChangeImage={onChangeImage}
                         onChangeVideo={onChangeVideo}
                         setNewMessage={setNewMessage}
                     />
-
                     <hr className="post-split"></hr>
                     {/* Post options */}
                     <div className="post-various">
@@ -365,7 +402,16 @@ const AllPosts = () => {
                     <hr className="post-split"></hr>
                     {/* Comments */}
                     <Comments post={post} setNewMessage={setNewMessage} />
+
+                    {/* // TODO implement infinite scroll */}
+                    {window.addEventListener("scroll", () => {
+                        // TODO 1) know if we are at the bottom of the page
+                        // TODO 2) if bottom reached, call API with the correct offset to get 10 more posts
+                        // TODO 3) re set component posts with current posts + newly fetched posts
+                    })}
                 </div>
+
+      
             ))}
         </div>
     )

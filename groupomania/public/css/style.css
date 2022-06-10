@@ -180,14 +180,18 @@ footer {
   font-style: italic;
 }
 .post-form__options, .post-form--modify__options {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
-  height: 40px;
-  padding: 0 5px;
-  margin: 5px 0 10px 0;
+  padding: 10px 5px;
+  margin: 5px 0;
+}
+.post-form__options-upload, .post-form--modify__options-upload {
+  display: flex;
+  justify-content: center;
 }
 .post-form__options .uploadFile, .post-form--modify__options .uploadFile {
   display: flex;
@@ -203,6 +207,21 @@ footer {
   cursor: pointer;
   color: rgba(253, 45, 1, 0.7);
   transform: scale(1.05);
+}
+.post-form__options .displayFileName, .post-form--modify__options .displayFileName {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.post-form__options .displayFileName .isFile, .post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .isFile, .post-form--modify__options .displayFileName .modify__isFile {
+  display: none;
+  bottom: -10px;
+  font-size: 12px;
+  padding-top: 10px;
+}
+.post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .modify__isFile {
+  color: white;
 }
 .post-form__options #image-file, .post-form__options #video-link, .post-form__options .modify__image, .post-form__options .modify__video-link, .post-form--modify__options #image-file, .post-form--modify__options #video-link, .post-form--modify__options .modify__image, .post-form--modify__options .modify__video-link {
   display: none;
@@ -519,14 +538,21 @@ footer {
 .allPosts .post .modify-form {
   display: none;
 }
-.allPosts .post-author {
+.allPosts .post-infos-user {
+  display: flex;
+  align-items: center;
+}
+.allPosts .post-infos-user__avatar {
+  height: 10px;
+}
+.allPosts .post-infos-user__author {
   background: 1px groove black;
   padding: 10px;
   color: #FD2D01;
   width: 0;
   font-weight: bold;
 }
-.allPosts .post-author:hover {
+.allPosts .post-infos-user__author:hover {
   cursor: pointer;
   text-decoration: underline;
 }
@@ -541,7 +567,8 @@ footer {
   display: flex;
   justify-content: center;
   width: 95%;
-  margin: 0 auto 10px auto;
+  max-height: 500px;
+  margin: 10px auto;
 }
 .allPosts .post-image img {
   object-fit: cover;
