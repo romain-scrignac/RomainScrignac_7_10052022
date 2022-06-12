@@ -10,13 +10,13 @@ exports.getMessage = (req, res) => {
             throw 'Unauthorized request!';
         }
 
-        const messageCrypt = await Message.findOne({ where: {message_id: req.params.id }});
+        const messageCrypt = await Message.findOne({ where: {id: req.params.id }});
         if (messageCrypt === null) throw 'Message not found!';
-        if (messageCrypt.message_receiver_id !== req.auth.userId) {
+        if (messageCrypt.receiver_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
 
-        const senderMessage = await User.findOne({ where: messageCrypt.message_sender_id });
+        const senderMessage = await User.findOne({ where: messageCrypt.sender_id });
         if (senderMessage === null) throw 'Sender not found!';
 
         const firstName = senderMessage.user_firstname;
@@ -56,10 +56,10 @@ exports.sendMessage = (req, res) => {
 
         // On crypte le message avant envoi
         const messageCrypt = await bcrypt.hash(content, 10);
-        await Message.create({ message_content: messageCrypt, message_sender_id: senderId, message_receiver_id: receiverId }, (err) => {
+        await Message.create({ content: messageCrypt, sender_id: senderId, receiver_id: receiverId }, (err) => {
             if (err) throw err;
         });
-        await User.update({ user_message: + 1, where: {user_id: receiverId} }, (err) => {
+        await User.update({ user_message: + 1, where: {id: receiverId} }, (err) => {
             if (err) throw err;
         });
 
@@ -81,13 +81,13 @@ exports.deleteMessage = (req, res) => {
         }
 
         const messageId = req.body.messageId;
-        const message = await Message.findOne({ where: {message_id: messageId} });
+        const message = await Message.findOne({ where: {id: messageId} });
         if (message === null) throw 'Message not found!';
-        if (message.message_receiver_id !== req.auth.userId) {
+        if (message.receiver_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
 
-        await Message.destroy({ where: {message_id: messageId} }, (err) => {
+        await Message.destroy({ where: {id: messageId} }, (err) => {
             if (err) throw err;
         });
         res.status(200).json({ message: 'Message deleted!' });

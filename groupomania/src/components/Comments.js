@@ -89,7 +89,7 @@ const Comments = ({ post, setNewMessage }) => {
      */
      const fetchDeleteComment = async (commentId) => {
         try {
-            const response = await fetch(`https://localhost/api/comments/${commentId}`, {
+            const response = await fetch(`https://localhost/api/comments/${commentId}?order=dateDesc`, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
@@ -130,11 +130,11 @@ const Comments = ({ post, setNewMessage }) => {
             <div className="post-allComments">
                 {
                     post.Comments.map(comment => (
-                        <div className="oneComment" key={comment.comment_id}>
+                        <div className="oneComment" key={comment.id}>
                             <span className="oneComment-author">{comment.User.user_firstname}</span>
-                            <span id={`comment-${comment.comment_id}`}>{comment.comment_content}</span>
+                            <span id={`comment-${comment.id}`}>{comment.content}</span>
                             {
-                                comment.comment_user_id === parseInt(localStorage.session_id) ?
+                                comment.user_id === parseInt(localStorage.session_id) ?
                                 (
                                     <div className="oneComment-options">
                                         <div className="oneComment-options--display">
@@ -142,7 +142,7 @@ const Comments = ({ post, setNewMessage }) => {
                                             <div className="oneComment-options--choices">
                                                 <span 
                                                     title="Supprimer le commentaire" 
-                                                    onClick={(e) => onDeleteComment(e, comment.comment_id)}
+                                                    onClick={(e) => onDeleteComment(e, comment.id)}
                                                 >
                                                     Supprimer
                                                 </span>

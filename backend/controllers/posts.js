@@ -7,7 +7,6 @@ const url = require('url');
 // Fonction pour afficher tous les posts
 exports.getAllPosts = async (req, res) => {
     const queryObject = url.parse(req.url, true).query;
-
     try {
         // Sort by date
         let sortByDate;
@@ -19,8 +18,8 @@ exports.getAllPosts = async (req, res) => {
         }
 
         const offset = parseInt(queryObject.offset);
-        const userAttr = ['user_firstname', 'user_lastname', 'user_avatar', 'user_last_connection', 'user_last_disconnection'];
-        const allPosts = await Post.findAll({ order: sortByDate, group: ['post_id'],
+        const userAttr = ['firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
+        const allPosts = await Post.findAll({ order: sortByDate, group: ['id'],
             include: [
                 { 
                     model: User, attributes: userAttr
@@ -29,16 +28,15 @@ exports.getAllPosts = async (req, res) => {
                     model: Comment, separate: true, order: [['createdAt', 'ASC']],
                     include: [
                         { model: User, attributes: userAttr },
-                        { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id', 'like_type'] }
+                        { model: Like, attributes:  ['id', 'user_id', 'value', 'type'] }
                     ],
-                    attributes: { exclude: ['comment_post_id'] }
+                    attributes: { exclude: ['post_id'] }
                 },
                 { 
-                    model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id', 'like_type']
+                    model: Like, separate: true, attributes: ['id', 'user_id', 'value', 'type']
                 }
-            ], offset: offset, limit: 10
-            
-            // {all: true, nested: true, attributes: {exclude: ['user_password', 'User.Comment']}}, limit: 100
+            ], 
+            offset: offset, limit: 10
         });
         if (allPosts === null || allPosts.length === 0) {
             throw "No posts found";
@@ -101,16 +99,16 @@ exports.addPost = async (req, res) => {
 
         // Création du post
         const postAttributes = {
-            post_user_id: req.auth.userId,
-            post_content: postObject.content,
-            post_image: postObject.imageUrl,
-            post_video: postObject.video
+            user_id: req.auth.userId,
+            content: postObject.content,
+            image: postObject.imageUrl,
+            video: postObject.video
         };        
         const addPost = await Post.create(postAttributes, (err) => {
             if (err) throw err;
         });
 
-        res.status(201).json({ message: 'New post added!', postId: addPost.post_id });
+        res.status(201).json({ message: 'New post added!', postId: addPost.id });
     } catch (err) {
         switchErrors(res, err);
     }
@@ -126,9 +124,9 @@ exports.modifyPost = async (req, res) => {
         }
         const postId = req.params.id;
         
-        const findPost = await Post.findOne({ where: {post_id: postId} });
+        const findPost = await Post.findOne({ where: {id: postId} });
         if (findPost === null) throw 'Post not found!';
-        if (findPost.post_user_id !== req.auth.userId) {
+        if (findPost.user_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
 
@@ -143,8 +141,8 @@ exports.modifyPost = async (req, res) => {
         validatePostPayload(postObject);
 
         // Si ancienne image, on la supprime si nouvel ajout
-        if (findPost.post_image !== null && req.file) {
-            const fileName = findPost.post_image.split('images/')[1];
+        if (findPost.image !== null && req.file) {
+            const fileName = findPost.image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
                 if (err) throw err;
                 console.log(`Old image deleted (${fileName})`);
@@ -155,37 +153,37 @@ exports.modifyPost = async (req, res) => {
         let newImage;
         let newVideo;
         
-        if(findPost.post_content && !postObject.content) {
+        if(findPost.content && !postObject.content) {
             newContent = '';
         }
-        if (postObject.content === findPost.post_content) {
-            newContent = findPost.post_content;
+        if (postObject.content === findPost.content) {
+            newContent = findPost.content;
         } else {
             newContent = postObject.content;
         }
-        if(findPost.post_image && imageUrl === null) {
+        if(findPost.image && imageUrl === null) {
             newImage = null;
         } else if (postObject.imageUrl !== null) {
             newImage = postObject.imageUrl;
         } else {
-            newImage = findPost.post_image;
+            newImage = findPost.image;
         }
-        if(findPost.post_video && postObject.video === null) {
+        if(findPost.video && postObject.video === null) {
             newVideo = null;
-        } else if (postObject.video === findPost.post_video) {
-            newVideo = findPost.post_video; 
+        } else if (postObject.video === findPost.video) {
+            newVideo = findPost.video; 
         } else {
             newVideo = postObject.video;
         }
         
         // Mise à jour du post
         const postAttributes = {
-            post_content: newContent,
-            post_image: newImage,
-            post_video: newVideo
+            content: newContent,
+            image: newImage,
+            video: newVideo
         };
 
-        await Post.update( postAttributes, { where: {post_id: postId} }, (err) => {
+        await Post.update( postAttributes, { where: {id: postId} }, (err) => {
             if (err) throw err;
         });
         res.status(200).json({ message: 'Post updated!' });
@@ -204,15 +202,15 @@ exports.deletePost = async (req, res) => {
         }
         const postId = req.params.id;
 
-        const findPost = await Post.findOne({ where: {post_id: postId} });
+        const findPost = await Post.findOne({ where: {id: postId} });
         if (findPost === null) throw 'Post not found!';
-        else if (findPost.post_user_id !== req.auth.userId) {
+        else if (findPost.user_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
 
         // Si image on récupère son nom et on la supprime du serveur
-        if (findPost.post_image !== null) {
-            const fileName = findPost.post_image.split('images/')[1];
+        if (findPost.image !== null) {
+            const fileName = findPost.image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
                 if (err) throw err;
                 console.log(`Old image deleted (${fileName})`);
@@ -220,7 +218,7 @@ exports.deletePost = async (req, res) => {
         }
 
         // Suppression du post
-        await Post.destroy({ where: {post_id: postId} }, (err) => {
+        await Post.destroy({ where: {id: postId} }, (err) => {
             if (err) throw err;
         });
         res.status(200).json({ message: `Post deleted!` });
@@ -244,27 +242,27 @@ exports.likePost = async (req, res) => {
         const userId = parseInt(req.auth.userId);
         const type = req.body.type;
         
-        const findPost = await Post.findOne({ where: {post_id: postId} });
+        const findPost = await Post.findOne({ where: {id: postId} });
         if (findPost === null) throw 'Post not found!';
 
         if (like !== 0 && like !== 1) {
             throw 'Invalid value!';
         }
 
-        const findUserLike = await Like.findOne({  where: {like_user_id: userId, like_post_id: postId} });
+        const findUserLike = await Like.findOne({  where: {user_id: userId, post_id: postId} });
 
         // Si l'utilisateur n'a pas encore like
         if (like === 1 && findUserLike === null) {
-            await Like.create({ like_post_id: postId, like_user_id: userId, like_value: like, like_type: type }, (err) => {
+            await Like.create({ post_id: postId, user_id: userId, value: like, type: type }, (err) => {
                 if (err) throw err;
             });
         }
         // Sinon, on met à jour like_value
         else if (findUserLike !== null) {
-            if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
+            if ((findUserLike.value === 0 && like !== 0) || (findUserLike.value === 1 && like !== 1)) {
                 await Like.update(
-                    {like_value: like, like_type: type}, {
-                        where: {like_post_id: postId, like_user_id: userId}
+                    {value: like, type: type}, {
+                        where: {post_id: postId, user_id: userId}
                     },(err) => {
                         if (err) throw err;
                     }

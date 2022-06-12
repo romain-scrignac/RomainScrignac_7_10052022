@@ -1,18 +1,22 @@
 const { Comment, Post, Like } = require('../database/models');
 const { validateCommentPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
+const url = require('url');
 
 // Fonction pour afficher tous les commentaires
 exports.getAllComments = async (req, res) => {
+    const queryObject = url.parse(req.url, true).query;
     try{
         const postId = req.params.id;
-        const orderByDate = req.body.orderByDate;
         let sortBy;
         
-        if (!orderByDate) { sortBy = ''; }
-            else { sortBy = [['comment_date', 'DESC']]; }
+        if (queryObject.order === "dateAsc") { 
+            sortByDate = [['createdAt', 'ASC']];
+        } else if (queryObject.order === "dateDesc") {
+            sortBy = [['createdAt', 'DESC']];
+        }
 
-        const findComments = await Comment.findAll({ where: {comment_post_id: postId}, include: Post });
+        const findComments = await Comment.findAll({ where: {post_id: postId}, include: Post });
         if (findComments === null) throw 'No comments found!';
 
         res.status(200).json({ message: findComments });
@@ -36,16 +40,16 @@ exports.addComment = async (req, res) => {
 
         // Création du commentaire
         const commentAttributes = { 
-            comment_post_id: commentObject.postId,
-            comment_user_id: req.auth.userId,
-            comment_content: commentObject.content
+            post_id: commentObject.postId,
+            user_id: req.auth.userId,
+            content: commentObject.content
         };
 
         const addComment = await Comment.create(commentAttributes, (err) => {
             if(err) throw err;
         });
 
-        res.status(201).json({ message: 'New comment added!', commentId: addComment.comment_id });
+        res.status(201).json({ message: 'New comment added!', commentId: addComment.id });
     }catch (err) {
         switchErrors(res, err);
     }
@@ -61,14 +65,14 @@ exports.deleteComment = async (req, res) => {
         }
         const commentId = req.body.commentId;
 
-        const findComment = await Comment.findOne({ where: {comment_id: commentId} });
+        const findComment = await Comment.findOne({ where: {id: commentId} });
         if (findComment === null) throw 'Comment not found!';
-        if (findComment.comment_user_id !== req.auth.userId) {
+        if (findComment.user_id !== req.auth.userId) {
             throw 'Unauthorized request!';
         }
 
         // Suppression du commentaire
-        await Comment.destroy({ where: {comment_id: commentId} }, (err) => {
+        await Comment.destroy({ where: {id: commentId} }, (err) => {
             if (err) throw err;
         });
         res.status(200).json({ message: "Comment deleted !" });
@@ -87,9 +91,9 @@ exports.deleteComment = async (req, res) => {
 //         }
 
 //         const commentId = req.params.id;
-//         const findComment = await Comment.findOne({ where: {comment_id: commentId} });
+//         const findComment = await Comment.findOne({ where: {id: commentId} });
 //         if (findComment === null) throw 'Comment not found!';
-//         if (findComment.comment_user_id !== req.auth.userId) {
+//         if (findComment.user_id !== req.auth.userId) {
 //             throw 'Unauthorized request!';
 //         }
 
@@ -101,9 +105,9 @@ exports.deleteComment = async (req, res) => {
 
 //         // Création du commentaire
 //         const commentAttributes = { 
-//             comment_content: commentObject.content,
-//             comment_user_id: commentObject.userId,
-//             comment_post_id: commentObject.postId
+//             content: commentObject.content,
+//             user_id: commentObject.userId,
+//             post_id: commentObject.postId
 //         };
 
 //         await Comment.update(commentAttributes, (err) => {
@@ -125,7 +129,7 @@ exports.deleteComment = async (req, res) => {
 //         }
 //         const commentId = req.body.commentId;
 
-//         const findComment = await Post.findOne({ where: {comment_id: commentId} });
+//         const findComment = await Post.findOne({ where: {id: commentId} });
 //         if (findComment === null) throw 'Comment not found!';
 
 //         const like = parseInt(req.body.like);
@@ -133,17 +137,17 @@ exports.deleteComment = async (req, res) => {
 //             throw 'Invalid value!';
 //         }
 
-//         const findUserLike = await Like.findOne({where : {like_user_id: req.auth.userId, like_comment_id: commentId}});
+//         const findUserLike = await Like.findOne({where : {like_user_id: req.auth.userId, like_id: commentId}});
 //         // Si l'utilisateur n'a pas encore like/dislike
 //         if (findUserLike === null && like !== 0) {
-//             await Like.create({ like_comment_id: commentId, like_user_id: req.auth.userId, like_value: like }, (err) => {
+//             await Like.create({ like_id: commentId, like_user_id: req.auth.userId, like_value: like }, (err) => {
 //                 if (err) throw err;
 //             });
 //         }
 //         // Sinon, on met à jour like_value
 //         else if (findUserLike !== null) {
 //             if ((findUserLike.like_value === 0 && like !== 0) || (findUserLike.like_value === 1 && like !== 1)) {
-//                 await Like.update({like_value: like}, { where: {like_comment_id: commentId, like_user_id: req.auth.userId} },
+//                 await Like.update({like_value: like}, { where: {like_id: commentId, like_user_id: req.auth.userId} },
 //                  (err) => {
 //                     if (err) throw err;
 //                  });

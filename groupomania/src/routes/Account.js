@@ -159,7 +159,9 @@ const Account = () => {
                 input.disabled = true;
             }
         }
-        document.getElementById('avatarName').innerText = '';
+        if (avatarFile) {
+            document.getElementById('avatarName').innerText = '';
+        }
     };
 
     /**
@@ -203,7 +205,7 @@ const Account = () => {
             if (avatarFile) {
                 const formData = new FormData();
                 formData.append("account", JSON.stringify(account));
-                formData.append("avatarFile", avatarFile);
+                formData.append("avatar", avatarFile);
                 formData.append('fileName', avatarFile.name);
 
                 response = await fetch(url, {
@@ -276,7 +278,7 @@ const Account = () => {
                     <label htmlFor='avatar' className="avatarUpload">
                         <div className='avatar'>
                             <img
-                                src={userInfos.user_avatar}
+                                src={userInfos.avatar}
                                 alt='avatar'
                                 title="Changer d'avatar"
                             />
@@ -297,7 +299,7 @@ const Account = () => {
                         id="firstname"
                         name="firstname"
                         type="text"
-                        placeholder={userInfos.user_firstname}
+                        placeholder={userInfos.firstname}
                         onChange={firstnameOnChange}
                         disabled
                     />
@@ -311,7 +313,7 @@ const Account = () => {
                         id="lastname"
                         name="lastname"
                         type="text"
-                        placeholder={userInfos.user_lastname}
+                        placeholder={userInfos.lastname}
                         onChange={lastnameOnChange}
                         disabled
                     />
@@ -325,7 +327,7 @@ const Account = () => {
                         id="email"
                         name="email"
                         type="email"
-                        placeholder={userInfos.user_email}
+                        placeholder={userInfos.email}
                         onChange={emailOnChange}
                         disabled
                     />

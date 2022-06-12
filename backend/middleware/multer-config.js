@@ -11,7 +11,7 @@ const MIME_TYPES = {
 
 const storage = multer.diskStorage({
     destination: (req, file, callback) => {
-        if (file.fieldname === "avatarFile") {
+        if (file.fieldname === "avatar") {
             callback(null, 'images/avatars')
         } else {
             callback(null, 'images')
@@ -33,7 +33,7 @@ const imageFile = multer({
         try {
             if (req.body.post) {
                 const postObject = JSON.parse(req.body.post);
-                validatePostPayload(postObject);   // Check du formulaire avant de sauvegarder l'image sur le serveur
+                validatePostPayload(postObject, file.originalname);   // Check du formulaire avant de sauvegarder l'image sur le serveur
             } else {
                 success = false;
                 callback(new Error("Invalid Form !"));
@@ -44,9 +44,16 @@ const imageFile = multer({
         }
 
         // Vérification du format de l'image
-        if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
+        let isFileValid = false;
+        Object.entries(MIME_TYPES).map( entrie => {
+            if (entrie.includes(file.mimetype)) {
+                isFileValid = true;
+            }
+        });
+
+        if (!isFileValid) {
             success = false;
-            callback({ message: "Invalid Image !" }, false);
+            callback({ message: "Invalid file!" }, false);
         }
 
         if (success) {
@@ -55,7 +62,7 @@ const imageFile = multer({
     },
     limits: {   // Vérification du poids de l'image
         fileSize: 1024 * 1024 * 5
-}}).single('file');
+}}).single('image');
 
 const avatarFile = multer({
     storage,
@@ -86,6 +93,6 @@ const avatarFile = multer({
     },
     limits: {   // Vérification du poids de l'image
         fileSize: 1024 * 1024
-}}).single('avatarFile');
+}}).single('avatar');
 
 module.exports = { imageFile, avatarFile };

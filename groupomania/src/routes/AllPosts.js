@@ -48,13 +48,13 @@ const AllPosts = () => {
                         let loves = 0;
                         let laughs = 0;
                         for (let i = 0; i < post.Likes.length; i++) {
-                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "like") {
+                            if (post.Likes[i].value === 1 && post.Likes[i].type === "like") {
                                 likes++;
                             }
-                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "love") {
+                            if (post.Likes[i].value === 1 && post.Likes[i].type === "love") {
                                 loves++;
                             }
-                            if (post.Likes[i].like_value === 1 && post.Likes[i].like_type === "laugh") {
+                            if (post.Likes[i].value === 1 && post.Likes[i].type === "laugh") {
                                 laughs++;
                             }
                         }
@@ -129,7 +129,6 @@ const AllPosts = () => {
     const onChangeContent = (e) => {
         const oldContent = e.target.defaultValue;
         const content = e.target.value;
-        const enter = /\n/g;
 
         if (oldContent !== content) {
             if(content.length < 3 || content.trim() === "") {
@@ -263,8 +262,8 @@ const AllPosts = () => {
             if (imageFile) {
                 const formData = new FormData();
                 formData.append("post", JSON.stringify(postValues));
-                formData.append("file", imageFile);
-                formData.append('fileName', imageFile.name);
+                formData.append("image", imageFile);
+                //formData.append('fileName', imageFile.name);
 
                 response = await fetch(`https://localhost/api/posts/`, {
                     method: 'POST',
@@ -377,7 +376,7 @@ const AllPosts = () => {
             }
             {/* Display of publications */}
             {allPosts.map(post => (
-                <div className="post" key={post.post_id}>
+                <div className="post" key={post.id}>
                     {/* Modify post form */}
                     <ModifyPost 
                         post={post}
@@ -393,25 +392,25 @@ const AllPosts = () => {
                     />
                     {/* Post author informations */}
                     <div className="post-infos-user">
-                        <span 
-                            className='post-infos-user__avatar' 
-                            title={lastConnection(post.User.user_last_connection, post.User.user_last_disconnection)}
+                        <span
+                            className='post-infos-user__avatar'
+                            title={lastConnection(post.User.last_connection, post.User.last_disconnection)}
                         >
-                            <img src={post.User.user_avatar} alt ={`Avatar ${post.User.user_firstname}`} />
+                            <img src={post.User.avatar} alt ={`Avatar ${post.User.firstname}`} />
                         </span>
-                        <span 
+                        <span
                             className="post-infos-user__author"
-                            title={lastConnection(post.User.user_last_connection, post.User.user_last_disconnection)}
+                            title={lastConnection(post.User.last_connection, post.User.last_disconnection)}
                         >
-                            {post.User.user_firstname}
+                            {post.User.firstname}
                         </span>
                         {
-                            post.post_user_id !== parseInt(localStorage.session_id) ?
+                            post.user_id !== parseInt(localStorage.session_id) ?
                             (
                                 <span 
                                     className="post-infos-user__send-message"
-                                    title={`Envoyer un message à ${post.User.user_firstname}`}
-                                    onClick={() => sendMessage(post.post_user_id)}
+                                    title={`Envoyer un message à ${post.User.firstname}`}
+                                    onClick={() => sendMessage(post.user_id)}
                                 >
                                     <i className="far fa-envelope"></i>
                                 </span>
@@ -421,16 +420,16 @@ const AllPosts = () => {
                     {/* Content of the publication */}
                     <div className="post-content">
                         {
-                            post.post_image ? 
+                            post.image ? 
                             (<span className="post-content--image">
-                                <img src={post.post_image} alt="Illustration du post" />
+                                <img src={post.image} alt="Illustration du post" />
                             </span>) : null
                         }
                         {
-                            post.post_video ? videoPlayer(post) : null
+                            post.video ? videoPlayer(post) : null
                         }
                         {
-                            post.post_content ? (<div className="post-content--text">{post.post_content}</div>) : null
+                            post.content ? (<div className="post-content--text">{post.content}</div>) : null
                         }
                         <span className="post-content--date">{formatDate(post)}</span>
                     </div>
@@ -438,14 +437,14 @@ const AllPosts = () => {
                     {/* Post options */}
                     <div className="post-various">
                         {
-                            post.post_user_id === parseInt(localStorage.session_id) ? 
+                            post.user_id === parseInt(localStorage.session_id) ? 
                             (
                                 <div className="post-various--options">
                                     <span className="post-various--options__edit" title="Modifier le post">
-                                        <i className="fas fa-edit" onClick={(e) => onModifyPost(e, post.post_id)}></i>
+                                        <i className="fas fa-edit" onClick={(e) => onModifyPost(e, post.id)}></i>
                                     </span>
                                     <span className="post-various--options__delete" title="Supprimer le post">
-                                        <i className="fas fa-trash-alt" onClick={(e) => onDeletePost(e, post.post_id)}></i>
+                                        <i className="fas fa-trash-alt" onClick={(e) => onDeletePost(e, post.id)}></i>
                                     </span>
                                 </div>
                             ): null

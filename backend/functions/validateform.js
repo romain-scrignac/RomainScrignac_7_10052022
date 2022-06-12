@@ -2,19 +2,21 @@
  * @description This function checks the validity of the post form
  * 
  * @param {JSON | FormData} postObject the body of the request
+ * @param {String} fileName name of the file if the validation comes from multer
  **/
-const validatePostPayload = (postObject) => {
-    const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/
+const validatePostPayload = (postObject, fileName) => {
+    const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/;
+    console.log(postObject)
     const {
         content,
         imageUrl,
         video
     } = postObject;
-    console.log(postObject)
+    console.log(fileName)
 
     if (!postObject) {
         throw 'Bad request!';
-    } else if (!content && !imageUrl && !video) {
+    } else if (!content && (!fileName && !imageUrl) && !video) {
         throw 'Invalid form !';
     } else if (typeof content !== "string" || (video && typeof video !== "string")) {
         throw 'Invalid field(s)!';

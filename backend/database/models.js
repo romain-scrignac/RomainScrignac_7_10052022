@@ -3,40 +3,38 @@ const sequelize = require('./config');
 
 "use strict";
 
-// TODO simpler naming
-
 const User = sequelize.define('User', {              // User model
     // Model attributes are defined here
-    user_id: {
+    id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    user_firstname: {
+    firstname: {
         type: DataTypes.STRING(75),
         allowNull: false
     },
-    user_lastname: {
+    lastname: {
         type: DataTypes.STRING(75),
         allowNull: false
     },
-    user_email: {
+    email: {
         type: DataTypes.STRING(75),
         allowNull: false
     },
-    user_password: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    user_avatar: {
+    avatar: {
         type: DataTypes.STRING,
         defaultValue: 'https://localhost/images/avatars/avatar.svg'
     },
-    user_rank: {
+    rank: {
         type: DataTypes.TINYINT(4),
         defaultValue: 1
     },
-    user_code: {
+    code: {
         type: DataTypes.STRING(6),
         allowNull: false
     },
@@ -44,11 +42,11 @@ const User = sequelize.define('User', {              // User model
         type: DataTypes.TINYINT(1),
         defaultValue: 0
     }, 
-    user_last_connection: {
+    last_connection: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     },
-    user_last_disconnection: {
+    last_disconnection: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW
     }
@@ -60,23 +58,23 @@ const User = sequelize.define('User', {              // User model
 
 const Post = sequelize.define('Post', {             // post model
     // Model attributes are defined here
-    post_id: {
+    id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    post_user_id: {
+    user_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    post_content: {
+    content: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    post_image: {
+    image: {
         type: DataTypes.STRING
     },
-    post_video: {
+    video: {
         type: DataTypes.STRING
     }
 }, {
@@ -86,20 +84,20 @@ const Post = sequelize.define('Post', {             // post model
 
 const Comment = sequelize.define('Comment', {       // Comment model
     // Model attributes are defined here
-    comment_id: {
+    id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    comment_post_id: {
+    post_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    comment_user_id: {
+    user_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    comment_content: {
+    content: {
         type: DataTypes.STRING,
         allowNull: false
     }
@@ -110,26 +108,26 @@ const Comment = sequelize.define('Comment', {       // Comment model
 
 const Like = sequelize.define('Like', {             // Like model
     // Model attributes are defined here
-    like_id: {
+    id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    like_comment_id: {
+    comment_id: {
         type: DataTypes.SMALLINT
     },
-    like_post_id: {
+    post_id: {
         type: DataTypes.SMALLINT
     },
-    like_user_id: {
+    user_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    like_value: {
+    value: {
         type: TINYINT(1),
         allowNull: false
     },
-    like_type: {
+    type: {
         type: SMALLINT(10)
     }
 },{
@@ -140,23 +138,23 @@ const Like = sequelize.define('Like', {             // Like model
 
 const Message = sequelize.define('Message', {       // Message model
 // Model attributes are defined here
-    message_id: {
+    id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    message_sender_id: {
+    sender_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    message_receiver_id: {
+    receiver_id: {
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    message_content: {
+    content: {
         type: DataTypes.TEXT
     },
-    message_date: {
+    date: {
         type: DataTypes.DATE,
         defaultValue: Date
     }
@@ -167,48 +165,48 @@ const Message = sequelize.define('Message', {       // Message model
 });
 
 User.hasOne(Post, {                                 // Associations
-    foreignKey: 'post_user_id'
+    foreignKey: 'user_id'
 });
 Post.belongsTo(User, {
-    foreignKey: 'post_user_id'
+    foreignKey: 'user_id'
 });
 
 User.hasOne(Comment, { 
-    foreignKey: 'comment_user_id'
+    foreignKey: 'user_id'
 });
 Comment.belongsTo(User, {
-    foreignKey: 'comment_user_id'
+    foreignKey: 'user_id'
 });
 
 User.hasOne(Like, {
-    foreignKey: 'like_user_id'
+    foreignKey: 'user_id'
 });
 Like.belongsTo(User, {
-    foreignKey: 'like_user_id'
+    foreignKey: 'user_id'
 });
 
 Post.hasMany(Comment, {
-    foreignKey: 'comment_post_id',
+    foreignKey: 'post_id',
     onDelete: 'cascade'
 });
 Comment.belongsTo(Post, {
-    foreignKey: 'comment_post_id'
+    foreignKey: 'post_id'
 });
 
 Post.hasMany(Like, {
-    foreignKey: 'like_post_id',
+    foreignKey: 'post_id',
     onDelete: 'cascade'
 });
 Like.belongsTo(Post, {
-    foreignKey: 'like_post_id'
+    foreignKey: 'post_id'
 });
 
 Comment.hasMany(Like, {
-    foreignKey: 'like_comment_id',
+    foreignKey: 'comment_id',
     onDelete: 'cascade'
 });
 Like.belongsTo(Comment, {
-    foreignKey: 'like_comment_id'
+    foreignKey: 'comment_id'
 })
 
 module.exports = { Comment, Like, Post, User, Message };

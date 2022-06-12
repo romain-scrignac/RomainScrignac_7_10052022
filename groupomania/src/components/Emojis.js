@@ -6,13 +6,13 @@ import {
 
 // Verification of reactions values
 const userHasLaughedThisPost = (post, userId) => {
-    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'laugh');
+    return post.Likes.some(like => like.user_id === userId && like.value === 1 && like.type === 'laugh');
 };
 const userHasLikedThisPost = (post, userId) => {
-    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'like');
+    return post.Likes.some(like => like.user_id === userId && like.value === 1 && like.type === 'like');
 };
 const userHasLovedThisPost = (post, userId) => {
-    return post.Likes.some(like => like.like_user_id === userId && like.like_value === 1 && like.like_type === 'love');
+    return post.Likes.some(like => like.user_id === userId && like.value === 1 && like.type === 'love');
 };
 
 const Emojis = ({ post, setNewMessage }) => {
@@ -52,7 +52,7 @@ const Emojis = ({ post, setNewMessage }) => {
     };
 
     const userId = parseInt(localStorage.session_id);
-    const postId = post.post_id;
+    const postId = post.id;
     const countLaughs = post.countLaughs;
     const countLikes = post.countLikes;
     const countLoves = post.countLoves;

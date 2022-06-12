@@ -3,7 +3,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
 
     const displayModifyVideo = (e, post) => {
         e.preventDefault();
-        const videoLink = document.getElementById(`modify__video-${post.post_id}`);
+        const videoLink = document.getElementById(`modify__video-${post.id}`);
 
         if (videoLink.style["display"] === "" ) {
             videoLink.style["display"] = "block";
@@ -43,7 +43,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
             if (modifyImageFile) {
                 const formData = new FormData();
                 formData.append("post", JSON.stringify(modifyPostValues));
-                formData.append("file", modifyImageFile);
+                formData.append("image", modifyImageFile);
                 formData.append('fileName', modifyImageFile.name);
 
                 response = await fetch(`https://localhost/api/posts/${postId}`, {
@@ -79,19 +79,19 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
     };
 
     return (
-        <div className="modify-form" id={`modify-form-${post.post_id}`}>
-            <form className="post-form--modify" name={`modify-post-${post.post_id}`}>
+        <div className="modify-form" id={`modify-form-${post.id}`}>
+            <form className="post-form--modify" name={`modify-post-${post.id}`}>
                 <textarea 
-                    id={`modify__content-${post.post_id}`}
+                    id={`modify__content-${post.id}`}
                     rows="5" 
                     onChange={onChangeContent} 
-                    defaultValue={post.post_content}
+                    defaultValue={post.content}
                 >
                 </textarea>
                 <div className="post-form--modify__options">
                     <div className="post-form__options-upload">
                         <label 
-                            htmlFor={`modify__image-${post.post_id}`}
+                            htmlFor={`modify__image-${post.id}`}
                             className="uploadFile"
                         >
                             <span className="uploadFile-image" title="Insérer une image">
@@ -99,14 +99,14 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                             </span>
                         </label>
                         <input 
-                            id={`modify__image-${post.post_id}`} 
+                            id={`modify__image-${post.id}`} 
                             className="modify__image" 
                             type="file" 
                             accept="image/*" 
-                            onChange={(e) => onChangeImage(e, post.post_id)}
+                            onChange={(e) => onChangeImage(e, post.id)}
                         />
                         <label 
-                            htmlFor={`modify__video-${post.post_id}`} 
+                            htmlFor={`modify__video-${post.id}`} 
                             className="uploadFile" 
                             onClick={(e) => displayModifyVideo(e, post)}
                         >
@@ -115,17 +115,17 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                             </span>
                         </label>
                         <input 
-                            id={`modify__video-${post.post_id}`}
+                            id={`modify__video-${post.id}`}
                             className="modify__video-link"
                             type="url" 
-                            defaultValue={post.post_video}
+                            defaultValue={post.video}
                             placeholder="http(s)://" 
                             onChange={onChangeVideo}
                         />
                     </div>
                     <div className="displayFileName">
                         <span 
-                            id={`modify__isFile-${post.post_id}`} 
+                            id={`modify__isFile-${post.id}`} 
                             className="modify__isFile"
                         >
                             {modifyImageFile ? (modifyImageFile.name): null}
@@ -138,7 +138,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                         (
                             <button 
                                 className="btn btn-submit" 
-                                onClick={(e) => onSubmitModifyPost(e, post.post_id)}
+                                onClick={(e) => onSubmitModifyPost(e, post.id)}
                                 title="Valider la modification"
                             >
                                 Modifier
@@ -149,7 +149,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                     }
                     <button 
                         className="btn btn-submit" 
-                        onClick={(e) => resetModify(e, post.post_id)}
+                        onClick={(e) => resetModify(e, post.id)}
                         title="Annuler la modification"
                     >
                         Annuler
