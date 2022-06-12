@@ -14,7 +14,6 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
 
     const onSubmitModifyPost = (e, postId) => {
         e.preventDefault();
-        console.log(modifyPostValues); 
         fetchModifyPost(e, postId);
     };
 

@@ -7,6 +7,7 @@ body {
     width: 100%; 
     margin: 0;
     padding: 0;
+    color: $tertiary;
 }
 
 * {
@@ -27,13 +28,25 @@ a {
     margin-top: 100px;
 }
 
-.grpm-err404 {
+.err404, .alreadyConnected {
     display: flex;
-    justify-content: center;
-    margin: 100px auto;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 100px;
 
     img {
         width: 30%;
+    }
+    a {
+        text-decoration: underline;
+        font-style: italic;
+        &:hover {
+            color: $primary;
+        }
+    }
+    p {
+        font-weight: bold;
+        margin: 10px 0;
     }
 }
 
@@ -41,8 +54,4 @@ a {
     font-weight: bold;
     color: $primary;
     font-size: 14px;
-}
-
-.message {
-    color: $tertiary;
 }

@@ -6,7 +6,6 @@
     align-items: center;
     width: 90%;
     margin-top: 70px;
-    color: $tertiary;
 
     @include tablet-only {
         margin-top: 90px;
@@ -45,51 +44,90 @@
         }
         &-infos-user {
             display: flex;
-            align-items: center;
-            &__avatar {
-                height: 10px;
+            align-items:flex-start;
+            flex-wrap: wrap;
+            padding: 8px 10px;
+            &__avatar:hover, &__author:hover, &__send-message:hover {
+                cursor: pointer;
             }
 
+            &__avatar {
+                height: 40px;
+                border-radius: 3em;
+                border: 1px groove $secondary;
+                img {
+                    height: 100%;
+                    border-radius: 3em;
+                    &:hover {
+                        box-shadow: 1px 2px 5px $tertiary;
+                    }
+                }
+            }
             &__author {
-                background: 1px groove black;
-                padding: 10px;
+                margin: 5px 0 0 15px;
                 color: $primary;
-                width: 0;
-                font-weight: bold;
-    
+                font-weight: bold;    
                 &:hover {
-                    cursor: pointer;
                     text-decoration: underline;
                 }
             }
+            &__send-message {
+                position: absolute;
+                right: 15px;
+                top: 5px;
+                i {
+                    font-size: 18px;
+                    &:hover {
+                        transform: scale(1.05);
+                        color: $primary;
+                    }
+                }
+            }
         }
-
-        
         &-content {
+            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin: 10px 0 25px 0;
-            padding: 0 15px;
-        }
-        &-image {
-            display: flex;
-            justify-content: center;
-            width: 95%;
-            max-height: 500px;
-            margin: 10px auto;
-            //margin-bottom: 10px;
-
-            img {
-                object-fit: cover;
-                max-width: 100%;
-                border-radius: 8px;
+            align-items: center;
+            padding: 0 20px 10px 20px;
+            &--text {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+                white-space: pre;
+                overflow: auto;
+                width: 100%;
+                padding: 10px 0;
             }
-        }
-        &-video {
-            width: 95%;
-            height: 300px;
-            margin: 0 auto;
+            &--image {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                padding: 10px 0 7px 0;
+                img {
+                    object-fit: cover;
+                    max-height: 500px;
+                    max-width: 100%;
+                    border-radius: 8px;
+                }
+            }
+            &--video {
+                width: 100%;
+                height: 300px;
+                margin: 0 auto;
+            }
+            &--date {
+                position: absolute;
+                bottom: 3px;
+                right: 15px;
+                font-size: 12px;
+                font-style: italic;
+                @include tablet-desktop {
+                    bottom: -20px;
+                }
+            }
         }
         &-allComments {
             display: none;
@@ -248,13 +286,15 @@
             }
         }
         .displayComments {
-            padding: 7px 15px 0 15px;
+            display: inline-block;
+            padding: 5px 15px 0 15px;
             font-size: 15px;
             font-style: italic;
 
             &:hover {
                 cursor: pointer;
                 text-decoration: underline;
+                color: $primary;
             }
         }
     }

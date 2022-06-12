@@ -16,7 +16,7 @@ const Logout = () => {
             });
             if (response.ok) {
                 localStorage.clear();
-                setTimeout(function(){ window.location.href="/" } , 5000);
+                setTimeout(function(){ window.location.href="/" } , 3000);
             }
         } catch (err) {
             console.log(err);

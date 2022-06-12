@@ -6,32 +6,29 @@ const url = require('url');
 
 // Fonction pour afficher tous les posts
 exports.getAllPosts = async (req, res) => {
-
-    // TODO use query strings instead of header for everything related to pagination, sorting (etc.) !!
     const queryObject = url.parse(req.url, true).query;
-    console.log(req.url)
 
     try {
         // Sort by date
         let sortByDate;
 
         if (queryObject.order === "dateAsc") {
-            sortByDate = [['createdAt', 'ASC']];
+            sortByDate = [['updatedAt', 'ASC']];
         } else if (queryObject.order === "dateDesc") {
-            sortByDate = [['createdAt', 'DESC']];
+            sortByDate = [['updatedAt', 'DESC']];
         }
 
         const offset = parseInt(queryObject.offset);
-        const userAttr = ['user_firstname', 'user_lastname', 'user_email', 'user_avatar'];
+        const userAttr = ['user_firstname', 'user_lastname', 'user_avatar', 'user_last_connection', 'user_last_disconnection'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['post_id'],
             include: [
                 { 
-                    model: User, attributes: userAttr 
+                    model: User, attributes: userAttr
                 },
                 { 
                     model: Comment, separate: true, order: [['createdAt', 'ASC']],
                     include: [
-                        { model: User, attributes: userAttr }, 
+                        { model: User, attributes: userAttr },
                         { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id', 'like_type'] }
                     ],
                     attributes: { exclude: ['comment_post_id'] }

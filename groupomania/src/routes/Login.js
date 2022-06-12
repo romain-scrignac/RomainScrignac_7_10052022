@@ -87,7 +87,7 @@ const Login = () => {
                         localStorage.setItem("session_id", responseJson.userId);
                         localStorage.setItem("session_token", responseJson.token);
                         setMessage('Connexion ok, redirection en cours...');
-                        setTimeout(function(){ navigate("/") } , 5000);
+                        setTimeout(function(){ navigate("/") } , 3000);
                     }
                 } else {
                     setAlert(responseJson.error);

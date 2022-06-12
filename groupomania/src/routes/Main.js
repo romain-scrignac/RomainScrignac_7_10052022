@@ -2,7 +2,7 @@ import { Outlet, Link, NavLink } from "react-router-dom";
 import { btnLogin, btnLogout, btnSignup, btnAccount } from '../datas/buttons';
 import { grpmLogo, iconLogout, iconAccount } from '../datas/images';
 
-const Header = () => {
+const Main = () => {
     document.title = 'Groupomania';
     let activeClassName = 'activeBtn';
 
@@ -30,21 +30,18 @@ const Header = () => {
                         </NavLink>
                     </div>
                 ):(
-                    localStorage.session_token ? 
-                    (
-                        <div className="btn-profil">
-                            <NavLink to ='/account'>
-                                <button className={btnAccount.class} title={btnAccount.title}>
-                                    <img src={iconAccount.cover} alt={iconAccount.name} />
-                                </button>
-                            </NavLink>
-                            <NavLink to="/logout">
-                                <button className={btnLogout.class} title={btnLogout.title}>
-                                    <img src={iconLogout.cover} alt={iconLogout.name} />
-                                </button>
-                            </NavLink>
-                        </div>
-                    ): null
+                    <div className="btn-profil">
+                        <NavLink to ='/account'>
+                            <button className={btnAccount.class} title={btnAccount.title}>
+                                <img src={iconAccount.cover} alt={iconAccount.name} />
+                            </button>
+                        </NavLink>
+                        <NavLink to="/logout">
+                            <button className={btnLogout.class} title={btnLogout.title}>
+                                <img src={iconLogout.cover} alt={iconLogout.name} />
+                            </button>
+                        </NavLink>
+                    </div>
                 )
             }       
             </nav>
@@ -53,4 +50,4 @@ const Header = () => {
     )
 }
 
-export default Header
+export default Main

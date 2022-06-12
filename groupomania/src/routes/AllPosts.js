@@ -68,7 +68,42 @@ const AllPosts = () => {
         };    
         getPosts();
     }, [order, offset, newMessage]);
+
+    const lastConnection = (last_connection, last_disconnection) => {
+        const dateLastConnection = new Date(last_connection);
+        const dateLastDisconnection = new Date(last_disconnection);
+        const hour = new Intl.DateTimeFormat(
+            'fr', {timeStyle: "short"}
+            ).format(dateLastConnection);
+
+        if (dateLastConnection > dateLastDisconnection) {
+            return `En ligne depuis ${hour}`
+        }
+        else {
+            return "Hors ligne"
+        }
+    };
     
+    const formatDate = (post) => {
+        const createdAt = new Date(post.createdAt);
+        const updatedAt = new Date(post.updatedAt);
+        const formatCreatedAt = new Intl.DateTimeFormat(
+            'fr', {dateStyle: "short"}
+        ).format(createdAt);
+        const formatUpdatedAt = new Intl.DateTimeFormat(
+            'fr', {dateStyle: "short"}
+        ).format(updatedAt);
+
+        if (updatedAt > createdAt) {
+            return (
+                `Mis à jour le ${formatUpdatedAt}`
+            )
+        } else {
+            return (
+                `Publié le ${formatCreatedAt}`
+            )
+        }
+    };
 
     // Pagination
     const changeOffset = () => {
@@ -94,19 +129,20 @@ const AllPosts = () => {
     const onChangeContent = (e) => {
         const oldContent = e.target.defaultValue;
         const content = e.target.value;
+        const enter = /\n/g;
 
         if (oldContent !== content) {
             if(content.length < 3 || content.trim() === "") {
                 if (!isModifPost) {
-                    setPostValues(previousState => { return {...previousState, content: ''}});
+                    setPostValues(previousState => { return {...previousState, content: ''} });
                 } else {
-                    setModifyPostValues(previousState => { return {...previousState, content: ''}});
+                    setModifyPostValues(previousState => { return {...previousState, content: ''} });
                 }
             } else {
                 if (!isModifPost) {
                     setPostValues(previousState => { return {...previousState, content: content}});
                 } else {
-                    setModifyPostValues(previousState => { return {...previousState, content: content}});
+                    setModifyPostValues(previousState => { return {...previousState, content: content} });
                 }
             }
         };
@@ -207,7 +243,7 @@ const AllPosts = () => {
         }
         return (
             <iframe
-                className="post-video"
+                className="post-content--video"
                 src={videoUrl}
                 loading="lazy"
                 autohide="1" 
@@ -340,33 +376,8 @@ const AllPosts = () => {
                 (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>): null
             }
             {/* Display of publications */}
-            {allPosts.map(post => (                
+            {allPosts.map(post => (
                 <div className="post" key={post.post_id}>
-                    <div className="post-infos-user">
-                        <span className='infos-user__avatar'>
-                            <img src={post.User.user_avatar} alt ={`Avatar ${post.User.user_firstname}`} />
-                        </span>
-                        <span 
-                            className="infos-user__author"
-                            onClick={() => sendMessage(post.post_user_id)}
-                            title="Envoyer un message"
-                        >
-                            {post.User.user_firstname}
-                        </span>
-                    </div>
-                    {
-                        post.post_image ? 
-                        (<span className="post-image">
-                            <img src={post.post_image} alt="Illustration du post" />
-                        </span>) : null
-                    }
-                    {
-                        post.post_video ? videoPlayer(post) : null
-                    }
-                    {
-                        post.post_content ?
-                        (<div className="post-content">{post.post_content}</div>): null
-                    }
                     {/* Modify post form */}
                     <ModifyPost 
                         post={post}
@@ -380,6 +391,49 @@ const AllPosts = () => {
                         onChangeVideo={onChangeVideo}
                         setNewMessage={setNewMessage}
                     />
+                    {/* Post author informations */}
+                    <div className="post-infos-user">
+                        <span 
+                            className='post-infos-user__avatar' 
+                            title={lastConnection(post.User.user_last_connection, post.User.user_last_disconnection)}
+                        >
+                            <img src={post.User.user_avatar} alt ={`Avatar ${post.User.user_firstname}`} />
+                        </span>
+                        <span 
+                            className="post-infos-user__author"
+                            title={lastConnection(post.User.user_last_connection, post.User.user_last_disconnection)}
+                        >
+                            {post.User.user_firstname}
+                        </span>
+                        {
+                            post.post_user_id !== parseInt(localStorage.session_id) ?
+                            (
+                                <span 
+                                    className="post-infos-user__send-message"
+                                    title={`Envoyer un message à ${post.User.user_firstname}`}
+                                    onClick={() => sendMessage(post.post_user_id)}
+                                >
+                                    <i className="far fa-envelope"></i>
+                                </span>
+                            ) : null
+                        }                        
+                    </div>
+                    {/* Content of the publication */}
+                    <div className="post-content">
+                        {
+                            post.post_image ? 
+                            (<span className="post-content--image">
+                                <img src={post.post_image} alt="Illustration du post" />
+                            </span>) : null
+                        }
+                        {
+                            post.post_video ? videoPlayer(post) : null
+                        }
+                        {
+                            post.post_content ? (<div className="post-content--text">{post.post_content}</div>) : null
+                        }
+                        <span className="post-content--date">{formatDate(post)}</span>
+                    </div>
                     <hr className="post-split"></hr>
                     {/* Post options */}
                     <div className="post-various">
@@ -410,8 +464,6 @@ const AllPosts = () => {
                         // TODO 3) re set component posts with current posts + newly fetched posts
                     })}
                 </div>
-
-      
             ))}
         </div>
     )
