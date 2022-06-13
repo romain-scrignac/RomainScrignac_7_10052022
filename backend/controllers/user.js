@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
-const { Comment, Post, User } = require('../database/models');
+const { Comment, Message, Post, User } = require('../database/models');
 const { validateUserPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
 const verifEmail = require('../functions/verifEmail');
@@ -288,6 +288,23 @@ exports.getProfil = async (req, res) => {
         if (nbComs === null) throw 'No comments found!';
 
         res.status(200).json({ message: findUser, nbPosts: nbPosts, nbComs: nbComs });
+    } catch (err) {
+        switchErrors(res, err);
+    }
+};
+
+// Fonction pour afficher les infos de l'user dans le header
+exports.getUserMessages = async (req, res) => {
+    try {
+        if (!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
+            throw 'Unauthorized request!';
+        }
+
+        const userMessages = await Message.findAndCountAll({
+            where: { receiver_id: req.auth.userId }
+        });
+
+        res.status(200).json({ count: userMessages.count });
     } catch (err) {
         switchErrors(res, err);
     }

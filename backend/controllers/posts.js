@@ -8,6 +8,9 @@ const url = require('url');
 exports.getAllPosts = async (req, res) => {
     const queryObject = url.parse(req.url, true).query;
     try {
+        if(!req.auth || !req.auth.userId) {
+            throw 'Unauthorized request!';
+        }
         // Sort by date
         let sortByDate;
 
@@ -144,8 +147,11 @@ exports.modifyPost = async (req, res) => {
         if (findPost.image !== null && req.file) {
             const fileName = findPost.image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
-                if (err) throw err;
-                console.log(`Old image deleted (${fileName})`);
+                if (err) {
+                    console.log('Image not found!');
+                } else {
+                    console.log(`Old image deleted (${fileName})`);
+                }
             });
         }
 
@@ -156,18 +162,20 @@ exports.modifyPost = async (req, res) => {
         if(findPost.content && !postObject.content) {
             newContent = '';
         }
-        if (postObject.content === findPost.content) {
+        else if (postObject.content === findPost.content) {
             newContent = findPost.content;
         } else {
             newContent = postObject.content;
         }
-        if(findPost.image && imageUrl === null) {
+
+        if(findPost.image && postObject.imageUrl === null) {
             newImage = null;
         } else if (postObject.imageUrl !== null) {
             newImage = postObject.imageUrl;
         } else {
             newImage = findPost.image;
         }
+
         if(findPost.video && postObject.video === null) {
             newVideo = null;
         } else if (postObject.video === findPost.video) {
@@ -212,8 +220,11 @@ exports.deletePost = async (req, res) => {
         if (findPost.image !== null) {
             const fileName = findPost.image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
-                if (err) throw err;
-                console.log(`Old image deleted (${fileName})`);
+                if (err) {
+                    console.log('Image not found!');
+                } else {
+                    console.log(`Old image deleted (${fileName})`);
+                }
             });
         }
 

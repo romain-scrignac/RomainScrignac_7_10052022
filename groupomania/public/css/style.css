@@ -120,9 +120,6 @@ footer {
   box-shadow: 2px 3px 10px #4E5166;
   color: white;
 }
-.btn-login, .btn-account {
-  margin-right: 15px;
-}
 .btn-logout, .btn-account, .btn-delete, .btn-update {
   cursor: pointer;
   background-color: unset;
@@ -133,6 +130,15 @@ footer {
 }
 .btn-logout:hover, .btn-account:hover, .btn-delete:hover, .btn-update:hover {
   scale: 1.1;
+}
+.btn-account {
+  margin-right: 10px;
+}
+.btn-login {
+  margin-right: 15px;
+}
+.btn-logout img {
+  height: 22px;
 }
 .btn-delete {
   position: absolute;
@@ -486,13 +492,28 @@ footer {
   justify-content: center;
   z-index: 1;
 }
-.nav-buttons .btn-profil {
+.nav-buttons--profil {
   position: fixed;
   display: flex;
   justify-content: space-between;
   align-content: center;
   top: 10px;
   right: 10px;
+}
+.nav-buttons--profil__messages {
+  position: fixed;
+  top: 5px;
+  right: 85px;
+  font-size: 13px;
+  color: black;
+}
+.nav-buttons--profil__messages:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+.nav-buttons--profil a, .nav-buttons--profil button {
+  display: flex;
+  align-items: center;
 }
 .nav-buttons .btn-log {
   margin-top: 120px;
@@ -809,6 +830,14 @@ footer {
   .profil {
     width: 60%;
   }
+}
+
+.mailbox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -6,13 +6,11 @@
  **/
 const validatePostPayload = (postObject, fileName) => {
     const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/;
-    console.log(postObject)
     const {
         content,
         imageUrl,
         video
     } = postObject;
-    console.log(fileName)
 
     if (!postObject) {
         throw 'Bad request!';

@@ -1,5 +1,9 @@
-const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile, modifyPostValues, setModifyPostValues, 
-    onChangeContent, onChangeImage, onChangeVideo, setNewMessage }) => {
+import { ContentInput, ImageInput, VideoInput } from '../components/PostForm';
+import { useState } from 'react';
+
+const ModifyPost = ({ post, isModifyPost, modifyPostValues, setModifyPostValues, setNewMessage }) => {
+
+    const [modifyImageFile, setModifyImageFile] = useState(null);
 
     const displayModifyVideo = (e, post) => {
         e.preventDefault();
@@ -12,32 +16,32 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
         }
     };
 
-    const onSubmitModifyPost = (e, postId) => {
+    const onSubmitModifyPost = (e, post) => {
         e.preventDefault();
-        fetchModifyPost(e, postId);
+        fetchModifyPost(e, post);
     };
 
-    const resetModify = (e, postId) => {
+    const resetModify = (e, post) => {
         e.preventDefault();
-        const form = document.getElementById(`modify-form-${postId}`);
-        const content = document.getElementById(`modify__content-${postId}`);
-        const image = document.getElementById(`modify__image-${postId}`);
-        const video = document.getElementById(`modify__video-${postId}`);
+        const form = document.getElementById(`modify-form-${post.id}`);
+        const content = document.getElementById(`modify__content-${post.id}`);
+        const image = document.getElementById(`modify__image-${post.id}`);
+        const video = document.getElementById(`modify__video-${post.id}`);
 
         form.style["display"] = "";
-        content.value = content.defaultValue;
+        content.value = post.content;
+        video.value = post.video;
         image.file = null;
-        video.value = video.defaultValue;
         setModifyImageFile(null);
-        setIsModifPost(false);
         setModifyPostValues({ content: "", video: null });
-        setNewMessage('Cancelled modification');
+        setNewMessage('Cancelled modification'+content);
+        console.log(video.value)
     };
 
     /**
      * @description this function communicates with the API when a post is modified
      */
-     const fetchModifyPost = async (e, postId) => {
+     const fetchModifyPost = async (e, post) => {
         try {
             let response;
             if (modifyImageFile) {
@@ -46,7 +50,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                 formData.append("image", modifyImageFile);
                 formData.append('fileName', modifyImageFile.name);
 
-                response = await fetch(`https://localhost/api/posts/${postId}`, {
+                response = await fetch(`https://localhost/api/posts/${post.id}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${localStorage.session_token}`
@@ -54,7 +58,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                     body: formData
                 });
             } else {
-                response = await fetch(`https://localhost/api/posts/${postId}`, {
+                response = await fetch(`https://localhost/api/posts/${post.id}`, {
                     method: 'PUT',
                     headers: {
                         'Accept': 'application/json',
@@ -68,8 +72,8 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                 if (err) throw err;
             });
             if (response.ok) {
-                resetModify(e, postId);
-                setNewMessage(`Post ${postId} modified`);
+                resetModify(e, post);
+                setNewMessage(`Post ${post.id} modified`);
             } else {
                 alert(responseJson.error);
             }
@@ -81,13 +85,12 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
     return (
         <div className="modify-form" id={`modify-form-${post.id}`}>
             <form className="post-form--modify" name={`modify-post-${post.id}`}>
-                <textarea 
-                    id={`modify__content-${post.id}`}
-                    rows="5" 
-                    onChange={onChangeContent} 
-                    defaultValue={post.content}
-                >
-                </textarea>
+                <ContentInput
+                    isModifyPost={isModifyPost}
+                    setPostValues={null}
+                    setModifyPostValues={setModifyPostValues}
+                    post={post}
+                />
                 <div className="post-form--modify__options">
                     <div className="post-form__options-upload">
                         <label 
@@ -98,12 +101,11 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                                 <i className="far fa-file-image"></i>
                             </span>
                         </label>
-                        <input 
-                            id={`modify__image-${post.id}`} 
-                            className="modify__image" 
-                            type="file" 
-                            accept="image/*" 
-                            onChange={(e) => onChangeImage(e, post.id)}
+                        <ImageInput 
+                            isModifyPost={isModifyPost}
+                            setImageFile={null}
+                            setModifyImageFile={setModifyImageFile}
+                            post={post}
                         />
                         <label 
                             htmlFor={`modify__video-${post.id}`} 
@@ -114,13 +116,11 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                                 <i className="far fa-file-video"></i>
                             </span>
                         </label>
-                        <input 
-                            id={`modify__video-${post.id}`}
-                            className="modify__video-link"
-                            type="url" 
-                            defaultValue={post.video}
-                            placeholder="http(s)://" 
-                            onChange={onChangeVideo}
+                        <VideoInput 
+                            isModifyPost={isModifyPost}
+                            setPostValues={null}
+                            setModifyPostValues={setModifyPostValues}
+                            post={post}
                         />
                     </div>
                     <div className="displayFileName">
@@ -138,7 +138,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                         (
                             <button 
                                 className="btn btn-submit" 
-                                onClick={(e) => onSubmitModifyPost(e, post.id)}
+                                onClick={(e) => onSubmitModifyPost(e, post)}
                                 title="Valider la modification"
                             >
                                 Modifier
@@ -149,7 +149,7 @@ const ModifyPost = ({ post, setIsModifPost, modifyImageFile, setModifyImageFile,
                     }
                     <button 
                         className="btn btn-submit" 
-                        onClick={(e) => resetModify(e, post.id)}
+                        onClick={(e) => resetModify(e, post)}
                         title="Annuler la modification"
                     >
                         Annuler

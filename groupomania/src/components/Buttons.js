@@ -1,5 +1,4 @@
 /* Emoji button components  */
-
 export const GrinTearsButtonEmpty = ({ addEmoji, postId, type }) => {
     return (
         <span className="laugh-before">
@@ -7,7 +6,7 @@ export const GrinTearsButtonEmpty = ({ addEmoji, postId, type }) => {
             <i className="far fa-grin-tears" onClick={(e) => addEmoji(e, type)} title="Haha"></i>
         </span>
     )
-}
+};
 
 export const GrinTearsButtonFilled = ({ removeEmoji, postId, type }) => {
     return (
@@ -16,7 +15,7 @@ export const GrinTearsButtonFilled = ({ removeEmoji, postId, type }) => {
             <i className="fas fa-grin-tears" onClick={(e) => removeEmoji(e, type)} title="C'est plus marrant"></i>
         </span>
     )
-}
+};
 
 export const ThumbUpButtonEmpty = ({ addEmoji, postId, type }) => {
     return(

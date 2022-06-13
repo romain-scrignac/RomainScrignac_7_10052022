@@ -52,7 +52,7 @@ const Comments = ({ post, setNewMessage }) => {
     const resetComment = (postId) => {
         setAddComment({ comment: '' });
         document.getElementById(`content-${postId}`).value = '';
-        document.getElementById(`submit-comment-${post.post_id}`).style["display"] = 'none';
+        document.getElementById(`submit-comment-${post.id}`).style["display"] = 'none';
     };
 
     /**
@@ -157,8 +157,8 @@ const Comments = ({ post, setNewMessage }) => {
             </div>
             {/* Comment form  */}
             <form className="post-addComment">
-                <textarea id={`content-${post.post_id}`} onChange={onChangeComment} rows="1" placeholder="Écrire un commentaire..."></textarea>
-                <span id={`submit-comment-${post.post_id}`} className="post-addComment__submit" onClick={(e) => onSubmitComment(e, post.post_id)}>
+                <textarea id={`content-${post.id}`} onChange={onChangeComment} rows="1" placeholder="Écrire un commentaire..."></textarea>
+                <span id={`submit-comment-${post.id}`} className="post-addComment__submit" onClick={(e) => onSubmitComment(e, post.id)}>
                     <i className="fas fa-check-circle" title="Envoyer le commentaire"></i>
                 </span>
             </form>

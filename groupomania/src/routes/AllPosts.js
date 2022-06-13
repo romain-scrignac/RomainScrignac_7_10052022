@@ -1,37 +1,31 @@
 import { useState, useEffect, lazy } from "react";
 import { useNavigate } from 'react-router-dom';
 import ModifyPost from '../components/ModifyPost';
-// import Comments from '../components/Comments';
-// import Emojis from '../components/Emojis';
+import { ContentInput, ImageInput, VideoInput } from '../components/PostForm';
 const Emojis = lazy(() => import('../components/Emojis'));
 const Comments = lazy(() => import('../components/Comments'));
 
 const AllPosts = () => {
-
     document.title = 'Groupomania';
 
     const navigate = useNavigate();
     const [order, setOrder] = useState('dateDesc');
     const [offset, setOffset] = useState(0);
     const [allPosts, setAllPosts] = useState([]);
-    const [isModifPost, setIsModifPost] = useState(false);
     const [imageFile, setImageFile] = useState(null);
     const [postValues, setPostValues] = useState({
         content: '',
         video: null
     });
-    const [modifyImageFile, setModifyImageFile] = useState(null);
-    const [modifyPostValues, setModifyPostValues] = useState({
-        content: '',
-        video: null
-    });
+    const [modifyPostValues, setModifyPostValues] = useState({});
+    const [isModifyPost, setIsModifyPost] = useState(false);
     const [newMessage, setNewMessage] = useState('');
     
     useEffect(() => {
         /**
          * @description this function communicates with the API to display all posts
          */
-        const getPosts = async () => {            
+        const getPosts = async () => {
             try{
                 const response = await fetch(`https://localhost/api/posts/?offset=${offset}&order=${order}`, {
                     headers: { 
@@ -106,9 +100,9 @@ const AllPosts = () => {
     };
 
     // Pagination
-    const changeOffset = () => {
-        setOffset(offset + 10);
-    };
+    // const changeOffset = () => {
+    //     setOffset(offset + 10);
+    // };
 
     // Order of posts
     const changeOrder = () => {
@@ -122,73 +116,7 @@ const AllPosts = () => {
 
     // Send message to user
     const sendMessage = (userId) => {
-        navigate('/message?userId='+userId);
-    };
-
-    // Publications
-    const onChangeContent = (e) => {
-        const oldContent = e.target.defaultValue;
-        const content = e.target.value;
-
-        if (oldContent !== content) {
-            if(content.length < 3 || content.trim() === "") {
-                if (!isModifPost) {
-                    setPostValues(previousState => { return {...previousState, content: ''} });
-                } else {
-                    setModifyPostValues(previousState => { return {...previousState, content: ''} });
-                }
-            } else {
-                if (!isModifPost) {
-                    setPostValues(previousState => { return {...previousState, content: content}});
-                } else {
-                    setModifyPostValues(previousState => { return {...previousState, content: content} });
-                }
-            }
-        };
-    };
-
-    const onChangeImage = (e, postId) => {
-        const file = e.target.files[0];
-        if(file.size > (1024 * 1024 * 5)) {
-            if (!isModifPost) {
-                setImageFile(null);
-                document.getElementById('isFile').style["display"] = "none";
-            } else {
-                setModifyImageFile(null);
-                document.getElementById(`modify__isFile-${postId}`).style["display"] = "none";
-            }
-        } else {
-            if (!isModifPost) {
-                setImageFile(file);
-                document.getElementById('isFile').style["display"] = "block";
-            } else {
-                setModifyImageFile(file);
-                document.getElementById(`modify__isFile-${postId}`).style["display"] = "block";
-            }
-        }
-    };
-
-    const onChangeVideo = (e) => {
-        const oldVideoLink = e.target.defaultValue;
-        const videoLink = e.target.value;
-        const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/
-        
-        if (oldVideoLink !== videoLink) {
-            console.log("test")
-            if (!videoLink.match(regexVideo)) {
-                if (!isModifPost) {
-                    setPostValues(previousState => { return {...previousState, video: null}});
-                } else {
-                    setModifyPostValues(previousState => { return {...previousState, video: null}});
-                }
-            } else {
-                if (!isModifPost) {
-                    setPostValues(previousState => { return {...previousState, video: videoLink}});
-                } else {
-                    setModifyPostValues(previousState => { return {...previousState, video: videoLink}});
-                }
-            }
-        }
+        navigate(`/messages?userId=${userId}`);
     };
 
     const displayInputVideo = (e) => {
@@ -202,13 +130,16 @@ const AllPosts = () => {
         }
     };
 
-    const onModifyPost = (e, postId) => {
+    const onModifyPost = (e, post) => {
         e.preventDefault();
-        const form = document.getElementById(`modify-form-${postId}`);
+        //console.log(post.video)
+
+        const form = document.getElementById(`modify-form-${post.id}`);
         if (form.style["display"] === "") {
             form.style["display"] = "flex";
         }
-        setIsModifPost(true);
+        setIsModifyPost(true);
+        setModifyPostValues({ content: post.content, video: post.video });
     };
 
     const onDeletePost = (e, postId) => {
@@ -235,10 +166,10 @@ const AllPosts = () => {
 
     const videoPlayer = (post) => {
         let videoUrl;
-        if (post.post_video.match(/www.youtube.com\/watch\?v=/)) {
-            videoUrl = post.post_video.replace("watch?v=", "embed/");
+        if (post.video.match(/www.youtube.com\/watch\?v=/)) {
+            videoUrl = post.video.replace("watch?v=", "embed/");
         } else {
-            videoUrl = post.post_video;
+            videoUrl = post.video;
         }
         return (
             <iframe
@@ -248,7 +179,7 @@ const AllPosts = () => {
                 autohide="1" 
                 frameBorder="0" 
                 scrolling="no"
-                title={`video-${post.post_id}`}
+                title={`video-${post.id}`}
             ></iframe>
         )
     };
@@ -333,14 +264,11 @@ const AllPosts = () => {
             <div className="addPost">
                 <h1>Envie de partager ?</h1>
                 <form className="post-form">
-                    <textarea 
-                        id="postText"
-                        name="postText"
-                        placeholder="Écrivez quelque chose..."
-                        onChange={onChangeContent}
-                        rows="5"
-                    >
-                    </textarea>
+                    <ContentInput 
+                        isModifyPost={isModifyPost}
+                        setPostValues={setPostValues}
+                        setModifyPostValues={null}
+                    />
                     <div className="post-form__options">
                         <div className="post-form__options-upload">
                             <label htmlFor="image-file" className="uploadFile">
@@ -348,13 +276,21 @@ const AllPosts = () => {
                                     <i className="far fa-file-image"></i>
                                 </span>
                             </label>
-                            <input id="image-file" type="file" accept="image/*" onChange={onChangeImage} />
+                            <ImageInput 
+                                isModifyPost={isModifyPost}
+                                setImageFile={setImageFile}
+                                setModifyImageFile={null}
+                            />
                             <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
                                 <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
                                     <i className="far fa-file-video"></i>
                                 </span>
                             </label>
-                            <input id="video-link" type="url" placeholder="http(s)://" onChange={onChangeVideo} />
+                            <VideoInput 
+                                isModifyPost={isModifyPost}
+                                setPostValues={setPostValues}
+                                setModifyPostValues={null}
+                            />
                         </div>
                         <div className="displayFileName">
                             <span id="isFile" className="isFile">
@@ -363,7 +299,7 @@ const AllPosts = () => {
                         </div>
                     </div>
                     { 
-                        postValues.content || postValues.video || imageFile ? 
+                        !isModifyPost && (postValues.content || postValues.video || imageFile) ? 
                         (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
                         (<button className="btn btn-submit-post" disabled>Publier</button>)
                     }
@@ -380,14 +316,9 @@ const AllPosts = () => {
                     {/* Modify post form */}
                     <ModifyPost 
                         post={post}
-                        setIsModifPost={setIsModifPost}
-                        modifyImageFile={modifyImageFile}
-                        setModifyImageFile={setModifyImageFile}
+                        isModifyPost={isModifyPost}
                         modifyPostValues={modifyPostValues}
                         setModifyPostValues={setModifyPostValues}
-                        onChangeContent={onChangeContent}
-                        onChangeImage={onChangeImage}
-                        onChangeVideo={onChangeVideo}
                         setNewMessage={setNewMessage}
                     />
                     {/* Post author informations */}
@@ -441,7 +372,7 @@ const AllPosts = () => {
                             (
                                 <div className="post-various--options">
                                     <span className="post-various--options__edit" title="Modifier le post">
-                                        <i className="fas fa-edit" onClick={(e) => onModifyPost(e, post.id)}></i>
+                                        <i className="fas fa-edit" onClick={(e) => onModifyPost(e, post)}></i>
                                     </span>
                                     <span className="post-various--options__delete" title="Supprimer le post">
                                         <i className="fas fa-trash-alt" onClick={(e) => onDeletePost(e, post.id)}></i>

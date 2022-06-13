@@ -18,9 +18,6 @@
         box-shadow: 2px 3px 10px $tertiary;
         color: white;
     }
-    &-login, &-account {
-        margin-right: 15px;
-    }
     &-logout, &-account, &-delete, &-update {
         cursor: pointer;
         background-color: unset;
@@ -31,6 +28,15 @@
         &:hover {
             scale: 1.1;
         }
+    }
+    &-account {
+        margin-right: 10px;
+    }
+    &-login {
+        margin-right: 15px;
+    }
+    &-logout img{
+        height: 22px;
     }
     &-delete {
         position: absolute;

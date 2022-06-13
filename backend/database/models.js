@@ -178,11 +178,11 @@ Comment.belongsTo(User, {
     foreignKey: 'user_id'
 });
 
-User.hasOne(Like, {
-    foreignKey: 'user_id'
+User.hasOne(Message, {
+    foreignKey: 'sender_id'
 });
-Like.belongsTo(User, {
-    foreignKey: 'user_id'
+Message.belongsTo(User, {
+    foreignKey: 'sender_id'
 });
 
 Post.hasMany(Comment, {

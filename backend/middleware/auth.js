@@ -15,8 +15,7 @@ module.exports = async (req, res, next) => {
         if(findUser === null) {
             throw 'User not found!';
         } else if (findUser.last_connection < findUser.last_disconnection) {
-            const erreur = [findUser.last_connection - findUser.last_disconnection];
-            throw erreur;
+            throw 'You are not logged in!';
         }
         // else if (user.isVerified === 0) {    // Vérification email
         //     throw 'Please validate your account first, check your email box';

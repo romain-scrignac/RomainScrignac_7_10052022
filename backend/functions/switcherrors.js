@@ -18,6 +18,9 @@ const switchErrors = (res, err) => {
         case 'Comment not found!':
         case 'No comments found':
         case 'User not found!':
+        case 'No Message found!':
+        case 'Message not found !':
+        case 'Sender not found!':
             statusCode = 404;
             break;
         case 'Unauthorized request!':
