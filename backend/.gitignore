@@ -9,8 +9,7 @@ server.key
 /node_modules
 
 # Images
-images/*
+/images/*.*
 
 # avatars
-!images/avatars
-images/avatars/*
+/images/avatars/*.*
