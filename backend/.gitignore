@@ -7,9 +7,3 @@ server.key
 
 # Node
 /node_modules
-
-# Images
-/images/*.*
-
-# avatars
-/images/avatars/*.*
