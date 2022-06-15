@@ -16,9 +16,9 @@ const validatePostPayload = (postObject, fileName) => {
         throw 'Bad request!';
     } else if (!content && (!fileName && !imageUrl) && !video) {
         throw 'Invalid form !';
-    } else if (typeof content !== "string" || (video && typeof video !== "string")) {
+    } else if (content !== true && typeof content !== "string" || (video && typeof video !== "string")) {
         throw 'Invalid field(s)!';
-    } else if (content && content.trim() === "") {
+    } else if (content !== true && content && content.trim() === "") {
         throw 'Missing field(s)!';
     } else if (content && (content.length < 3)) {
         throw 'Invalid number of characters!';

@@ -11,28 +11,30 @@ const Main = () => {
     const [userMessages, setUserMessages] = useState(0);
 
     useEffect(() => {
-        const getUserMessages = async () => {
-            try {
-                const response = await fetch(`https://localhost/api/auth/messages/${localStorage.session_id}`, {
-                    headers: { 
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.session_token}`
+        if (localStorage.session_token) {
+            const getUserMessages = async () => {
+                try {
+                    const response = await fetch(`https://localhost/api/auth/messages/${localStorage.session_id}`, {
+                        headers: { 
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.session_token}`
+                        }
+                    });
+                    const responseJson = await response.json((err) => {
+                        if (err) throw err;
+                    });
+                    if (response.ok) {
+                        setUserMessages(responseJson.count);
+                    } else {
+                        alert(responseJson.error);
                     }
-                });
-                const responseJson = await response.json((err) => {
-                    if (err) throw err;
-                });
-                if (response.ok) {
-                    setUserMessages(responseJson.count);
-                } else {
-                    alert(responseJson.error);
+                } catch (err) {
+                    console.error(err);
                 }
-            } catch (err) {
-                console.error(err);
-            }
-        };
-        getUserMessages();
+            };
+            getUserMessages();
+        }
     }, []);
 
     const viewMessages = () => {

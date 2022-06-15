@@ -7,8 +7,8 @@ const Comments = lazy(() => import('../components/Comments'));
 
 const AllPosts = () => {
     document.title = 'Groupomania';
-
     const navigate = useNavigate();
+
     const [order, setOrder] = useState('dateDesc');
     const [offset, setOffset] = useState(0);
     const [allPosts, setAllPosts] = useState([]);
@@ -17,7 +17,6 @@ const AllPosts = () => {
         content: '',
         video: null
     });
-    const [modifyPostValues, setModifyPostValues] = useState({});
     const [isModifyPost, setIsModifyPost] = useState(false);
     const [newMessage, setNewMessage] = useState('');
     
@@ -36,7 +35,7 @@ const AllPosts = () => {
                 });
                 if (response.ok) {
                     const responseJson = await response.json();
-                    // Likes counters
+                    // Reactions counters
                     const postsFromApi = responseJson.allPosts.map(post => {
                         let likes = 0;
                         let loves = 0;
@@ -63,6 +62,10 @@ const AllPosts = () => {
         getPosts();
     }, [order, offset, newMessage]);
 
+    /**
+     * @description this function allows to display if a user is online or not. 
+     *              If yes, it transforms the date to HH:MM format
+     */
     const lastConnection = (last_connection, last_disconnection) => {
         const dateLastConnection = new Date(last_connection);
         const dateLastDisconnection = new Date(last_disconnection);
@@ -78,6 +81,10 @@ const AllPosts = () => {
         }
     };
     
+    /**
+     * @description this function switches between the publication and update date
+     *               and transforms it into DD-MM-YYYY format
+     */
     const formatDate = (post) => {
         const createdAt = new Date(post.createdAt);
         const updatedAt = new Date(post.updatedAt);
@@ -99,11 +106,16 @@ const AllPosts = () => {
         }
     };
 
-    // Pagination
+    /**
+     * @description this function is used to change the offset of infinite scroll
+     */
     // const changeOffset = () => {
     //     setOffset(offset + 10);
     // };
 
+    /**
+     * @description this function is used to change the display order of posts by date
+     */
     // Order of posts
     const changeOrder = () => {
         if (order === "dateDesc") {
@@ -114,11 +126,17 @@ const AllPosts = () => {
         }
     };
 
+    /**
+     * @description this function is used to navigate to the mailbox
+     */
     // Send message to user
     const sendMessage = (userId) => {
         navigate(`/messages?userId=${userId}`);
     };
 
+    /**
+     * @description this function is used to display the video address bar
+     */
     const displayInputVideo = (e) => {
         e.preventDefault();
         const videoLink = document.getElementById('video-link');
@@ -130,18 +148,21 @@ const AllPosts = () => {
         }
     };
 
+    /**
+     * @description this function is used to display the modification form of a publication
+     */
     const onModifyPost = (e, post) => {
         e.preventDefault();
-        //console.log(post.video)
-
         const form = document.getElementById(`modify-form-${post.id}`);
         if (form.style["display"] === "") {
             form.style["display"] = "flex";
         }
         setIsModifyPost(true);
-        setModifyPostValues({ content: post.content, video: post.video });
     };
 
+    /**
+     * @description this function is used to display a confirmation dialog before deletion of a post
+     */
     const onDeletePost = (e, postId) => {
         e.preventDefault();
         const text = "Confirmez-vous la suppression du post ?";
@@ -150,20 +171,30 @@ const AllPosts = () => {
         }
     };
 
+    /**
+     * @description this function is used to submit the publication
+     */
     const onSubmitPost = (e) => {
         e.preventDefault();
         fetchPostData();
     };
     
-    const resetPost = () => {
+    /**
+     * @description this is used to reset the publication form after sending
+     */
+    const resetForm = () => {
         setImageFile(null);
         setPostValues({ content: "", video: null });
         document.getElementById('postText').value = '';
-        document.getElementById('image-file').file = null;
+        document.getElementById('image-file').value = '';
         document.getElementById('isFile').innerText = '';
         document.getElementById('video-link').value = '';
     };
 
+    /**
+     * @description this function is used to replace the video address if it's youtube
+     *              and return an iframe tag
+     */
     const videoPlayer = (post) => {
         let videoUrl;
         if (post.video.match(/www.youtube.com\/watch\?v=/)) {
@@ -194,7 +225,6 @@ const AllPosts = () => {
                 const formData = new FormData();
                 formData.append("post", JSON.stringify(postValues));
                 formData.append("image", imageFile);
-                //formData.append('fileName', imageFile.name);
 
                 response = await fetch(`https://localhost/api/posts/`, {
                     method: 'POST',
@@ -218,11 +248,11 @@ const AllPosts = () => {
                 if (err) throw err;
             });
             if (response.ok) {
-                resetPost();
+                resetForm();
                 setNewMessage(`Post added ${responseJson.postId}`);
                 console.log(responseJson.message);
             } else {
-                console.error(responseJson.error);
+                console.log(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -249,7 +279,7 @@ const AllPosts = () => {
                 setNewMessage(`Post ${postId} deleted`);
                 console.log(responseJson.message);
             } else {
-                console.error(responseJson.error);
+                console.log(responseJson.error);
             }
         } catch (err) {
             console.error(err);
@@ -257,9 +287,7 @@ const AllPosts = () => {
     };
 
     return (
-        
         <div className="allPosts" id="allPosts">
-            
             {/* Publication form */}
             <div className="addPost">
                 <h1>Envie de partager ?</h1>
@@ -268,6 +296,7 @@ const AllPosts = () => {
                         isModifyPost={isModifyPost}
                         setPostValues={setPostValues}
                         setModifyPostValues={null}
+                        post={null}
                     />
                     <div className="post-form__options">
                         <div className="post-form__options-upload">
@@ -280,6 +309,7 @@ const AllPosts = () => {
                                 isModifyPost={isModifyPost}
                                 setImageFile={setImageFile}
                                 setModifyImageFile={null}
+                                post={null}
                             />
                             <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
                                 <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
@@ -290,6 +320,7 @@ const AllPosts = () => {
                                 isModifyPost={isModifyPost}
                                 setPostValues={setPostValues}
                                 setModifyPostValues={null}
+                                post={null}
                             />
                         </div>
                         <div className="displayFileName">
@@ -317,8 +348,7 @@ const AllPosts = () => {
                     <ModifyPost 
                         post={post}
                         isModifyPost={isModifyPost}
-                        modifyPostValues={modifyPostValues}
-                        setModifyPostValues={setModifyPostValues}
+                        setIsModifyPost={setIsModifyPost}
                         setNewMessage={setNewMessage}
                     />
                     {/* Post author informations */}

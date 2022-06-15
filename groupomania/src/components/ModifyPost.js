@@ -1,10 +1,18 @@
 import { ContentInput, ImageInput, VideoInput } from '../components/PostForm';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-const ModifyPost = ({ post, isModifyPost, modifyPostValues, setModifyPostValues, setNewMessage }) => {
+const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
 
+    const [modifyPostValues, setModifyPostValues] = useState({
+        content: '',
+        video: null
+    });
     const [modifyImageFile, setModifyImageFile] = useState(null);
+    const [deleteImage, setDeleteImage] = useState(false);
 
+    /**
+     * @description this function is used to display the video address bar
+     */
     const displayModifyVideo = (e, post) => {
         e.preventDefault();
         const videoLink = document.getElementById(`modify__video-${post.id}`);
@@ -16,70 +24,134 @@ const ModifyPost = ({ post, isModifyPost, modifyPostValues, setModifyPostValues,
         }
     };
 
-    const onSubmitModifyPost = (e, post) => {
-        e.preventDefault();
-        fetchModifyPost(e, post);
+    /**
+     * @description this function is used to display the name of the image
+     */
+    const DisplayFileName = ({ post }) => {
+        if (modifyImageFile && !deleteImage) {
+            return `Image: ${modifyImageFile.name}`;
+        } else if (post.image && !deleteImage) {
+            return `Image: ${post.image.split('images/')[1]}`;
+        }
     };
 
+    /**
+     * @description this function is used to remove the image from a post
+     */
+    const onDeleteImage = (e) => {
+        e.preventDefault();
+        setDeleteImage(true);
+        e.target.style["display"] = 'none';
+    };
+
+    /**
+     * @description this function is used to reset modification form
+     */
     const resetModify = (e, post) => {
         e.preventDefault();
         const form = document.getElementById(`modify-form-${post.id}`);
-        const content = document.getElementById(`modify__content-${post.id}`);
-        const image = document.getElementById(`modify__image-${post.id}`);
-        const video = document.getElementById(`modify__video-${post.id}`);
-
+        const imageField = document.getElementById(`modify__image-${post.id}`);
+        const contentField = document.getElementById(`modify__content-${post.id}`);
+        const videoField = document.getElementById(`modify__video-${post.id}`);
+        const deleteFile = document.getElementById(`deleteFile-${post.id}`);
+        // On enlève les affichages créés lors de la modification
         form.style["display"] = "";
-        content.value = post.content;
-        video.value = post.video;
-        image.file = null;
+        videoField.style['display'] = "";
+        if (post.image && !modifyImageFile && post.content) {
+            deleteFile.firstChild.style["display"] = "unset";
+        }
+        // On remet tous les états à leurs valeurs par défaut
         setModifyImageFile(null);
-        setModifyPostValues({ content: "", video: null });
-        setNewMessage('Cancelled modification'+content);
-        console.log(video.value)
+        setModifyPostValues({content: '', video: null});
+        setDeleteImage(false);
+        setIsModifyPost(false);
+        setNewMessage(`Reset modification ${contentField.value + imageField.value + videoField.value}`);
+        // On remet les valuers par défaut dans les champs du formulaire
+        contentField.value = post.content;
+        videoField.value = post.video;
+        imageField.value = '';
+    };
+
+    /**
+     * @description this function is used to validate the modification
+     */
+     const onSubmitModifyPost = (e, post) => {
+        e.preventDefault();
+        // Définition des valeurs à envoyer selon modification ou non
+        let contentValue;
+        let imageValue;
+        let videoValue;
+
+        if (modifyPostValues.content) {
+            contentValue = modifyPostValues.content;
+        } else {
+            contentValue = post.content;
+        }
+        if (modifyPostValues.video) {
+            videoValue = modifyPostValues.video;
+        } else {
+            videoValue = post.video;
+        }
+        if (modifyImageFile) {
+            imageValue = modifyImageFile;
+        } else {
+            if (deleteImage) {
+                imageValue = null;
+            } else {
+                imageValue = post.image;
+            }
+        }
+        fetchModifyPost(e, post, contentValue, imageValue, videoValue);
     };
 
     /**
      * @description this function communicates with the API when a post is modified
      */
-     const fetchModifyPost = async (e, post) => {
+    const fetchModifyPost = async (e, post, contentValue, imageValue, videoValue) => {
         try {
             let response;
-            if (modifyImageFile) {
-                const formData = new FormData();
-                formData.append("post", JSON.stringify(modifyPostValues));
-                formData.append("image", modifyImageFile);
-                formData.append('fileName', modifyImageFile.name);
+            const formData = new FormData();
 
-                response = await fetch(`https://localhost/api/posts/${post.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.session_token}`
-                    },
-                    body: formData
-                });
+            if(modifyImageFile) {
+                formData.append("post", JSON.stringify({ content: contentValue, video: videoValue }));
+                formData.append("image", imageValue);
             } else {
-                response = await fetch(`https://localhost/api/posts/${post.id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.session_token}`
-                    },
-                    body: JSON.stringify({ post: modifyPostValues })
-                });
+                formData.append("post", JSON.stringify({ content: contentValue, video: videoValue, imageUrl: imageValue }));
             }
+
+            response = await fetch(`https://localhost/api/posts/${post.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.session_token}`
+                },
+                body: formData
+            });
             const responseJson = await response.json((err) => {
                 if (err) throw err;
             });
             if (response.ok) {
-                resetModify(e, post);
-                setNewMessage(`Post ${post.id} modified`);
-            } else {
-                alert(responseJson.error);
+                setNewMessage(`Reset modification ${contentValue + imageValue + videoValue}`);
+                //resetModify(e, post);
+            }
+            else {
+                console.log(responseJson.error);
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
+
+            // else {
+            //     response = await fetch(`https://localhost/api/posts/${post.id}`, {
+            //         method: 'PUT',
+            //         headers: {
+            //             'Accept': 'application/json',
+            //             'Content-type': 'application/json',
+            //             'Authorization': `Bearer ${localStorage.session_token}`
+            //         },
+            //         body: JSON.stringify({ post: modifyPostValues })
+            //     });
+            // }
+            
     };
 
     return (
@@ -124,17 +196,22 @@ const ModifyPost = ({ post, isModifyPost, modifyPostValues, setModifyPostValues,
                         />
                     </div>
                     <div className="displayFileName">
-                        <span 
-                            id={`modify__isFile-${post.id}`} 
-                            className="modify__isFile"
-                        >
-                            {modifyImageFile ? (modifyImageFile.name): null}
+                        <span id={`modify__isFile-${post.id}`} className="modify__isFile">
+                            <DisplayFileName post={post} />
                         </span>
+                        { 
+                            post.image && !modifyImageFile && post.content? 
+                            (
+                                <span id={`deleteFile-${post.id}`} className="deleteFile" onClick={onDeleteImage}>
+                                    <i className="far fa-trash-alt" title="Supprimer l'image"></i>
+                                </span>
+                            ) : null
+                        }
                     </div>
                 </div>
                 <div className="confirm-modify">
                     { 
-                        modifyPostValues.content || modifyPostValues.video || modifyImageFile ? 
+                        modifyPostValues.content || modifyPostValues.video || modifyImageFile || deleteImage ? 
                         (
                             <button 
                                 className="btn btn-submit" 

@@ -230,13 +230,22 @@ footer {
   width: 100%;
 }
 .post-form__options .displayFileName .isFile, .post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .isFile, .post-form--modify__options .displayFileName .modify__isFile {
-  display: none;
   bottom: -10px;
   font-size: 12px;
   padding-top: 10px;
 }
 .post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .modify__isFile {
   color: white;
+}
+.post-form__options .displayFileName .deleteFile, .post-form--modify__options .displayFileName .deleteFile {
+  margin-left: 10px;
+  margin-top: 10px;
+  color: #FFD7D7;
+  font-size: 16px;
+}
+.post-form__options .displayFileName .deleteFile:hover, .post-form--modify__options .displayFileName .deleteFile:hover {
+  cursor: pointer;
+  transform: scale(1.07);
 }
 .post-form__options #image-file, .post-form__options #video-link, .post-form__options .modify__image, .post-form__options .modify__video-link, .post-form--modify__options #image-file, .post-form--modify__options #video-link, .post-form--modify__options .modify__image, .post-form--modify__options .modify__video-link {
   display: none;

@@ -106,7 +106,7 @@ exports.addPost = async (req, res) => {
             content: postObject.content,
             image: postObject.imageUrl,
             video: postObject.video
-        };        
+        };
         const addPost = await Post.create(postAttributes, (err) => {
             if (err) throw err;
         });
@@ -118,7 +118,7 @@ exports.addPost = async (req, res) => {
 };
 
 // Fonction pour modifier un post
-exports.modifyPost = async (req, res) => {    
+exports.modifyPost = async (req, res) => {
     try {
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
@@ -138,7 +138,7 @@ exports.modifyPost = async (req, res) => {
         {
             ...JSON.parse(req.body.post),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body.post, imageUrl: null };
+        } : { ...JSON.parse(req.body.post) };
 
         // Validation du formulaire
         validatePostPayload(postObject);
@@ -159,7 +159,7 @@ exports.modifyPost = async (req, res) => {
         let newImage;
         let newVideo;
         
-        if(findPost.content && !postObject.content) {
+        if(findPost.content && (!postObject.content || postObject.content === true)) {
             newContent = '';
         }
         else if (postObject.content === findPost.content) {
@@ -170,11 +170,13 @@ exports.modifyPost = async (req, res) => {
 
         if(findPost.image && postObject.imageUrl === null) {
             newImage = null;
-        } else if (postObject.imageUrl !== null) {
+        } else if (postObject.imageUrl !== null && postObject.imageUrl !== findPost.image) {
             newImage = postObject.imageUrl;
         } else {
             newImage = findPost.image;
         }
+        console.log(newContent);
+
 
         if(findPost.video && postObject.video === null) {
             newVideo = null;

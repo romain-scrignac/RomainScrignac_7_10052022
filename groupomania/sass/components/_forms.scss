@@ -63,13 +63,22 @@
             width: 100%;
 
             .isFile, .modify__isFile {
-                display: none;
                 bottom: -10px;
                 font-size: 12px;
                 padding-top: 10px;
             }
             .modify__isFile{
                 color: white;
+            }
+            .deleteFile {
+                margin-left: 10px;
+                margin-top: 10px;
+                color: $secondary;
+                font-size: 16px;
+                &:hover {
+                    cursor: pointer;
+                    transform: scale(1.07);
+                }
             }
         }
         #image-file, #video-link, .modify__image, .modify__video-link {
