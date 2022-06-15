@@ -31,7 +31,7 @@ exports.getAllPosts = async (req, res) => {
                     model: Comment, separate: true, order: [['createdAt', 'ASC']],
                     include: [
                         { model: User, attributes: userAttr },
-                        { model: Like, attributes:  ['id', 'user_id', 'value', 'type'] }
+                        // { model: Like, attributes:  ['id', 'user_id', 'value', 'type'] }
                     ],
                     attributes: { exclude: ['post_id'] }
                 },
@@ -50,36 +50,6 @@ exports.getAllPosts = async (req, res) => {
         switchErrors(res, err);
     }
 };
-
-// // Fonction pour afficher un seul post
-// exports.getOnePost = async (req, res) => {
-//     try {
-//         const userAttr = ['user_firstname', 'user_lastname', 'user_email'];
-//         const onePost = await Post.findOne({ 
-//             where: {post_id: req.params.id},
-//             include: [
-//                 { 
-//                     model: User, attributes: userAttr 
-//                 },
-//                 { 
-//                     model: Comment, separate: true, order: [['comment_date', 'ASC']], 
-//                     include: [
-//                         { model: User, attributes: userAttr }, 
-//                         { model: Like, attributes:  ['like_id', 'like_value', 'like_user_id'] }
-//                     ],
-//                     attributes: { exclude: ['comment_post_id'] }
-//                 },
-//                 { 
-//                     model: Like, separate: true, attributes: ['like_id', 'like_value', 'like_user_id']
-//                 }
-//             ]
-//         });
-//         if (onePost === null) throw 'Post not found!';
-//         res.status(200).json({ onePost });
-//     } catch (err) {
-//         switchErrors(res, err);
-//     }
-// };
 
 // Fonction pour ajouter un post
 exports.addPost = async (req, res) => {

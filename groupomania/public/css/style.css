@@ -157,7 +157,7 @@ footer {
   scale: 1.05;
 }
 .btn-order {
-  margin: 30px 0 10px 0;
+  margin-bottom: 10px;
   scale: 0.9;
 }
 
@@ -517,8 +517,8 @@ footer {
 }
 .nav-buttons--profil__messages {
   position: fixed;
-  top: 5px;
-  right: 85px;
+  top: 30px;
+  right: 80px;
   font-size: 13px;
   color: black;
 }
@@ -557,6 +557,7 @@ footer {
 }
 .allPosts .addPost {
   width: 100%;
+  margin-bottom: 30px;
 }
 .allPosts .addPost h1 {
   font-size: medium;

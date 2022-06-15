@@ -28,27 +28,27 @@ const Main = () => {
         document.getElementById('root').style["opacity"] = 1;
     };
 
-    const getUserMessages = async () => {
-        try {
-            const response = await fetch(`https://localhost/api/auth/messages/${localStorage.session_id}`, {
-                headers: { 
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.session_token}`
-                }
-            });
-            const responseJson = await response.json();
-            if (response.ok) {
-                setUserMessages(responseJson.count);
-            } else if (responseJson.error.name && responseJson.error.name === "JsonWebTokenError") {
-                alertToken();
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    };
     if (localStorage.session_token) {
-        getUserMessages();
+        const getUserMessages = async () => {
+            try {
+                const response = await fetch(`https://localhost/api/auth/messages/${localStorage.session_id}`, {
+                    headers: { 
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.session_token}`
+                    }
+                });
+                const responseJson = await response.json();
+                if (response.ok) {
+                    setUserMessages(responseJson.count);
+                } else if (responseJson.error.name && responseJson.error.name === "JsonWebTokenError") {
+                    alertToken();
+                }
+            } catch (err) {
+                console.log(err);
+            }
+            getUserMessages();
+        };
     }
     
 
