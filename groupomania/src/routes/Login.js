@@ -43,16 +43,16 @@ const Login = () => {
         setPasswordValue(password);
     };
 
-    const onView = (e) => {
+    const onViewPassword = (e) => {
         e.preventDefault();
 
         if (e.target.title === 'Afficher') {
-            e.target.parentNode.previousSibling.type = 'text';
+            document.getElementById("password").type = 'text';
             document.getElementById('icon-low-vision').style["display"] = "none";
             document.getElementById('icon-eye').style['display'] = 'block';
         }
         if (e.target.title === 'Cacher') {
-            e.target.parentNode.previousSibling.previousSibling.type = 'password';
+            document.getElementById("password").type = 'password';
             document.getElementById('icon-eye').style["display"] = "none";
             document.getElementById('icon-low-vision').style['display'] = 'block';
         }
@@ -122,10 +122,10 @@ const Login = () => {
                             value={password}
                             onChange={passwordOnChange}
                         />
-                        <span id="icon-low-vision" className="icon-low-vision" onClick={onView}>
+                        <span id="icon-low-vision" className="icon-low-vision" onClick={onViewPassword}>
                             <i className="fas fa-low-vision" title="Afficher"></i>
                         </span>
-                        <span id="icon-eye" className ="icon-eye" onClick={onView}>
+                        <span id="icon-eye" className ="icon-eye" onClick={onViewPassword}>
                             <i className="fas fa-eye" title="Cacher"></i>
                         </span>
                     </fieldset>

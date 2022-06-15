@@ -81,17 +81,20 @@ const Signup = () => {
         setConfirmPasswordValue(confirmPass);
     };
 
-    const onView = (e) => {
+    const onViewPassword = (e) => {
         e.preventDefault();
-        const previousInput = e.target.parentNode.previousElementSibling;
-        if (previousInput.type === "password") {
-            previousInput.type = "text";
-            e.target.style["opacity"] = "0.5";
-            e.target.title = "Cacher";
-        } else {
-            previousInput.type = "password";
-            e.target.style["opacity"] = "1";
-            e.target.title = "Afficher";
+        
+        if (e.target.title === 'Afficher') {
+            document.getElementById("password").type = 'text';
+            document.getElementById("verifPassword").type = 'text';
+            document.getElementById('icon-low-vision').style["display"] = "none";
+            document.getElementById('icon-eye').style['display'] = 'block';
+        }
+        if (e.target.title === 'Cacher') {
+            document.getElementById("password").type = 'password';
+            document.getElementById("verifPassword").type = 'password';
+            document.getElementById('icon-eye').style["display"] = "none";
+            document.getElementById('icon-low-vision').style['display'] = 'block';
         }
     };
 
@@ -174,9 +177,15 @@ const Signup = () => {
                                 value={passwordValue}
                                 onChange={passwordOnChange}
                             />
-                            <span className="icon-eye">
-                                <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
+                            <span id="icon-low-vision" className="icon-low-vision" onClick={onViewPassword}>
+                                <i className="fas fa-low-vision" title="Afficher"></i>
                             </span>
+                            <span id="icon-eye" className ="icon-eye" onClick={onViewPassword}>
+                                <i className="fas fa-eye" title="Cacher"></i>
+                            </span>
+                            {/* <span className="icon-eye">
+                                <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
+                            </span> */}
                         </fieldset>
                         <fieldset>
                             <label htmlFor="password">Confirmation du mot de passe</label>
@@ -187,9 +196,6 @@ const Signup = () => {
                                 value={confirmPasswordValue}
                                 onChange={confirmPasswordOnChange}
                             />
-                            <span className="icon-eye">
-                                <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
-                            </span>
                         </fieldset>
                         {   
                             user.firstname && user.lastname && user.email && user.password 
