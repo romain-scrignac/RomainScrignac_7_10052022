@@ -69,18 +69,15 @@ const Comments = ({ post, setNewMessage }) => {
                 },
                 body: JSON.stringify({ content: addComment.content, postId: postId })
             });
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
+            const responseJson = await response.json();
+
             if (response.ok) {
                 resetComment(postId);
                 setNewMessage(`Comment ${responseJson.commentId} added`);
                 console.log(responseJson.message);
-            } else {
-                alert(responseJson.error);
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     };
 
@@ -98,17 +95,14 @@ const Comments = ({ post, setNewMessage }) => {
                 },
                 body: JSON.stringify({ commentId: commentId })
             });
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
+            const responseJson = await response.json();
+
             if (response.ok) {
                 setNewMessage(`Comment ${commentId} deleted`);
                 console.log(responseJson.message);
-            } else {
-                alert(responseJson.error);
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     };
 

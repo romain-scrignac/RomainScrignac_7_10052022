@@ -45,15 +45,16 @@ const Login = () => {
 
     const onView = (e) => {
         e.preventDefault();
-        const previousInput = e.target.parentNode.previousElementSibling;
-        if (previousInput.type === "password") {
-            previousInput.type = "text";
-            e.target.style["opacity"] = "0.5";
-            e.target.title = "Cacher";
-        } else {
-            previousInput.type = "password";
-            e.target.style["opacity"] = "1";
-            e.target.title = "Afficher";
+
+        if (e.target.title === 'Afficher') {
+            e.target.parentNode.previousSibling.type = 'text';
+            document.getElementById('icon-low-vision').style["display"] = "none";
+            document.getElementById('icon-eye').style['display'] = 'block';
+        }
+        if (e.target.title === 'Cacher') {
+            e.target.parentNode.previousSibling.previousSibling.type = 'password';
+            document.getElementById('icon-eye').style["display"] = "none";
+            document.getElementById('icon-low-vision').style['display'] = 'block';
         }
     };
 
@@ -72,10 +73,7 @@ const Login = () => {
                     },
                     body: JSON.stringify({ user })
                 });
-
-                const responseJson = await response.json((err) => {
-                    if (err) throw err;
-                });
+                const responseJson = await response.json();
 
                 if (response.ok) {
                     if (responseJson.isVerified === false) {
@@ -94,7 +92,7 @@ const Login = () => {
                     setTimeout(function(){ setAlert('') } , 8000);
                 }
             } catch (err) {
-                console.error(err);
+                console.log(err);
             }
         };
         fetchData();
@@ -124,8 +122,11 @@ const Login = () => {
                             value={password}
                             onChange={passwordOnChange}
                         />
-                        <span className="icon-eye">
-                            <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
+                        <span id="icon-low-vision" className="icon-low-vision" onClick={onView}>
+                            <i className="fas fa-low-vision" title="Afficher"></i>
+                        </span>
+                        <span id="icon-eye" className ="icon-eye" onClick={onView}>
+                            <i className="fas fa-eye" title="Cacher"></i>
                         </span>
                     </fieldset>
                     {

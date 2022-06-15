@@ -32,16 +32,12 @@ const Account = () => {
                         'Authorization': `Bearer ${localStorage.session_token}`
                     }
                 });
-                const responseJson = await response.json((err) => {
-                    if (err) throw err;
-                });
+                const responseJson = await response.json();
                 if (response.ok) {
                     setUserInfos(responseJson.message);
-                } else {
-                    alert(responseJson.error);
                 }
             } catch (err) {
-                console.error(err);
+                console.olg(err);
             }
         };
         getUserData();

@@ -1,5 +1,5 @@
 import { ContentInput, ImageInput, VideoInput } from '../components/PostForm';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
 
@@ -109,7 +109,6 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
      */
     const fetchModifyPost = async (e, post, contentValue, imageValue, videoValue) => {
         try {
-            let response;
             const formData = new FormData();
 
             if(modifyImageFile) {
@@ -119,22 +118,16 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                 formData.append("post", JSON.stringify({ content: contentValue, video: videoValue, imageUrl: imageValue }));
             }
 
-            response = await fetch(`https://localhost/api/posts/${post.id}`, {
+            const response = await fetch(`https://localhost/api/posts/${post.id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${localStorage.session_token}`
                 },
                 body: formData
             });
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
             if (response.ok) {
                 setNewMessage(`Reset modification ${contentValue + imageValue + videoValue}`);
-                //resetModify(e, post);
-            }
-            else {
-                console.log(responseJson.error);
+                resetModify(e, post);
             }
         } catch (err) {
             console.log(err);

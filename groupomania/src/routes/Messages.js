@@ -33,16 +33,13 @@ const Messages = () => {
                     if (response.ok) {
                         setAllMessages(responseJson);
                         console.log(allMessages);
-                    } else {
-                        console.error(responseJson.error);
                     }
                 } catch (err) {
-                    console.error(err);
+                    console.log(err);
                 }
             };
             getAllMessages();
         } else if (messageId) {
-            console.log(`messageId: ${messageId}`)
             /**
              * @description this function communicates with the API to display all messages
              */
@@ -59,11 +56,9 @@ const Messages = () => {
                     if (response.ok) {
                         setOneMessage(responseJson);
                         console.log(oneMessage);
-                    } else {
-                        console.error(responseJson.error);
                     }
                 } catch (err) {
-                    console.error(err);
+                    console.log(err);
                 }
             };
             getOneMessage();

@@ -460,18 +460,24 @@ footer {
 .login-form fieldset, .signup-form fieldset {
   position: relative;
 }
-.login-form .icon-eye, .signup-form .icon-eye {
+.login-form .icon-low-vision, .login-form .icon-eye, .signup-form .icon-low-vision, .signup-form .icon-eye {
   position: absolute;
   right: 20px;
   bottom: 0;
   height: 30px;
   width: 30px;
 }
-.login-form .icon-eye i, .signup-form .icon-eye i {
+.login-form .icon-low-vision i, .login-form .icon-eye i, .signup-form .icon-low-vision i, .signup-form .icon-eye i {
   font-size: 15px;
 }
-.login-form .icon-eye i:hover, .signup-form .icon-eye i:hover {
+.login-form .icon-low-vision i:hover, .login-form .icon-eye i:hover, .signup-form .icon-low-vision i:hover, .signup-form .icon-eye i:hover {
   cursor: pointer;
+}
+.login-form .icon-low-vision, .signup-form .icon-low-vision {
+  display: block;
+}
+.login-form .icon-eye, .signup-form .icon-eye {
+  display: none;
 }
 
 /* Main */

@@ -56,7 +56,7 @@ const AllPosts = () => {
                     setAllPosts(postsFromApi);
                 }
             } catch (err) {
-                console.error(err);
+                console.log(err);
             }        
         };    
         getPosts();
@@ -244,18 +244,15 @@ const AllPosts = () => {
                     body: JSON.stringify({ post: postValues })
                 });
             }
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
+            const responseJson = await response.json();
+
             if (response.ok) {
                 resetForm();
                 setNewMessage(`Post added ${responseJson.postId}`);
                 console.log(responseJson.message);
-            } else {
-                console.log(responseJson.error);
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     };
 
@@ -278,11 +275,9 @@ const AllPosts = () => {
             if (response.ok) {
                 setNewMessage(`Post ${postId} deleted`);
                 console.log(responseJson.message);
-            } else {
-                console.log(responseJson.error);
             }
         } catch (err) {
-            console.error(err);
+            console.log(err);
         }
     };
 

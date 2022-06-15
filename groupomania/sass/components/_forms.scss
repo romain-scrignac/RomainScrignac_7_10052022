@@ -313,7 +313,7 @@
     fieldset {
         position: relative;
     }
-    .icon-eye {
+    .icon-low-vision, .icon-eye {
         position: absolute;
         right: 20px;
         bottom: 0;
@@ -326,5 +326,11 @@
                 cursor: pointer;
             }
         }
+    }
+    .icon-low-vision {
+        display: block;
+    }
+    .icon-eye {
+        display: none;
     }
 }

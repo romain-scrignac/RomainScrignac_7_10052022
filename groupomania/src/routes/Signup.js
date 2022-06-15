@@ -110,9 +110,8 @@ const Signup = () => {
                     },
                     body: JSON.stringify({ user })
                 });
-                const responseJson = await response.json((err) => {
-                    if (err) throw err;
-                });
+                const responseJson = await response.json();
+                
                 if (response.ok) {
                     setMessage('Bienvenue ! Un code de confirmation vient de vous être envoyé, veuillez vérifier votre boite email');
                     setTimeout(function(){ window.location.href="/login" } , 5000);
@@ -121,7 +120,7 @@ const Signup = () => {
                     setTimeout(function(){ setNewAlert('') } , 8000);
                 }
             } catch (err) {
-                console.error(err);
+                console.log(err);
             }
         };
         fetchData();
