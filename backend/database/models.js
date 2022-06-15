@@ -1,10 +1,7 @@
-const { DataTypes, TINYINT, SMALLINT } = require("sequelize");
+const { DataTypes } = require("sequelize");
 const sequelize = require('./config');
 
-"use strict";
-
 const User = sequelize.define('User', {              // User model
-    // Model attributes are defined here
     id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
@@ -51,13 +48,11 @@ const User = sequelize.define('User', {              // User model
         defaultValue: DataTypes.NOW
     }
 }, {
-    // Other model options go here
     tableName: 'Users',
     timestamps: false
 });
 
 const Post = sequelize.define('Post', {             // post model
-    // Model attributes are defined here
     id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
@@ -68,7 +63,7 @@ const Post = sequelize.define('Post', {             // post model
         allowNull: false
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     },
     image: {
@@ -78,12 +73,10 @@ const Post = sequelize.define('Post', {             // post model
         type: DataTypes.STRING
     }
 }, {
-    // Other model options go here
     tableName: 'Posts'
 });
 
 const Comment = sequelize.define('Comment', {       // Comment model
-    // Model attributes are defined here
     id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
@@ -98,24 +91,22 @@ const Comment = sequelize.define('Comment', {       // Comment model
         allowNull: false
     },
     content: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false
     }
 }, {
-    // Other model options go here
     tableName: 'Comments'
 });
 
 const Like = sequelize.define('Like', {             // Like model
-    // Model attributes are defined here
     id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
         primaryKey: true
     },
-    comment_id: {
-        type: DataTypes.SMALLINT
-    },
+    // comment_id: {
+    //     type: DataTypes.SMALLINT
+    // },
     post_id: {
         type: DataTypes.SMALLINT
     },
@@ -123,21 +114,19 @@ const Like = sequelize.define('Like', {             // Like model
         type: DataTypes.SMALLINT,
         allowNull: false
     },
-    value: {
-        type: TINYINT(1),
-        allowNull: false
-    },
     type: {
-        type: SMALLINT(10)
+        type: DataTypes.STRING(10)
+    },
+    value: {
+        type: DataTypes.TINYINT(1),
+        allowNull: false
     }
 },{
-    // Other model options go here
     tableName: 'Likes',
     timestamps: false
 });
 
 const Message = sequelize.define('Message', {       // Message model
-// Model attributes are defined here
     id: {
         type: DataTypes.SMALLINT,
         autoIncrement: true,
@@ -159,30 +148,48 @@ const Message = sequelize.define('Message', {       // Message model
         defaultValue: Date
     }
 }, {
-    // Other model options go here
     tableName: 'Messages',
     timestamps: false
 });
 
-User.hasOne(Post, {                                 // Associations
-    foreignKey: 'user_id'
+User.hasMany(Post, {                                // Associations
+    foreignKey: 'user_id',
+    onDelete: 'cascade'
 });
 Post.belongsTo(User, {
     foreignKey: 'user_id'
 });
 
-User.hasOne(Comment, { 
-    foreignKey: 'user_id'
+User.hasMany(Comment, { 
+    foreignKey: 'user_id',
+    onDelete: 'cascade'
 });
 Comment.belongsTo(User, {
     foreignKey: 'user_id'
 });
 
-User.hasOne(Message, {
-    foreignKey: 'sender_id'
+User.hasMany(Message, {
+    foreignKey: 'sender_id',
+    onDelete: 'cascade'
 });
 Message.belongsTo(User, {
     foreignKey: 'sender_id'
+});
+
+User.hasMany(Message, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade'
+});
+Message.belongsTo(User, {
+    foreignKey: 'receiver_id'
+});
+
+User.hasMany(Like, {
+    foreignKey: 'user_id',
+    onDelete: 'cascade'
+});
+Like.belongsTo(User, {
+    foreignKey: 'user_id'
 });
 
 Post.hasMany(Comment, {
@@ -201,12 +208,10 @@ Like.belongsTo(Post, {
     foreignKey: 'post_id'
 });
 
-Comment.hasMany(Like, {
-    foreignKey: 'comment_id',
-    onDelete: 'cascade'
-});
-Like.belongsTo(Comment, {
-    foreignKey: 'comment_id'
-})
+// Comment.hasMany(Like, {
+//     foreignKey: 'comment_id',
+//     onDelete: 'cascade'
+// });
+// Like.belongsTo(Comment);
 
-module.exports = { Comment, Like, Post, User, Message };
+module.exports = { User, Post, Comment, Like, Message };
