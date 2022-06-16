@@ -13,12 +13,9 @@ const switchErrors = (res, err) => {
         case 'Please validate your account first, check your email box!':
             statusCode = 422;
             break;
-        case 'No post found!':
         case 'Post not found!':
         case 'Comment not found!':
-        case 'No comments found':
         case 'User not found!':
-        case 'No Message found!':
         case 'Message not found !':
         case 'Sender not found!':
             statusCode = 404;

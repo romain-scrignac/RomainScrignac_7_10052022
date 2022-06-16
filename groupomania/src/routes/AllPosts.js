@@ -9,16 +9,16 @@ const AllPosts = () => {
     document.title = 'Groupomania';
     const navigate = useNavigate();
 
-    const [order, setOrder] = useState('dateDesc');
-    const [offset, setOffset] = useState(0);
+    const [order, setOrder] = useState('dateDesc');             // used to sort publications by activity date
+    const [offset, setOffset] = useState(0);                    // used for infinite scroll
     const [allPosts, setAllPosts] = useState([]);
     const [imageFile, setImageFile] = useState(null);
     const [postValues, setPostValues] = useState({
         content: '',
         video: null
     });
-    const [isModifyPost, setIsModifyPost] = useState(false);
-    const [newMessage, setNewMessage] = useState('');
+    const [isModifyPost, setIsModifyPost] = useState(false);    // used to switch between publication and modification form in PostForm component
+    const [newMessage, setNewMessage] = useState('');           // used to update the web page following the activity
     
     useEffect(() => {
         /**
@@ -33,8 +33,9 @@ const AllPosts = () => {
                         'Authorization': `Bearer ${localStorage.session_token}`
                     }
                 });
-                if (response.ok) {
-                    const responseJson = await response.json();
+                const responseJson = await response.json();
+
+                if (response.ok && !responseJson.message) {
                     // Reactions counters
                     const postsFromApi = responseJson.allPosts.map(post => {
                         let likes = 0;
@@ -54,10 +55,12 @@ const AllPosts = () => {
                         return {...post, countLikes: likes, countLoves: loves, countLaughs: laughs}
                     });
                     setAllPosts(postsFromApi);
+                } else {
+                    setAllPosts([]);
                 }
             } catch (err) {
                 console.log(err);
-            }        
+            }
         };    
         getPosts();
     }, [order, offset, newMessage]);
@@ -114,7 +117,7 @@ const AllPosts = () => {
     // };
 
     /**
-     * @description this function is used to change the display order of posts by date
+     * @description this function is used to change the display order of posts by activity date
      */
     // Order of posts
     const changeOrder = () => {
@@ -248,8 +251,7 @@ const AllPosts = () => {
 
             if (response.ok) {
                 resetForm();
-                setNewMessage(`Post added ${responseJson.postId}`);
-                console.log(responseJson.message);
+                setNewMessage(`Post ${responseJson.postId} added`);
             }
         } catch (err) {
             console.log(err);
@@ -269,12 +271,12 @@ const AllPosts = () => {
                     'Authorization': `Bearer ${localStorage.session_token}`
                 }
             });
-            const responseJson = await response.json((err) => {
-                if (err) throw err;
-            });
+            const responseJson = await response.json();
+
             if (response.ok) {
                 setNewMessage(`Post ${postId} deleted`);
-                console.log(responseJson.message);
+            } else {
+                console.log(responseJson.error);
             }
         } catch (err) {
             console.log(err);
@@ -331,10 +333,13 @@ const AllPosts = () => {
                     }
                 </form>
             </div>
+            {
+                allPosts.length < 1 ? (<p>Aucune publication actuellement, c'est le moment d'en créer une 😉</p>) : null
+            }
             {/* Button to change the order of the publications */}
             {
                 allPosts.length > 1 ? 
-                (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>): null
+                (<button className="btn btn-order" onClick={changeOrder}>Trier par date</button>) : null
             }
             {/* Display of publications */}
             {allPosts.map(post => (

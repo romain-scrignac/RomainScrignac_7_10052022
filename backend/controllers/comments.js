@@ -3,28 +3,6 @@ const { validateCommentPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
 const url = require('url');
 
-// Fonction pour afficher tous les commentaires
-exports.getAllComments = async (req, res) => {
-    const queryObject = url.parse(req.url, true).query;
-    try{
-        const postId = req.params.id;
-        let sortBy;
-        
-        if (queryObject.order === "dateAsc") { 
-            sortByDate = [['createdAt', 'ASC']];
-        } else if (queryObject.order === "dateDesc") {
-            sortBy = [['createdAt', 'DESC']];
-        }
-
-        const findComments = await Comment.findAll({ where: {post_id: postId}, include: Post });
-        if (findComments === null) throw 'No comments found!';
-
-        res.status(200).json({ message: findComments });
-    }catch (err) {
-        switchErrors(res, err);
-    }
-};
-
 // Fonction pour ajouter un commentaire
 exports.addComment = async (req, res) => {
     try{
@@ -80,44 +58,6 @@ exports.deleteComment = async (req, res) => {
         switchErrors(res, err);
     }
 };
-
-// // Fonction pour modifier un commentaire
-// exports.modifyComment = async (req, res) => {
-//     try{
-//         if (!req.auth || !req.auth.userId) {
-//             throw 'Bad request!';
-//         } else if(!req.body || !req.body.comment) {
-//             throw 'Invalid form!';
-//         }
-
-//         const commentId = req.params.id;
-//         const findComment = await Comment.findOne({ where: {id: commentId} });
-//         if (findComment === null) throw 'Comment not found!';
-//         if (findComment.user_id !== req.auth.userId) {
-//             throw 'Unauthorized request!';
-//         }
-
-//         const commentObject = req.body.comment;
-//         const authId = req.auth.userId;
-
-//         // Validation du formulaire
-//         validateCommentPayload(authId, commentObject);
-
-//         // Création du commentaire
-//         const commentAttributes = { 
-//             content: commentObject.content,
-//             user_id: commentObject.userId,
-//             post_id: commentObject.postId
-//         };
-
-//         await Comment.update(commentAttributes, (err) => {
-//             if(err) throw err;
-//         })
-//         res.status(200).json({ message: 'Comment updated!' });
-//     } catch (err) {
-//         switchErrors(res, err);
-//     }
-// };
 
 // // Fonction pour le système de like d'un commentaire
 // exports.likeComment = async (req, res) => {

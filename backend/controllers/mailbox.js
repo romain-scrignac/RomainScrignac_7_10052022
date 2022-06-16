@@ -21,9 +21,13 @@ exports.getAllMessages = async (req, res) => {
                 where: {id: req.auth.userId}
             }
         });
-        if (messages === null) throw 'No message found!';
-
-        res.status(200).json({ messages });
+        if (messages === null) {
+            throw 'An error has occurred!';
+        } else if (messages.length === 0) {
+            res.status(200).json({ message: 'No message found!' });
+        } else {
+            res.status(200).json({ messages });
+        }
     } catch (err) {
         switchErrors(res, err);
     }

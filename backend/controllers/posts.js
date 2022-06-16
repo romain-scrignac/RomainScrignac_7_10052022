@@ -41,8 +41,11 @@ exports.getAllPosts = async (req, res) => {
             ], 
             offset: offset, limit: 10
         });
-        if (allPosts === null || allPosts.length === 0) {
-            throw "No posts found";
+        if (allPosts === null) {
+            throw 'An error has occurred!';
+        }
+        else if (allPosts.length === 0) {
+            res.status(200).json({ message: 'No post found!' });
         } else {
             res.status(200).json({ allPosts });
         }
