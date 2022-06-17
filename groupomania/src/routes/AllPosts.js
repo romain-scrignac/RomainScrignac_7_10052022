@@ -10,7 +10,6 @@ const AllPosts = () => {
     const navigate = useNavigate();
 
     const [order, setOrder] = useState('dateDesc');             // used to sort publications by activity date
-    const [offset, setOffset] = useState(0);                    // used for infinite scroll
     const [allPosts, setAllPosts] = useState([]);
     const [imageFile, setImageFile] = useState(null);
     const [postValues, setPostValues] = useState({
@@ -25,7 +24,7 @@ const AllPosts = () => {
          */
         const getPosts = async () => {
             try{
-                const response = await fetch(`https://localhost/api/posts/?offset=${offset}&order=${order}`, {
+                const response = await fetch(`https://localhost/api/posts/?order=${order}`, {
                     headers: { 
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
@@ -62,7 +61,7 @@ const AllPosts = () => {
             }
         };    
         getPosts();
-    }, [order, offset, newMessage]);
+    }, [order, newMessage]);
 
     /**
      * @description this function allows to display if a user is online or not. 
@@ -107,13 +106,6 @@ const AllPosts = () => {
             )
         }
     };
-
-    /**
-     * @description this function is used to change the offset of infinite scroll
-     */
-    // const changeOffset = () => {
-    //     setOffset(offset + 10);
-    // };
 
     /**
      * @description this function is used to change the display order of posts by activity date
@@ -424,13 +416,6 @@ const AllPosts = () => {
                     <hr className="post-split"></hr>
                     {/* Comments */}
                     <Comments post={post} setNewMessage={setNewMessage} />
-
-                    {/* // TODO implement infinite scroll */}
-                    {window.addEventListener("scroll", () => {
-                        // TODO 1) know if we are at the bottom of the page
-                        // TODO 2) if bottom reached, call API with the correct offset to get 10 more posts
-                        // TODO 3) re set component posts with current posts + newly fetched posts
-                    })}
                 </div>
             ))}
         </div>

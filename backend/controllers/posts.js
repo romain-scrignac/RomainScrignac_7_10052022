@@ -20,7 +20,6 @@ exports.getAllPosts = async (req, res) => {
             sortByDate = [['updatedAt', 'DESC']];
         }
 
-        const offset = parseInt(queryObject.offset);
         const userAttr = ['id', 'firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['id'],
             include: [
@@ -40,8 +39,7 @@ exports.getAllPosts = async (req, res) => {
                 { 
                     model: Like, separate: true, attributes: ['id', 'user_id', 'value', 'type']
                 }
-            ], 
-            offset: offset, limit: 10
+            ]
         });
         if (allPosts === null) {
             throw 'An error has occurred!';
