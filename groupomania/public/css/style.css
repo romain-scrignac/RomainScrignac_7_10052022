@@ -526,17 +526,6 @@ footer {
   top: 10px;
   right: 10px;
 }
-.nav-buttons--profil__messages {
-  position: fixed;
-  top: 30px;
-  right: 80px;
-  font-size: 13px;
-  color: black;
-}
-.nav-buttons--profil__messages:hover {
-  cursor: pointer;
-  transform: scale(1.05);
-}
 .nav-buttons--profil a, .nav-buttons--profil button {
   display: flex;
   align-items: center;
@@ -599,7 +588,7 @@ footer {
   flex-wrap: wrap;
   padding: 8px 10px;
 }
-.allPosts .post-infos-user__avatar:hover, .allPosts .post-infos-user__author:hover, .allPosts .post-infos-user__send-message:hover {
+.allPosts .post-infos-user__avatar:hover, .allPosts .post-infos-user__author:hover {
   cursor: pointer;
 }
 .allPosts .post-infos-user__avatar {
@@ -614,7 +603,7 @@ footer {
 .allPosts .post-infos-user__avatar img:hover {
   box-shadow: 1px 2px 5px #4E5166;
 }
-.allPosts .post-infos-user__author, .allPosts .post-infos-user__send-message {
+.allPosts .post-infos-user__author {
   margin: 5px 0 0 15px;
 }
 .allPosts .post-infos-user__author {
@@ -623,13 +612,6 @@ footer {
 }
 .allPosts .post-infos-user__author:hover {
   text-decoration: underline;
-}
-.allPosts .post-infos-user__send-message i {
-  font-size: 17px;
-}
-.allPosts .post-infos-user__send-message i:hover {
-  transform: scale(1.05);
-  color: #FD2D01;
 }
 .allPosts .post-content {
   position: relative;
@@ -951,14 +933,6 @@ footer {
 }
 .profil .usersList span hr {
   width: 50%;
-}
-
-.mailbox {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-top: 100px;
 }
 
 /*# sourceMappingURL=style.css.map */

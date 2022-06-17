@@ -23,7 +23,6 @@ router.post('/verification', userCtrl.verifCode);                           // R
 router.post('/sendcode', userCtrl.sendCode);                                // Requête pour renvoyer le code de vérification
 router.put('/logout', userCtrl.logout);                                     // Requête pour déconnexion utilisateur
 router.get('/:id', auth, userCtrl.getProfil)                                // Requête pour récupérer les infos de l'utilisateur
-router.get('/messages/:id', auth, userCtrl.getUserMessages)                 // Requête pour afficher les messages de l'utilisateur
 router.put('/:id', auth, multerMiddleware, userCtrl.modifyUser)             // Requête pour modification compte utilisateur
 router.delete('/:id', auth, userCtrl.deleteUser);                           // Requête pour suppression compte utilisateur
 

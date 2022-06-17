@@ -129,14 +129,6 @@ const AllPosts = () => {
     };
 
     /**
-     * @description this function is used to navigate to the mailbox
-     */
-    // Send message to user
-    const sendMessage = (userId) => {
-        navigate(`/messages?userId=${userId}`);
-    };
-
-    /**
      * @description this function is used to display the video address bar
      */
     const displayInputVideo = (e) => {
@@ -382,19 +374,7 @@ const AllPosts = () => {
                                 </span>
                             )
                         }
-                        {
-                            post.user_id !== parseInt(localStorage.session_id) ?
-                            (
-                                <span 
-                                    className="post-infos-user__send-message"
-                                    title={`Envoyer un message à ${post.User.firstname}`}
-                                    onClick={() => sendMessage(post.user_id)}
-                                >
-                                    <i className="far fa-envelope"></i>
-                                </span>
-                            ) : null
-                        }
-                    </div>
+                     </div>
                     {/* Content of the publication */}
                     <div className="post-content">
                         {

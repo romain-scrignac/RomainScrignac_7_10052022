@@ -110,9 +110,6 @@ const Like = sequelize.define('Like', {             // Like model
         autoIncrement: true,
         primaryKey: true
     },
-    // comment_id: {
-    //     type: DataTypes.SMALLINT
-    // },
     post_id: {
         type: DataTypes.SMALLINT
     },
@@ -132,32 +129,6 @@ const Like = sequelize.define('Like', {             // Like model
     timestamps: false
 });
 
-const Message = sequelize.define('Message', {       // Message model
-    id: {
-        type: DataTypes.SMALLINT,
-        autoIncrement: true,
-        primaryKey: true
-    },
-    sender_id: {
-        type: DataTypes.SMALLINT,
-        allowNull: false
-    },
-    receiver_id: {
-        type: DataTypes.SMALLINT,
-        allowNull: false
-    },
-    content: {
-        type: DataTypes.TEXT
-    },
-    date: {
-        type: DataTypes.DATE,
-        defaultValue: Date
-    }
-}, {
-    tableName: 'Messages',
-    timestamps: false
-});
-
 User.hasMany(Post, {                                // Associations
     foreignKey: 'user_id',
     onDelete: 'cascade'
@@ -172,22 +143,6 @@ User.hasMany(Comment, {
 });
 Comment.belongsTo(User, {
     foreignKey: 'user_id'
-});
-
-User.hasMany(Message, {
-    foreignKey: 'sender_id',
-    onDelete: 'cascade'
-});
-Message.belongsTo(User, {
-    foreignKey: 'sender_id'
-});
-
-User.hasMany(Message, {
-    foreignKey: 'receiver_id',
-    onDelete: 'cascade'
-});
-Message.belongsTo(User, {
-    foreignKey: 'receiver_id'
 });
 
 User.hasMany(Like, {
@@ -220,4 +175,4 @@ Like.belongsTo(Post, {
 // });
 // Like.belongsTo(Comment);
 
-module.exports = { User, Post, Comment, Like, Message };
+module.exports = { User, Post, Comment, Like };

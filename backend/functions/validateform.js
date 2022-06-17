@@ -100,13 +100,4 @@ const validatePostPayload = (postObject, fileName) => {
     }
 };
 
-/**
- * @description This function checks the validity of the message form
- * 
-  * @param {JSON} userObject the body of the request
- **/
- const validateMessagePayload = (userObject) => {
-
- };
-
-module.exports = { validatePostPayload, validateCommentPayload, validateUserPayload, validateMessagePayload };
+module.exports = { validatePostPayload, validateCommentPayload, validateUserPayload };

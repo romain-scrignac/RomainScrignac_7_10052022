@@ -358,20 +358,3 @@ exports.deleteUser = async (req, res) => {
         switchErrors(res, err);
     }
 };
-
-// Fonction pour afficher le nombre de messages de l'utilisateur
-exports.getUserMessages = async (req, res) => {
-    try {
-        if (!req.auth || !req.auth.userId || req.auth.userId !== JSON.parse(req.params.id)) {
-            throw 'Unauthorized request!';
-        }
-
-        const userMessages = await Message.findAndCountAll({
-            where: { receiver_id: req.auth.userId }
-        });
-
-        res.status(200).json({ count: userMessages.count });
-    } catch (err) {
-        switchErrors(res, err);
-    }
-};

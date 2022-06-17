@@ -48,7 +48,7 @@
             align-items:flex-start;
             flex-wrap: wrap;
             padding: 8px 10px;
-            &__avatar:hover, &__author:hover, &__send-message:hover {
+            &__avatar:hover, &__author:hover {
                 cursor: pointer;
             }
 
@@ -64,7 +64,7 @@
                     }
                 }
             }
-            &__author, &__send-message {
+            &__author {
                 margin: 5px 0 0 15px;
             }
             &__author {                
@@ -72,15 +72,6 @@
                 font-weight: bold;    
                 &:hover {
                     text-decoration: underline;
-                }
-            }
-            &__send-message {
-                i {
-                    font-size: 17px;
-                    &:hover {
-                        transform: scale(1.05);
-                        color: $primary;
-                    }
                 }
             }
         }

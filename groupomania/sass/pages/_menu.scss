@@ -11,18 +11,6 @@
         align-content: center;
         top: 10px;
         right: 10px;
-
-        &__messages {
-            position: fixed;
-            top: 30px;
-            right: 80px;
-            font-size: 13px;
-            color: black;
-            &:hover {
-                cursor: pointer;
-                transform: scale(1.05);
-            }
-        }
         a, button {
             display: flex; 
             align-items: center;

@@ -5,7 +5,6 @@ import Login from './routes/Login';
 import Signup from './routes/Signup';
 import Logout from './routes/Logout';
 import Account from './routes/Account';
-import Messages from './routes/Messages';
 import { error404 } from './datas/images';
 
 const App = () => {
@@ -21,9 +20,6 @@ const App = () => {
           <Route index element={<AllPosts />} />
           <Route path="logout" element={<Logout />} />
           <Route path="account" element={<Account />} />
-          <Route path="messages" element={<Messages />}>
-            <Route path=":id" />
-          </Route>
         </Route>
       ) : (
         <Route path="/" element={<Main />}>
