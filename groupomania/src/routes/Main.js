@@ -51,7 +51,6 @@ const Main = () => {
         };
     }
     
-
     const viewMessages = () => {
         navigate(`/messages`);
     };
@@ -95,6 +94,7 @@ const Main = () => {
                             <button className={btnAccount.class} title={btnAccount.title}>
                                 <img src={iconAccount.cover} alt={iconAccount.name} />
                             </button>
+                            {}
                         </NavLink>
                         <NavLink to="/logout">
                             <button className={btnLogout.class} title={btnLogout.title}>

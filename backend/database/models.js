@@ -28,7 +28,7 @@ const User = sequelize.define('User', {              // User model
         defaultValue: 'https://localhost/images/avatars/avatar.svg'
     },
     rank: {
-        type: DataTypes.TINYINT(4),
+        type: DataTypes.TINYINT(1),
         defaultValue: 1
     },
     code: {
@@ -71,6 +71,9 @@ const Post = sequelize.define('Post', {             // post model
     },
     video: {
         type: DataTypes.STRING
+    },
+    moderator: {
+        type: DataTypes.STRING(10)      // admin ou modérateur, sinon null
     }
 }, {
     tableName: 'Posts'
@@ -93,6 +96,9 @@ const Comment = sequelize.define('Comment', {       // Comment model
     content: {
         type: DataTypes.TEXT,
         allowNull: false
+    },
+    moderator: {
+        type: DataTypes.STRING(10)      // admin ou modérateur, sinon null
     }
 }, {
     tableName: 'Comments'

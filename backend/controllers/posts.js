@@ -21,14 +21,16 @@ exports.getAllPosts = async (req, res) => {
         }
 
         const offset = parseInt(queryObject.offset);
-        const userAttr = ['firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
+        const userAttr = ['id', 'firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['id'],
             include: [
                 { 
                     model: User, attributes: userAttr
                 },
                 { 
-                    model: Comment, separate: true, order: [['createdAt', 'ASC']],
+                    model: Comment, 
+                    separate: true, 
+                    order: [['createdAt', 'ASC']],
                     include: [
                         { model: User, attributes: userAttr },
                         // { model: Like, attributes:  ['id', 'user_id', 'value', 'type'] }
@@ -99,10 +101,25 @@ exports.modifyPost = async (req, res) => {
             throw 'Bad request!';
         }
         const postId = req.params.id;
-        
-        const findPost = await Post.findOne({ where: {id: postId} });
+
+        // Vérification du rang de l'utilisateur. Si admin ou modo, il pourra modifier le post
+        const findUser = await User.findOne({ where: {id: req.auth.userId}, attributes: ['rank'] });
+        let userRank = null;
+        if (findUser !== null) {
+            if (findUser.rank === 2) {
+                userRank = "modérateur";
+            } else if (findUser.rank === 3) {
+                userRank = "admin";
+            }
+        }
+
+        // Recherche du post à modifier
+        const findPost = await Post.findOne({ 
+            where: {id: postId},
+            include: { model: User, attributes: ['rank'] }
+        });
         if (findPost === null) throw 'Post not found!';
-        if (findPost.user_id !== req.auth.userId) {
+        if (findPost.user_id !== req.auth.userId && !userRank) {
             throw 'Unauthorized request!';
         }
 
@@ -128,6 +145,7 @@ exports.modifyPost = async (req, res) => {
             });
         }
 
+        // On définie la modification selon les données envoyées depuis le front
         let newContent;
         let newImage;
         let newVideo;
@@ -148,8 +166,6 @@ exports.modifyPost = async (req, res) => {
         } else {
             newImage = findPost.image;
         }
-        console.log(newContent);
-
 
         if(findPost.video && postObject.video === null) {
             newVideo = null;
@@ -163,7 +179,8 @@ exports.modifyPost = async (req, res) => {
         const postAttributes = {
             content: newContent,
             image: newImage,
-            video: newVideo
+            video: newVideo,
+            moderator: findPost.User.rank < 2 ? userRank : null     // personnalisation de message sur le front si modération
         };
 
         await Post.update( postAttributes, { where: {id: postId} }, (err) => {
@@ -185,9 +202,20 @@ exports.deletePost = async (req, res) => {
         }
         const postId = req.params.id;
 
-        const findPost = await Post.findOne({ where: {id: postId} });
+        // Vérification du rang de l'utilisateur. Si admin, il pourra supprimer le post
+        const findUser = await User.findOne({ where: {id: req.auth.userId}, attributes: ['rank'] });
+        let userRank = null;
+        if (findUser !== null && findUser.rank > 2) {
+            userRank = true;
+        }
+
+        // Recherche du post à supprimer
+        const findPost = await Post.findOne({ 
+            where: {id: postId},
+            include: { model: User, attributes: ['rank'] }
+        });
         if (findPost === null) throw 'Post not found!';
-        else if (findPost.user_id !== req.auth.userId) {
+        else if (findPost.user_id !== req.auth.userId && !userRank) {
             throw 'Unauthorized request!';
         }
 
@@ -207,7 +235,9 @@ exports.deletePost = async (req, res) => {
         await Post.destroy({ where: {id: postId} }, (err) => {
             if (err) throw err;
         });
+
         res.status(200).json({ message: `Post deleted!` });
+
     } catch (err) {
         switchErrors(res, err);
     }

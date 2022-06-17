@@ -84,6 +84,7 @@ const Login = () => {
                         localStorage.setItem("session_firstname", responseJson.firstname);
                         localStorage.setItem("session_id", responseJson.userId);
                         localStorage.setItem("session_token", responseJson.token);
+                        localStorage.setItem("session_rank", responseJson.rank);
                         setMessage('Connexion ok, redirection en cours...');
                         setTimeout(function(){ navigate("/") } , 3000);
                     }

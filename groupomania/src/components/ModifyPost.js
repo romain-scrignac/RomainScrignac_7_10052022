@@ -112,10 +112,17 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
             const formData = new FormData();
 
             if(modifyImageFile) {
-                formData.append("post", JSON.stringify({ content: contentValue, video: videoValue }));
+                formData.append("post", JSON.stringify({ 
+                    content: contentValue, 
+                    video: videoValue
+                }));
                 formData.append("image", imageValue);
             } else {
-                formData.append("post", JSON.stringify({ content: contentValue, video: videoValue, imageUrl: imageValue }));
+                formData.append("post", JSON.stringify({
+                    content: contentValue, 
+                    video: videoValue, 
+                    imageUrl: imageValue,
+                }));
             }
 
             const response = await fetch(`https://localhost/api/posts/${post.id}`, {

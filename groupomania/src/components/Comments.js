@@ -125,7 +125,7 @@ const Comments = ({ post, setNewMessage }) => {
                 {
                     post.Comments.map(comment => (
                         <div className="oneComment" key={comment.id}>
-                            <span className="oneComment-author">{comment.User.user_firstname}</span>
+                            <span className="oneComment-author">{comment.User.firstname}</span>
                             <span id={`comment-${comment.id}`}>{comment.content}</span>
                             {
                                 comment.user_id === parseInt(localStorage.session_id) ?

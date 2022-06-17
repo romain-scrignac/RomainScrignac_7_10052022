@@ -19,7 +19,6 @@ const AllPosts = () => {
     });
     const [isModifyPost, setIsModifyPost] = useState(false);    // used to switch between publication and modification form in PostForm component
     const [newMessage, setNewMessage] = useState('');           // used to update the web page following the activity
-    
     useEffect(() => {
         /**
          * @description this function communicates with the API to display all posts
@@ -218,6 +217,10 @@ const AllPosts = () => {
         )
     };
 
+    const profilView = (userId) => {
+        navigate(`/account?userId=${userId}`);
+    };
+
     /**
      * @description this function communicates with the API when adding a publication
      */
@@ -359,12 +362,26 @@ const AllPosts = () => {
                         >
                             <img src={post.User.avatar} alt ={`Avatar ${post.User.firstname}`} />
                         </span>
-                        <span
-                            className="post-infos-user__author"
-                            title={lastConnection(post.User.last_connection, post.User.last_disconnection)}
-                        >
-                            {post.User.firstname}
-                        </span>
+                        {
+                            // Display view user's profile if admin
+                            parseInt(localStorage.session_rank) === 3 && post.User.id !== parseInt(localStorage.session_id) ?
+                            (
+                                <span 
+                                    className="post-infos-user__author"
+                                    title='Voir le profil'
+                                    onClick={() => profilView(post.User.id)}
+                                >
+                                    {post.User.firstname}
+                                </span>
+                            ) : (
+                                <span 
+                                    className="post-infos-user__author"
+                                    title={lastConnection(post.User.last_connection, post.User.last_disconnection)}
+                                >
+                                    {post.User.firstname}
+                                </span>
+                            )
+                        }
                         {
                             post.user_id !== parseInt(localStorage.session_id) ?
                             (
@@ -376,7 +393,7 @@ const AllPosts = () => {
                                     <i className="far fa-envelope"></i>
                                 </span>
                             ) : null
-                        }                        
+                        }
                     </div>
                     {/* Content of the publication */}
                     <div className="post-content">
@@ -392,13 +409,24 @@ const AllPosts = () => {
                         {
                             post.content ? (<div className="post-content--text">{post.content}</div>) : null
                         }
-                        <span className="post-content--date">{formatDate(post)}</span>
+                        <span className="post-content--date">
+                            {formatDate(post)}
+                        </span>
+                        {
+                            // If the publication has been moderated
+                            post.moderator ?
+                            (
+                                <span className="post-content--moderation">
+                                    (Post modifié par {post.moderator})
+                                </span>
+                            ) : null
+                        }
                     </div>
                     <hr className="post-split"></hr>
                     {/* Post options */}
                     <div className="post-various">
                         {
-                            post.user_id === parseInt(localStorage.session_id) ? 
+                            post.user_id === parseInt(localStorage.session_id) || parseInt(localStorage.session_rank) > 1 ? 
                             (
                                 <div className="post-various--options">
                                     <span className="post-various--options__edit" title="Modifier le post">

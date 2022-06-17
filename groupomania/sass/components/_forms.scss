@@ -283,6 +283,7 @@
 }
 
 .account-form {
+    position: relative;
     fieldset {
         position: relative;
     }
@@ -306,6 +307,13 @@
                 border-radius: 3em;
             }
         }
+    }
+    .user-rank {
+        font-weight: bold;
+        color: $primary;
+        text-decoration: underline;
+        margin-top: -15px;
+        margin-bottom: 10px;
     }
 }
 

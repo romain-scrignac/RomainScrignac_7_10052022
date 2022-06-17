@@ -64,8 +64,10 @@
                     }
                 }
             }
-            &__author {
+            &__author, &__send-message {
                 margin: 5px 0 0 15px;
+            }
+            &__author {                
                 color: $primary;
                 font-weight: bold;    
                 &:hover {
@@ -73,11 +75,8 @@
                 }
             }
             &__send-message {
-                position: absolute;
-                right: 15px;
-                top: 5px;
                 i {
-                    font-size: 18px;
+                    font-size: 17px;
                     &:hover {
                         transform: scale(1.05);
                         color: $primary;
@@ -119,14 +118,23 @@
                 height: 300px;
                 margin: 0 auto;
             }
-            &--date {
+            &--date, &--moderation {
                 position: absolute;
-                bottom: 3px;
                 right: 15px;
                 font-size: 12px;
                 font-style: italic;
+            }
+            &--date {
+                bottom: 3px;
                 @include tablet-desktop {
                     bottom: -20px;
+                }
+            }
+            &--moderation {
+                color: $primary;
+                bottom: -15px;
+                @include tablet-desktop {
+                    bottom: -37px;
                 }
             }
         }
@@ -141,7 +149,7 @@
                 display: flex;
                 flex-direction: column;
                 margin-top: 10px;
-                width:fit-content;
+                width: fit-content;
                 padding: 5px 15px 7px 15px;
                 background-color: rgba(255, 215, 215, 0.4);
                 border-radius: 15px;
