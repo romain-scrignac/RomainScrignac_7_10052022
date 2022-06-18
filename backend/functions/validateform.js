@@ -5,25 +5,21 @@
  * @param {String} fileName name of the file if the validation comes from multer
  **/
 const validatePostPayload = (postObject, fileName) => {
-    const regexVideo = /^https?:\/\/[a-zA-Z0-9]{3,}.[a-z]{2,}.?\/?([?=a-zA-Z0-9]{2,})?/;
     const {
         content,
-        imageUrl,
-        video
+        imageUrl
     } = postObject;
 
     if (!postObject) {
         throw 'Bad request!';
-    } else if (!content && (!fileName && !imageUrl) && !video) {
+    } else if (!content && (!fileName && !imageUrl)) {
         throw 'Invalid form !';
-    } else if (content !== true && typeof content !== "string" || (video && typeof video !== "string")) {
+    } else if (content !== true && typeof content !== "string") {
         throw 'Invalid field(s)!';
     } else if (content !== true && content && content.trim() === "") {
         throw 'Missing field(s)!';
     } else if (content && (content.length < 3)) {
         throw 'Invalid number of characters!';
-    } else if (video && !video.match(regexVideo)) {
-        throw 'Wrong video url!';
     }
 };
 

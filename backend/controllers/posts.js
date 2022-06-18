@@ -31,8 +31,7 @@ exports.getAllPosts = async (req, res) => {
                     separate: true, 
                     order: [['createdAt', 'ASC']],
                     include: [
-                        { model: User, attributes: userAttr },
-                        // { model: Like, attributes:  ['id', 'user_id', 'value', 'type'] }
+                        { model: User, attributes: userAttr }
                     ],
                     attributes: { exclude: ['post_id'] }
                 },
@@ -77,8 +76,7 @@ exports.addPost = async (req, res) => {
         const postAttributes = {
             user_id: req.auth.userId,
             content: postObject.content,
-            image: postObject.imageUrl,
-            video: postObject.video
+            image: postObject.imageUrl
         };
         const addPost = await Post.create(postAttributes, (err) => {
             if (err) throw err;
@@ -146,7 +144,6 @@ exports.modifyPost = async (req, res) => {
         // On définie la modification selon les données envoyées depuis le front
         let newContent;
         let newImage;
-        let newVideo;
         
         if(findPost.content && (!postObject.content || postObject.content === true)) {
             newContent = '';
@@ -164,20 +161,11 @@ exports.modifyPost = async (req, res) => {
         } else {
             newImage = findPost.image;
         }
-
-        if(findPost.video && postObject.video === null) {
-            newVideo = null;
-        } else if (postObject.video === findPost.video) {
-            newVideo = findPost.video; 
-        } else {
-            newVideo = postObject.video;
-        }
         
         // Mise à jour du post
         const postAttributes = {
             content: newContent,
             image: newImage,
-            video: newVideo,
             moderator: findPost.User.rank < 2 ? userRank : null     // personnalisation de message sur le front si modération
         };
 

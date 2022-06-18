@@ -69,9 +69,6 @@ const Post = sequelize.define('Post', {             // post model
     image: {
         type: DataTypes.STRING
     },
-    video: {
-        type: DataTypes.STRING
-    },
     moderator: {
         type: DataTypes.STRING(10)      // admin ou modérateur, sinon null
     }
@@ -114,8 +111,7 @@ const Like = sequelize.define('Like', {             // Like model
         type: DataTypes.SMALLINT
     },
     user_id: {
-        type: DataTypes.SMALLINT,
-        allowNull: false
+        type: DataTypes.SMALLINT
     },
     type: {
         type: DataTypes.STRING(10)
@@ -168,11 +164,5 @@ Post.hasMany(Like, {
 Like.belongsTo(Post, {
     foreignKey: 'post_id'
 });
-
-// Comment.hasMany(Like, {
-//     foreignKey: 'comment_id',
-//     onDelete: 'cascade'
-// });
-// Like.belongsTo(Comment);
 
 module.exports = { User, Post, Comment, Like };

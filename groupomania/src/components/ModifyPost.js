@@ -3,26 +3,9 @@ import { useState } from 'react';
 
 const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
 
-    const [modifyPostValues, setModifyPostValues] = useState({
-        content: '',
-        video: null
-    });
+    const [modifyPostValues, setModifyPostValues] = useState({content: ''});
     const [modifyImageFile, setModifyImageFile] = useState(null);
     const [deleteImage, setDeleteImage] = useState(false);
-
-    /**
-     * @description this function is used to display the video address bar
-     */
-    const displayModifyVideo = (e, post) => {
-        e.preventDefault();
-        const videoLink = document.getElementById(`modify__video-${post.id}`);
-
-        if (videoLink.style["display"] === "" ) {
-            videoLink.style["display"] = "block";
-        } else {
-            videoLink.style["display"] = "";
-        }
-    };
 
     /**
      * @description this function is used to display the name of the image
@@ -52,23 +35,20 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
         const form = document.getElementById(`modify-form-${post.id}`);
         const imageField = document.getElementById(`modify__image-${post.id}`);
         const contentField = document.getElementById(`modify__content-${post.id}`);
-        const videoField = document.getElementById(`modify__video-${post.id}`);
         const deleteFile = document.getElementById(`deleteFile-${post.id}`);
         // On enlève les affichages créés lors de la modification
         form.style["display"] = "";
-        videoField.style['display'] = "";
         if (post.image && !modifyImageFile && post.content) {
             deleteFile.firstChild.style["display"] = "unset";
         }
         // On remet tous les états à leurs valeurs par défaut
         setModifyImageFile(null);
-        setModifyPostValues({content: '', video: null});
+        setModifyPostValues({ content: '' });
         setDeleteImage(false);
         setIsModifyPost(false);
-        setNewMessage(`Reset modification ${contentField.value + imageField.value + videoField.value}`);
+        setNewMessage(`Reset modification ${contentField.value + imageField.value}`);
         // On remet les valuers par défaut dans les champs du formulaire
         contentField.value = post.content;
-        videoField.value = post.video;
         imageField.value = '';
     };
 
@@ -80,17 +60,11 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
         // Définition des valeurs à envoyer selon modification ou non
         let contentValue;
         let imageValue;
-        let videoValue;
 
         if (modifyPostValues.content) {
             contentValue = modifyPostValues.content;
         } else {
             contentValue = post.content;
-        }
-        if (modifyPostValues.video) {
-            videoValue = modifyPostValues.video;
-        } else {
-            videoValue = post.video;
         }
         if (modifyImageFile) {
             imageValue = modifyImageFile;
@@ -101,27 +75,25 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                 imageValue = post.image;
             }
         }
-        fetchModifyPost(e, post, contentValue, imageValue, videoValue);
+        fetchModifyPost(e, post, contentValue, imageValue);
     };
 
     /**
      * @description this function communicates with the API when a post is modified
      */
-    const fetchModifyPost = async (e, post, contentValue, imageValue, videoValue) => {
+    const fetchModifyPost = async (e, post, contentValue, imageValue) => {
         try {
             const formData = new FormData();
 
             if(modifyImageFile) {
                 formData.append("post", JSON.stringify({ 
-                    content: contentValue, 
-                    video: videoValue
+                    content: contentValue
                 }));
                 formData.append("image", imageValue);
             } else {
                 formData.append("post", JSON.stringify({
                     content: contentValue, 
-                    video: videoValue, 
-                    imageUrl: imageValue,
+                    imageUrl: imageValue
                 }));
             }
 
@@ -133,7 +105,7 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                 body: formData
             });
             if (response.ok) {
-                setNewMessage(`Reset modification ${contentValue + imageValue + videoValue}`);
+                setNewMessage(`Reset modification ${contentValue + imageValue}`);
                 resetModify(e, post);
             }
         } catch (err) {
@@ -179,21 +151,6 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                             setModifyImageFile={setModifyImageFile}
                             post={post}
                         />
-                        <label 
-                            htmlFor={`modify__video-${post.id}`} 
-                            className="uploadFile" 
-                            onClick={(e) => displayModifyVideo(e, post)}
-                        >
-                            <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
-                                <i className="far fa-file-video"></i>
-                            </span>
-                        </label>
-                        <VideoInput 
-                            isModifyPost={isModifyPost}
-                            setPostValues={null}
-                            setModifyPostValues={setModifyPostValues}
-                            post={post}
-                        />
                     </div>
                     <div className="displayFileName">
                         <span id={`modify__isFile-${post.id}`} className="modify__isFile">
@@ -211,7 +168,7 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                 </div>
                 <div className="confirm-modify">
                     { 
-                        modifyPostValues.content || modifyPostValues.video || modifyImageFile || deleteImage ? 
+                        modifyPostValues.content || modifyImageFile || deleteImage ? 
                         (
                             <button 
                                 className="btn btn-submit" 

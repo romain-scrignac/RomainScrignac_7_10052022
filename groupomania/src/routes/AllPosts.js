@@ -9,15 +9,12 @@ const AllPosts = () => {
     document.title = 'Groupomania';
     const navigate = useNavigate();
 
-    const [order, setOrder] = useState('dateDesc');             // used to sort publications by activity date
+    const [order, setOrder] = useState('dateDesc');                 // used to sort publications by activity date
     const [allPosts, setAllPosts] = useState([]);
     const [imageFile, setImageFile] = useState(null);
-    const [postValues, setPostValues] = useState({
-        content: '',
-        video: null
-    });
-    const [isModifyPost, setIsModifyPost] = useState(false);    // used to switch between publication and modification form in PostForm component
-    const [newMessage, setNewMessage] = useState('');           // used to update the web page following the activity
+    const [postValues, setPostValues] = useState({content: ''});
+    const [isModifyPost, setIsModifyPost] = useState(false);        // used to switch between publication and modification form in PostForm component
+    const [newMessage, setNewMessage] = useState('');               // used to update the web page following the activity
     useEffect(() => {
         /**
          * @description this function communicates with the API to display all posts
@@ -121,20 +118,6 @@ const AllPosts = () => {
     };
 
     /**
-     * @description this function is used to display the video address bar
-     */
-    const displayInputVideo = (e) => {
-        e.preventDefault();
-        const videoLink = document.getElementById('video-link');
-
-        if (videoLink.style["display"] === "" ) {
-            videoLink.style["display"] = "block";
-        } else {
-            videoLink.style["display"] = "";
-        }
-    };
-
-    /**
      * @description this function is used to display the modification form of a publication
      */
     const onModifyPost = (e, post) => {
@@ -170,37 +153,15 @@ const AllPosts = () => {
      */
     const resetForm = () => {
         setImageFile(null);
-        setPostValues({ content: "", video: null });
+        setPostValues({ content: "" });
         document.getElementById('postText').value = '';
         document.getElementById('image-file').value = '';
         document.getElementById('isFile').innerText = '';
-        document.getElementById('video-link').value = '';
     };
 
     /**
-     * @description this function is used to replace the video address if it's youtube
-     *              and return an iframe tag
+     * @description this is used to view user's profile for admin
      */
-    const videoPlayer = (post) => {
-        let videoUrl;
-        if (post.video.match(/www.youtube.com\/watch\?v=/)) {
-            videoUrl = post.video.replace("watch?v=", "embed/");
-        } else {
-            videoUrl = post.video;
-        }
-        return (
-            <iframe
-                className="post-content--video"
-                src={videoUrl}
-                loading="lazy"
-                autohide="1" 
-                frameBorder="0" 
-                scrolling="no"
-                title={`video-${post.id}`}
-            ></iframe>
-        )
-    };
-
     const profilView = (userId) => {
         navigate(`/account?userId=${userId}`);
     };
@@ -295,17 +256,6 @@ const AllPosts = () => {
                                 setModifyImageFile={null}
                                 post={null}
                             />
-                            <label htmlFor="video-link" className="uploadFile" onClick={displayInputVideo}>
-                                <span className="uploadFile-video"  title="Insérer un lien vers une vidéo">
-                                    <i className="far fa-file-video"></i>
-                                </span>
-                            </label>
-                            <VideoInput 
-                                isModifyPost={isModifyPost}
-                                setPostValues={setPostValues}
-                                setModifyPostValues={null}
-                                post={null}
-                            />
                         </div>
                         <div className="displayFileName">
                             <span id="isFile" className="isFile">
@@ -314,7 +264,7 @@ const AllPosts = () => {
                         </div>
                     </div>
                     { 
-                        !isModifyPost && (postValues.content || postValues.video || imageFile) ? 
+                        !isModifyPost && (postValues.content || imageFile) ? 
                         (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
                         (<button className="btn btn-submit-post" disabled>Publier</button>)
                     }
@@ -374,9 +324,6 @@ const AllPosts = () => {
                             (<span className="post-content--image">
                                 <img src={post.image} alt="Illustration du post" />
                             </span>) : null
-                        }
-                        {
-                            post.video ? videoPlayer(post) : null
                         }
                         {
                             post.content ? (<div className="post-content--text">{post.content}</div>) : null
