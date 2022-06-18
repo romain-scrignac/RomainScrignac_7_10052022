@@ -1,11 +1,11 @@
+const { User } = require('../database/models');
+const { validateUserPayload } = require('../functions/validateform');
+const switchErrors = require('../functions/switcherrors');
+const verifEmail = require('../functions/verifEmail');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const url = require('url');
-const { Comment, Message, Post, User } = require('../database/models');
-const { validateUserPayload } = require('../functions/validateform');
-const switchErrors = require('../functions/switcherrors');
-const verifEmail = require('../functions/verifEmail');
 
 // Fonction pour s'inscrire sur le réseau social
 exports.signup = async (req, res) => {

@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy } from "react";
 import { useNavigate } from 'react-router-dom';
 import ModifyPost from '../components/ModifyPost';
-import { ContentInput, ImageInput, VideoInput } from '../components/PostForm';
+import { ContentInput, ImageInput } from '../components/PostForm';
 const Emojis = lazy(() => import('../components/Emojis'));
 const Comments = lazy(() => import('../components/Comments'));
 
@@ -12,9 +12,10 @@ const AllPosts = () => {
     const [order, setOrder] = useState('dateDesc');                 // used to sort publications by activity date
     const [allPosts, setAllPosts] = useState([]);
     const [imageFile, setImageFile] = useState(null);
-    const [postValues, setPostValues] = useState({content: ''});
+    const [postContent, setPostContent] = useState('');
     const [isModifyPost, setIsModifyPost] = useState(false);        // used to switch between publication and modification form in PostForm component
     const [newMessage, setNewMessage] = useState('');               // used to update the web page following the activity
+
     useEffect(() => {
         /**
          * @description this function communicates with the API to display all posts
@@ -30,7 +31,7 @@ const AllPosts = () => {
                 });
                 const responseJson = await response.json();
 
-                if (response.ok && !responseJson.message) {
+                if (response.ok && responseJson.allPosts.length > 0) {
                     // Reactions counters
                     const postsFromApi = responseJson.allPosts.map(post => {
                         let likes = 0;
@@ -54,7 +55,7 @@ const AllPosts = () => {
                     setAllPosts([]);
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
             }
         };    
         getPosts();
@@ -153,7 +154,7 @@ const AllPosts = () => {
      */
     const resetForm = () => {
         setImageFile(null);
-        setPostValues({ content: "" });
+        setPostContent('');
         document.getElementById('postText').value = '';
         document.getElementById('image-file').value = '';
         document.getElementById('isFile').innerText = '';
@@ -172,27 +173,30 @@ const AllPosts = () => {
     const fetchPostData = async () => {
         try {
             let response;
+            const url = 'https://localhost/api/posts/';
+            const authorization = `Bearer ${localStorage.session_token}`;
+
             if (imageFile) {
                 const formData = new FormData();
-                formData.append("post", JSON.stringify(postValues));
+                formData.append("post", JSON.stringify({ content: postContent }));
                 formData.append("image", imageFile);
 
-                response = await fetch(`https://localhost/api/posts/`, {
+                response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${localStorage.session_token}`
+                        'Authorization': authorization
                     },
                     body: formData
                 });
             } else {
-                response = await fetch(`https://localhost/api/posts/`, {
+                response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Accept': 'application/json',
                         'Content-type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.session_token}`
+                        'Authorization': authorization
                     },
-                    body: JSON.stringify({ post: postValues })
+                    body: JSON.stringify({ post: {content: postContent} })
                 });
             }
             const responseJson = await response.json();
@@ -202,7 +206,7 @@ const AllPosts = () => {
                 setNewMessage(`Post ${responseJson.postId} added`);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 
@@ -219,15 +223,11 @@ const AllPosts = () => {
                     'Authorization': `Bearer ${localStorage.session_token}`
                 }
             });
-            const responseJson = await response.json();
-
             if (response.ok) {
                 setNewMessage(`Post ${postId} deleted`);
-            } else {
-                console.log(responseJson.error);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 
@@ -239,8 +239,8 @@ const AllPosts = () => {
                 <form className="post-form">
                     <ContentInput 
                         isModifyPost={isModifyPost}
-                        setPostValues={setPostValues}
-                        setModifyPostValues={null}
+                        setPostContent={setPostContent}
+                        setModifyPostContent={null}
                         post={null}
                     />
                     <div className="post-form__options">
@@ -264,7 +264,7 @@ const AllPosts = () => {
                         </div>
                     </div>
                     { 
-                        !isModifyPost && (postValues.content || imageFile) ? 
+                        !isModifyPost && (postContent || imageFile) ? 
                         (<button className="btn btn-submit-post" onClick={onSubmitPost}>Publier</button>):
                         (<button className="btn btn-submit-post" disabled>Publier</button>)
                     }

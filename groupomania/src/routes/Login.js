@@ -90,10 +90,10 @@ const Login = () => {
                     }
                 } else {
                     setAlert(responseJson.error);
-                    setTimeout(function(){ setAlert('') } , 8000);
+                    setTimeout(function(){ setAlert('') } , 5000);
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
             }
         };
         fetchData();

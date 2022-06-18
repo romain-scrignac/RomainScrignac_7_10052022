@@ -1,7 +1,7 @@
 /**
  * @description React component that returns the content input field
  */
-export const ContentInput = ({ isModifyPost, setPostValues, setModifyPostValues, post }) => {
+export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostContent, post }) => {
     let postId;
     let postContent;
     let postImage;
@@ -16,44 +16,31 @@ export const ContentInput = ({ isModifyPost, setPostValues, setModifyPostValues,
         const oldContent = e.target.defaultValue;
         const content = e.target.value;
 
-        if(!isModifyPost) {
+        // If it's not a post modification
+        if (!isModifyPost) {
             if(content.length < 3 || content.trim() === "") {
-                setPostValues(previousState => { return {...previousState, content: ''} });
+                setPostContent('');
             } else {
-                setPostValues(previousState => { return {...previousState, content: content}});
+                setPostContent(content);
             }
         } else {
-            if ((content.length < 3 || content.trim() === "") && !postImage) {
-                setModifyPostValues(previousState => { return {...previousState, content: ''} });
+            if (!postImage) {
+                if (content.length < 3 || content.trim() === "") {
+                    setModifyPostContent('');
+                } else {
+                    setModifyPostContent(content);
+                }
             } else {
-                if (content.trim() === "") {
-                    setModifyPostValues(previousState => { return {...previousState, content: true} });
+                if (!content) {
+                    setModifyPostContent(false);
                 }
                 else if (oldContent !== content) {
-                    setModifyPostValues(previousState => { return {...previousState, content: content} });
+                    setModifyPostContent(content);
                 } else {
-                    setModifyPostValues(previousState => { return {...previousState, content: oldContent} });
+                    setModifyPostContent(oldContent);
                 }
             }
         }
-    
-        // if(content.length < 3 || content.trim() === "") {
-        //     if (!isModifyPost) {
-        //         setPostValues(previousState => { return {...previousState, content: ''} });
-        //     } else {
-        //         setModifyPostValues(previousState => { return {...previousState, content: ''} });
-        //     }
-        // } else {
-        //     if (!isModifyPost) {
-        //         setPostValues(previousState => { return {...previousState, content: content}});
-        //     } else {
-        //         if (oldContent !== content) {
-        //             setModifyPostValues(previousState => { return {...previousState, content: content} });
-        //         } else {
-        //             setModifyPostValues(previousState => { return {...previousState, content: oldContent} });
-        //         }
-        //     }
-        // }
     };
     
     return (        

@@ -74,10 +74,9 @@ const Comments = ({ post, setNewMessage }) => {
             if (response.ok) {
                 resetComment(postId);
                 setNewMessage(`Comment ${responseJson.commentId} added`);
-                console.log(responseJson.message);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 
@@ -95,14 +94,11 @@ const Comments = ({ post, setNewMessage }) => {
                 },
                 body: JSON.stringify({ commentId: commentId })
             });
-            const responseJson = await response.json();
-
             if (response.ok) {
                 setNewMessage(`Comment ${commentId} deleted`);
-                console.log(responseJson.message);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 

@@ -42,11 +42,8 @@ exports.getAllPosts = async (req, res) => {
         });
         if (allPosts === null) {
             throw 'An error has occurred!';
-        }
-        else if (allPosts.length === 0) {
-            res.status(200).json({ message: 'No post found!' });
-        } else {
-            res.status(200).json({ allPosts });
+        }else {
+            res.status(200).json({ allPosts: allPosts });
         }
     } catch (err) {
         switchErrors(res, err);
@@ -61,7 +58,7 @@ exports.addPost = async (req, res) => {
         } else if (!req.body.post) {
             throw 'Bad request!';
         }
-
+        
         // Si présence image on en définit l'url
         const postObject = req.file ?
         {
@@ -124,7 +121,7 @@ exports.modifyPost = async (req, res) => {
         {
             ...JSON.parse(req.body.post),
             imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...JSON.parse(req.body.post) };
+        } : { ...req.body.post };
 
         // Validation du formulaire
         validatePostPayload(postObject);
@@ -145,7 +142,7 @@ exports.modifyPost = async (req, res) => {
         let newContent;
         let newImage;
         
-        if(findPost.content && (!postObject.content || postObject.content === true)) {
+        if(findPost.content && (!postObject.content || postObject.content === false)) {
             newContent = '';
         }
         else if (postObject.content === findPost.content) {

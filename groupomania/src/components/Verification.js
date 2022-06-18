@@ -48,7 +48,7 @@ const Verification = () => {
                     setAlert(responseJson.error);
                 }
             } catch (err) {
-                console.error(err);
+                //console.log(err);
             }
         };
         fetchData();
@@ -74,7 +74,7 @@ const Verification = () => {
                     setSendmail('Le code vous a été renvoyé sur votre boite mail');
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
             }
         };
         fetchData();

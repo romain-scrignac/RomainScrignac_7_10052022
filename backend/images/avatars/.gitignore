@@ -1,2 +1,5 @@
 *
 !.gitignore
+
+# default account's avatar
+!avatar.svg

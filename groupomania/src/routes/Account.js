@@ -15,6 +15,7 @@ const Account = () => {
 
     const regexName = /[0-9!-&(-,.-/:-@[-`{-~]/;
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
+
     const [userInfos, setUserInfos] = useState({});
     const [avatarFile, setAvatarFile] = useState(null);
     const [account, setAccount] = useState({
@@ -26,9 +27,9 @@ const Account = () => {
         signup: false
     });
     const [usersList, setUsersList] = useState([]);
-    const [isAdminProfile, setIsAdminProfile] = useState(false);
-    const [newMessage, setNewMessage] = useState('');
-    const [newAlert, setNewAlert] = useState('');
+    const [isAdminProfile, setIsAdminProfile] = useState(false);        
+    const [newMessage, setNewMessage] = useState('');                   // used to update the web page following the activity
+    const [newAlert, setNewAlert] = useState('');                       // used to alert user if there is an error
 
     useEffect(() => {
         /**
@@ -56,7 +57,7 @@ const Account = () => {
                     }
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
             }
         };
         getUserData();
@@ -185,6 +186,7 @@ const Account = () => {
             confirmPass: '',
             signup: false
         });
+        setNewMessage(`Reset modification ${Date()}`);
     };
 
     /**
@@ -217,7 +219,7 @@ const Account = () => {
      * @param {Number} rank the rank of privileges
      */
     const changePrivileges = (rank) => {
-        if (userInfos.rank === 3) {
+        if (parseInt(localStorage.session_rank) === 3) {
             modifyPrivileges(rank);
         }
     };
@@ -296,15 +298,11 @@ const Account = () => {
                     body: JSON.stringify({ account })
                 });
             }
-            const responseJson = await response.json();
-
             if (response.ok) {
                 resetModify();
-                setNewMessage({account: account, file: avatarFile});
-                console.log(responseJson.message);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 
@@ -316,6 +314,8 @@ const Account = () => {
             let userId;
             if (location.search) {
                 userId = location.search.split('userId=')[1];
+            } else {
+                userId = userInfos.id;
             }
             const url = `https://localhost/api/auth/${userId}?admin=true`;
             const authorization = `Bearer ${localStorage.session_token}`;
@@ -330,14 +330,13 @@ const Account = () => {
                 body: JSON.stringify({ accountRank: rank })
             });
             if (response.ok) {
-                console.log('Privileges updated!');
-                setNewMessage(`Privileges updated!${rank}`);
+                setNewMessage(`Privileges updated! ${rank}`);
                 if (userId === localStorage.session_id) {
                     localStorage.setItem("session_rank", rank);
                 }
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 
@@ -345,7 +344,6 @@ const Account = () => {
      * @description this function communicate with the API to delete the user's account
      */
     const deleteAccount = async () => {
-        console.log(userInfos.id)
         try {
             const response = await fetch(`https://localhost/api/auth/${userInfos.id}`, {
                 method: 'DELETE',
@@ -357,7 +355,6 @@ const Account = () => {
                 body: JSON.stringify({ userId : userInfos.id })
             });
             if (response.ok) {
-                console.log(`Compte de ${userInfos.firstname} supprimé !`);
                 if (parseInt(localStorage.session_rank) === 3) {
                     navigate('/account');
                 } else {
@@ -366,7 +363,7 @@ const Account = () => {
                 }
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
 

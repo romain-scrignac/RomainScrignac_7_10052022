@@ -9,17 +9,20 @@ const validatePostPayload = (postObject, fileName) => {
         content,
         imageUrl
     } = postObject;
+    console.log(postObject);
 
     if (!postObject) {
         throw 'Bad request!';
-    } else if (!content && (!fileName && !imageUrl)) {
+    } else if (!content && !imageUrl && !fileName) {                // Si la publication ne contient rien
         throw 'Invalid form !';
-    } else if (content !== true && typeof content !== "string") {
-        throw 'Invalid field(s)!';
-    } else if (content !== true && content && content.trim() === "") {
-        throw 'Missing field(s)!';
-    } else if (content && (content.length < 3)) {
+    } else if (content && content.length < 3 && !imageUrl) {        // Si la publication ne contient pas d'image (création)
         throw 'Invalid number of characters!';
+    } else if (content || content !== false) {                      // S'il y a du contenu (création + modification)
+        if (typeof content !== "string") {
+            throw 'Invalid field(s)!';
+        } else if (content.trim() === "") { 
+            throw 'Missing field(s)!';
+        }
     }
 };
 

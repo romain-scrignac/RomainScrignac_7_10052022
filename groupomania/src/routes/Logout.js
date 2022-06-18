@@ -19,7 +19,7 @@ const Logout = () => {
                 setTimeout(function(){ window.location.href="/" } , 3000);
             }
         } catch (err) {
-            console.log(err);
+            //console.log(err);
         }
     };
     deconnexion();

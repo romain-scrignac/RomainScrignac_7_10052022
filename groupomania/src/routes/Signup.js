@@ -123,7 +123,7 @@ const Signup = () => {
                     setTimeout(function(){ setNewAlert('') } , 8000);
                 }
             } catch (err) {
-                console.log(err);
+                //console.log(err);
             }
         };
         fetchData();

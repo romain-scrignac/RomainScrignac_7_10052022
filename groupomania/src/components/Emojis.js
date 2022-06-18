@@ -47,7 +47,7 @@ const Emojis = ({ post, setNewMessage }) => {
                 setNewMessage(`Emoji ${postId} modified, like ${like}`);
             }
         } catch (err) {
-            console.error(err);
+            //console.error(err);
         }
     };
 
