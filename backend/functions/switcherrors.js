@@ -23,6 +23,7 @@ const switchErrors = (res, err) => {
         case 'Unauthorized request!':
             statusCode = 403;
             break;
+        case 'Invalid token!':
         case 'User already connected!':
         case 'User already disconnected!':
         case 'Wrong password!':

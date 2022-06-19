@@ -9,7 +9,12 @@ module.exports = async (req, res, next) => {
             throw 'Unauthenticated user!';
         }
         const token = authorization.split(' ')[1];
-        req.auth = jwt.verify(token, process.env.JWT_KEY);  // Vérification du token
+
+        try {
+            req.auth = jwt.verify(token, process.env.JWT_KEY);  // Vérification du token
+        } catch (err) {
+            throw 'Invalid token!';
+        }
 
         const findUser = await User.findOne({ where: {id: req.auth.userId} });
         if(findUser === null) {

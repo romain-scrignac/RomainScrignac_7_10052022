@@ -789,13 +789,13 @@ footer {
   transform: scale(1.05);
 }
 .allPosts .post-various__emotes .laugh-after, .allPosts .post-various__emotes .laugh-before {
-  left: 85px;
+  left: 80px;
 }
 .allPosts .post-various__emotes .like-after, .allPosts .post-various__emotes .like-before {
-  left: 45px;
+  left: 10px;
 }
 .allPosts .post-various__emotes .love-after, .allPosts .post-various__emotes .love-before {
-  left: 5px;
+  left: 45px;
 }
 .allPosts .post-various__emotes .laugh-after {
   background-image: linear-gradient(30deg, yellow, orange);
@@ -815,13 +815,13 @@ footer {
   text-decoration: solid;
 }
 .allPosts .post-various__emotes .nbLaughs {
-  left: 80px;
+  left: 75px;
 }
 .allPosts .post-various__emotes .nbLikes {
-  left: 35px;
+  left: 0;
 }
 .allPosts .post-various__emotes .nbLoves {
-  left: 0;
+  left: 40px;
 }
 .allPosts .post .displayComments {
   display: inline-block;

@@ -19,7 +19,7 @@ const multerMiddleware = (req, res, next) => {avatarFile(req, res, err => {
 
 router.post('/signup', userCtrl.signup);                                    // Requête pour création compte utilisateur
 router.post('/login', userCtrl.login);                                      // Requête pour connexion utilisateur
-router.post('/verification', userCtrl.verifCode);                           // Requête pour vérification du code email
+router.post('/verification', userCtrl.verifCode);                           // Requête pour vérification du code d'inscription
 router.post('/sendcode', userCtrl.sendCode);                                // Requête pour renvoyer le code de vérification
 router.put('/logout', userCtrl.logout);                                     // Requête pour déconnexion utilisateur
 router.get('/:id', auth, userCtrl.getProfil)                                // Requête pour récupérer les infos de l'utilisateur

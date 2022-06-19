@@ -20,18 +20,18 @@ exports.getAllPosts = async (req, res) => {
             sortByDate = [['updatedAt', 'DESC']];
         }
 
-        const userAttr = ['id', 'firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
+        const userAttributes = ['id', 'firstname', 'lastname', 'avatar', 'last_connection', 'last_disconnection'];
         const allPosts = await Post.findAll({ order: sortByDate, group: ['id'],
             include: [
                 { 
-                    model: User, attributes: userAttr
+                    model: User, attributes: userAttributes
                 },
                 { 
                     model: Comment, 
                     separate: true, 
                     order: [['createdAt', 'ASC']],
                     include: [
-                        { model: User, attributes: userAttr }
+                        { model: User, attributes: userAttributes }
                     ],
                     attributes: { exclude: ['post_id'] }
                 },

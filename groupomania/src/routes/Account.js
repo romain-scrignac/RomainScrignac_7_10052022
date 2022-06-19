@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
+import { errorToken } from '../datas/functions';
 import { iconDelete, iconUpdate } from '../datas/images';
 import { btnDelete, btnUpdate } from '../datas/buttons';
 
@@ -52,6 +53,9 @@ const Account = () => {
                     }
                 });
                 const responseJson = await response.json();
+                if(responseJson.error && responseJson.error === 'Invalid token!') {
+                    errorToken(navigate);
+                }
                 if (response.ok) {
                     setUserInfos(responseJson.user);
                     if (responseJson.user.rank === 3) {

@@ -1,7 +1,8 @@
 import { useState, useEffect, lazy } from "react";
 import { useNavigate } from 'react-router-dom';
-import ModifyPost from '../components/ModifyPost';
 import { ContentInput, ImageInput } from '../components/PostForm';
+import { errorToken } from '../datas/functions';
+import ModifyPost from '../components/ModifyPost';
 const Emojis = lazy(() => import('../components/Emojis'));
 const Comments = lazy(() => import('../components/Comments'));
 
@@ -30,8 +31,10 @@ const AllPosts = () => {
                     }
                 });
                 const responseJson = await response.json();
-
-                if (response.ok && responseJson.allPosts.length > 0) {
+                if(responseJson.error && responseJson.error === 'Invalid token!') {
+                    errorToken(navigate);
+                }
+                if (response.ok) {
                     // Reactions counters
                     const postsFromApi = responseJson.allPosts.map(post => {
                         let likes = 0;
