@@ -18,6 +18,6 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "nodemailer": "^6.7.5",
-    "sequelize": "^6.20.1"
+    "sequelize": "^6.21.0"
   }
 }
