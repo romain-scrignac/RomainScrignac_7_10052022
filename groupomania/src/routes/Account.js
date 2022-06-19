@@ -4,17 +4,17 @@ import { iconDelete, iconUpdate } from '../datas/images';
 import { btnDelete, btnUpdate } from '../datas/buttons';
 
 const Account = () => {
-    const location = useLocation();
     const navigate = useNavigate();
-
+    const location = useLocation();
     if (location.search.match(/userId/)) {
         document.title = 'Groupomania - Profile';
     } else {
         document.title = 'Groupomania - Account';
     }
-
     const regexName = /[0-9!-&(-,.-/:-@[-`{-~]/;
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
+    const sessionRank = Number(localStorage.session_rank);
+    const sessionId = Number(localStorage.session_id);
 
     const [userInfos, setUserInfos] = useState({});
     const [avatarFile, setAvatarFile] = useState(null);
@@ -27,6 +27,7 @@ const Account = () => {
         signup: false
     });
     const [usersList, setUsersList] = useState([]);
+    const [isAdmin, setIsAdmin] = useState(false);
     const [isAdminProfile, setIsAdminProfile] = useState(false);        
     const [newMessage, setNewMessage] = useState('');                   // used to update the web page following the activity
     const [newAlert, setNewAlert] = useState('');                       // used to alert user if there is an error
@@ -36,10 +37,11 @@ const Account = () => {
          * @description this function communicates with the API to display the user's informations
          */
         const getUserData = async () => {
-            let userId = localStorage.session_id;
-            // If admin and profile consultation the userId changes
-            if (location.search && parseInt(localStorage.session_rank) === 3) {
+            let userId = sessionId;
+            // If admin's profile or profile consultation the userId changes
+            if (location.search && sessionRank === 3) {
                 userId = location.search.split('userId=')[1];
+                setIsAdmin(true);
             }
             try {
                 const response = await fetch(`https://localhost/api/auth/${userId}`, {
@@ -51,8 +53,8 @@ const Account = () => {
                 });
                 const responseJson = await response.json();
                 if (response.ok) {
-                    setUserInfos(responseJson.message);
-                    if (parseInt(localStorage.session_rank) === 3) {
+                    setUserInfos(responseJson.user);
+                    if (responseJson.user.rank === 3) {
                         setUsersList(responseJson.usersList);
                     }
                 }
@@ -113,6 +115,16 @@ const Account = () => {
 
     const emailOnChange = (e) => {
         const email = e.target.value;
+
+        if (email.match(/[A-ZÀ-ÿ]/)) {
+            setNewAlert("L'email doit être en minuscules et sans accent");
+        } else if (email.match(/[!-,/:-?[-^`°{-~]/)) {
+            setNewAlert("Caractère(s) non autorisé(s)");
+        }
+        else {
+            setNewAlert('');
+        }
+
         if (!email.match(regexEmail)) {
             setAccount(previousState => { return {...previousState, email: ''} });
             e.target.style["border-color"] = "#FD2D01";
@@ -120,6 +132,13 @@ const Account = () => {
             setAccount(previousState => { return {...previousState, email: email.toLowerCase()} });
             e.target.style["border-color"] = "#34c924";
         }
+    };
+
+    const emailOnBlur = (e) => {
+        const email = e.target.value;
+        if (!email.match(regexEmail)) {
+            setNewAlert("Mauvais format d'email");
+        } 
     };
 
     const passwordOnChange = (e) => {
@@ -157,7 +176,11 @@ const Account = () => {
     const handleDelete = async (e) => {
         e.preventDefault();
         const text = "Confirmez-vous la suppression de votre compte ?";
-        if (window.confirm(text)) {
+        const textAdmin = "Confirmez-vous la suppression de ce compte ?";
+
+        if ((!isAdmin || isAdminProfile) && window.confirm(text)) {
+            deleteAccount();
+        } else if (isAdmin && !isAdminProfile && window.confirm(textAdmin)) {
             deleteAccount();
         }
     };
@@ -186,6 +209,7 @@ const Account = () => {
             confirmPass: '',
             signup: false
         });
+        setAvatarFile(null);
         setNewMessage(`Reset modification ${Date()}`);
     };
 
@@ -198,16 +222,16 @@ const Account = () => {
         navigate(`/account?userId=${userId}`);
         setNewMessage(`Account of user ${userId}`);
 
-        if (userId !== userInfos.id && isAdminProfile === true) {
+        if (userId !== userInfos.id && isAdminProfile) {
             setIsAdminProfile(false);
         }
     };
 
     /**
-     * @description this function is used to switch user's profile and admin profile
+     * @description this function is used to switch between user's profile and admin's profile
      */
     const viewAdminProfile = () => {
-        if (!location.search && parseInt(localStorage.session_rank) === 3) {
+        if (!location.search && sessionRank === 3) {
             setIsAdminProfile(true);
         }
     };
@@ -219,7 +243,7 @@ const Account = () => {
      * @param {Number} rank the rank of privileges
      */
     const changePrivileges = (rank) => {
-        if (parseInt(localStorage.session_rank) === 3) {
+        if (sessionRank === 3) {
             modifyPrivileges(rank);
         }
     };
@@ -268,10 +292,41 @@ const Account = () => {
     };
 
     /**
+     * @description this function communicates with the API to modify the user's privileges
+     */
+     const modifyPrivileges = async (rank) => {
+        try {
+            let userId;
+            if (location.search) {
+                userId = location.search.split('userId=')[1];
+            } else {
+                userId = userInfos.id;
+            }
+            const url = `https://localhost/api/auth/${userId}?admin=true`;
+            const authorization = `Bearer ${localStorage.session_token}`;
+
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json',
+                    'Authorization': authorization
+                },
+                body: JSON.stringify({ accountRank: rank })
+            });
+            if (response.ok) {
+                setNewMessage(`Privileges updated! ${rank}`);
+            }
+        } catch (err) {
+            //console.log(err);
+        }
+    };
+
+    /**
      * @description this function communicates with the API to modify the user's informations
      */
     const modifyAccount = async () => {
-        const url = `https://localhost/api/auth/${localStorage.session_id}`;
+        const url = `https://localhost/api/auth/${sessionId}`;
         const authorization = `Bearer ${localStorage.session_token}`;
         try {
             let response;
@@ -307,40 +362,6 @@ const Account = () => {
     };
 
     /**
-     * @description this function communicates with the API to modify the user's privileges
-     */
-    const modifyPrivileges = async (rank) => {
-        try {
-            let userId;
-            if (location.search) {
-                userId = location.search.split('userId=')[1];
-            } else {
-                userId = userInfos.id;
-            }
-            const url = `https://localhost/api/auth/${userId}?admin=true`;
-            const authorization = `Bearer ${localStorage.session_token}`;
-
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json',
-                    'Authorization': authorization
-                },
-                body: JSON.stringify({ accountRank: rank })
-            });
-            if (response.ok) {
-                setNewMessage(`Privileges updated! ${rank}`);
-                if (userId === localStorage.session_id) {
-                    localStorage.setItem("session_rank", rank);
-                }
-            }
-        } catch (err) {
-            //console.log(err);
-        }
-    };
-
-    /**
      * @description this function communicate with the API to delete the user's account
      */
     const deleteAccount = async () => {
@@ -355,7 +376,7 @@ const Account = () => {
                 body: JSON.stringify({ userId : userInfos.id })
             });
             if (response.ok) {
-                if (parseInt(localStorage.session_rank) === 3) {
+                if (sessionRank === 3) {
                     navigate('/account');
                 } else {
                     localStorage.clear();
@@ -370,8 +391,8 @@ const Account = () => {
     return (
         <div className="profil">
             {
-                // Display privileges' list if admin and view profile
-                parseInt(localStorage.session_rank) === 3 ?
+                // Display privileges' button if admin
+                sessionRank === 3 ?
                 (
                     <div className="profil-admin">
                         <div className="profil-admin-rank">
@@ -396,25 +417,41 @@ const Account = () => {
                 <button className={btnDelete.class} title={btnDelete.title} onClick={handleDelete}>
                     <img src={iconDelete.cover} alt={iconDelete.name} />
                 </button>
-                <fieldset>
-                    <label htmlFor='avatar' className="avatarUpload">
-                        <div className='avatar'>
-                            <img
-                                src={userInfos.avatar}
-                                alt='avatar'
-                                title="Changer d'avatar"
+                {
+                    sessionId === userInfos.id ?
+                    (
+                        <fieldset>
+                            <label htmlFor='avatar' className="avatarUpload">
+                                <div className='avatar'>
+                                    <img
+                                        src={userInfos.avatar}
+                                        alt='avatar'
+                                        title="Changer d'avatar"
+                                    />
+                                </div>
+                            </label>
+                            {avatarFile ? (<span id="avatarName">{avatarFile.name}</span>): null}
+                            <input
+                                id="avatar"
+                                name="avatar"
+                                type="file"
+                                onChange={avatarOnChange}
+                                accept="image/*"
                             />
-                        </div>
-                    </label>
-                    {avatarFile ? (<span id="avatarName">{avatarFile.name}</span>): null}
-                    <input
-                        id="avatar"
-                        name="avatar"
-                        type="file"
-                        onChange={avatarOnChange}
-                        accept="image/*"
-                />
-                </fieldset>
+                        </fieldset>
+                    ) : (
+                        <fieldset>
+                            <label htmlFor='avatar' className="avatarUpload">
+                                <div className='avatar'>
+                                    <img
+                                        src={userInfos.avatar}
+                                        alt='avatar'
+                                    />
+                                </div>
+                            </label>
+                        </fieldset>
+                    )
+                }
                 <fieldset>
                     <label htmlFor="firstname">Prénom</label>
                     <input 
@@ -426,7 +463,7 @@ const Account = () => {
                         disabled
                     />
                     {
-                        parseInt(localStorage.session_id) === userInfos.id ?
+                        sessionId === userInfos.id ?
                         (
                             <button className={btnUpdate.class} title="Modifier le prénom" onClick={handleUpdate}>
                                 <img src={iconUpdate.cover} alt={iconUpdate.name} />
@@ -446,7 +483,7 @@ const Account = () => {
                         disabled
                     />
                     {
-                        parseInt(localStorage.session_id) === userInfos.id ?
+                        sessionId === userInfos.id ?
                         (
                             <button className={btnUpdate.class} title="Modifier le nom" onClick={handleUpdate}>
                                 <img src={iconUpdate.cover} alt={iconUpdate.name} />
@@ -462,10 +499,11 @@ const Account = () => {
                         type="email"
                         placeholder={userInfos.email}
                         onChange={emailOnChange}
+                        onBlur={emailOnBlur}
                         disabled
                     />
                     {
-                        parseInt(localStorage.session_id) === userInfos.id ?
+                        sessionId === userInfos.id ?
                         (
                             <button className={btnUpdate.class} title="Modifier l'email" onClick={handleUpdate}>
                                 <img src={iconUpdate.cover} alt={iconUpdate.name} />
@@ -474,7 +512,7 @@ const Account = () => {
                     }
                 </fieldset>
                 {
-                    parseInt(localStorage.session_id) === userInfos.id ?
+                    sessionId === userInfos.id ?
                     (
                         <fieldset>
                             <label htmlFor="password">Mot de passe</label>
@@ -512,7 +550,7 @@ const Account = () => {
             </form>
             {newAlert ? (<p className="alert">⚠️ {newAlert}</p>) : null}
             {
-                // If admin, display users' list
+                // If it's admin's profile, display users' list
                 userInfos.rank === 3 && !location.search.match(/userId/) ?
                 (
                     <div className="usersList">

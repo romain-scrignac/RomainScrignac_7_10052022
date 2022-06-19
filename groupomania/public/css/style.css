@@ -460,6 +460,9 @@ footer {
   cursor: pointer;
   border-radius: 3em;
 }
+.account-form .avatarUpload .avatar img:hover {
+  box-shadow: 1px 2px 5px #4E5166;
+}
 .account-form .user-rank {
   font-weight: bold;
   color: #FD2D01;
@@ -593,11 +596,13 @@ footer {
 }
 .allPosts .post-infos-user__avatar {
   height: 40px;
+  width: 40px;
   border-radius: 3em;
   border: 1px groove #FFD7D7;
 }
 .allPosts .post-infos-user__avatar img {
   height: 100%;
+  width: 100%;
   border-radius: 3em;
 }
 .allPosts .post-infos-user__avatar img:hover {

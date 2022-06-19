@@ -149,6 +149,7 @@ exports.logout = async(req, res) => {
 
 // Fonction pour voir le profil utilisateur + liste de tous les autres si admin
 exports.getProfil = async (req, res) => {
+    console.log(typeof req.auth.userId)
     try {
         if (!req.params.id) {
             throw 'Bad request!';
@@ -165,15 +166,16 @@ exports.getProfil = async (req, res) => {
             throw 'Unauthorized request!';
         }
 
-        const userAttr = ['id', 'firstname', 'lastname', 'email', 'avatar', 'rank'];
-        const findUser = await User.findOne({ attributes: userAttr, where: {id: userId} });
+        const userAttributes = ['id', 'firstname', 'lastname', 'email', 'avatar', 'rank'];
+        const findUser = await User.findOne({ attributes: userAttributes, where: {id: userId} });
         if (findUser === null) throw 'User not found!';
 
+        // Si admin on envoie la liste de tous les utilisateurs
         if (isAdmin) {
             const usersList = await User.findAll({attributes: ['id', 'firstname', 'lastname', 'rank'] });
-            res.status(200).json({ message: findUser,  usersList: usersList });
+            res.status(200).json({ user: findUser,  usersList: usersList });
         } else {
-            res.status(200).json({ message: findUser });
+            res.status(200).json({ user: findUser });
         }  
     } catch (err) {
         switchErrors(res, err);
@@ -232,15 +234,20 @@ exports.modifyUser = async (req, res) => {
             // vérification du formulaire
             validateUserPayload(userObject);
 
-            // Si nouvelle image on supprime l'ancienne
-            if (req.file && fileName !== 'avatar.svg') {
-                fs.unlink(`images/avatars/${fileName}`, (err) => {
-                    if (err) {
-                        console.log('Avatar not found!');
-                    } else {
-                        console.log(`Old avatar deleted (${fileName})`);
-                    }
-                });
+            console.log(fileName)
+
+            // Si nouvelle image met à jour l'avatar
+            if (req.file) {
+                // On supprime l'ancienne image sauf si c'est l'avatar par défaut
+                if (fileName !== 'avatar.svg') {
+                    fs.unlink(`images/avatars/${fileName}`, (err) => {
+                        if (err) {
+                            console.log('Avatar not found!');
+                        } else {
+                            console.log(`Old avatar deleted (${fileName})`);
+                        }
+                    });
+                }
                 await User.update({ avatar: userObject.avatarUrl }, { where: {id: userId} }, (err) => {
                     if (err) throw err;
                 });

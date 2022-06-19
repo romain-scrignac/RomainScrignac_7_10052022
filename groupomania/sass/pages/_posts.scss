@@ -54,10 +54,12 @@
 
             &__avatar {
                 height: 40px;
+                width: 40px;
                 border-radius: 3em;
                 border: 1px groove $secondary;
                 img {
                     height: 100%;
+                    width: 100%;
                     border-radius: 3em;
                     &:hover {
                         box-shadow: 1px 2px 5px $tertiary;

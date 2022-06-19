@@ -27,7 +27,7 @@ export const btnAccount = {
 export const btnDelete = {
     name: 'Suppression',
     class: 'btn-delete',
-    title: 'Supprimer mon compte'
+    title: 'Supprimer le compte'
 };
 export const btnUpdate = {
     name: 'Modification',

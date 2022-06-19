@@ -124,7 +124,7 @@ const Comments = ({ post, setNewMessage }) => {
                             <span className="oneComment-author">{comment.User.firstname}</span>
                             <span id={`comment-${comment.id}`}>{comment.content}</span>
                             {
-                                comment.user_id === parseInt(localStorage.session_id) ?
+                                comment.user_id === Number(localStorage.session_id) ?
                                 (
                                     <div className="oneComment-options">
                                         <div className="oneComment-options--display">

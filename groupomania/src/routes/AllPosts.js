@@ -298,7 +298,7 @@ const AllPosts = () => {
                         </span>
                         {
                             // Display view user's profile if admin
-                            parseInt(localStorage.session_rank) === 3 && post.User.id !== parseInt(localStorage.session_id) ?
+                            Number(localStorage.session_rank) === 3 && post.User.id !== Number(localStorage.session_id) ?
                             (
                                 <span 
                                     className="post-infos-user__author"
@@ -345,7 +345,7 @@ const AllPosts = () => {
                     {/* Post options */}
                     <div className="post-various">
                         {
-                            post.user_id === parseInt(localStorage.session_id) || parseInt(localStorage.session_rank) > 1 ? 
+                            post.user_id === Number(localStorage.session_id) || Number(localStorage.session_rank) > 1 ? 
                             (
                                 <div className="post-various--options">
                                     <span className="post-various--options__edit" title="Modifier le post">

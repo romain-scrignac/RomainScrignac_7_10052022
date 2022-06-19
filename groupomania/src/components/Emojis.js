@@ -51,7 +51,7 @@ const Emojis = ({ post, setNewMessage }) => {
         }
     };
 
-    const userId = parseInt(localStorage.session_id);
+    const userId = Number(localStorage.session_id);
     const postId = post.id;
     const countLaughs = post.countLaughs;
     const countLikes = post.countLikes;
