@@ -97,12 +97,12 @@ exports.modifyPost = async (req, res) => {
 
         // Vérification du rang de l'utilisateur. Si admin ou modo, il pourra modifier le post
         const findUser = await User.findOne({ where: {id: req.auth.userId}, attributes: ['rank'] });
-        let userRank = null;
+        let isModeration = null;
         if (findUser !== null) {
             if (findUser.rank === 2) {
-                userRank = "modérateur";
+                isModeration = "modérateur";
             } else if (findUser.rank === 3) {
-                userRank = "admin";
+                isModeration = "admin";
             }
         }
 
@@ -112,7 +112,7 @@ exports.modifyPost = async (req, res) => {
             include: { model: User, attributes: ['rank'] }
         });
         if (findPost === null) throw 'Post not found!';
-        if (findPost.user_id !== req.auth.userId && !userRank) {
+        if (findPost.user_id !== req.auth.userId && !isModeration) {
             throw 'Unauthorized request!';
         }
 
@@ -126,8 +126,8 @@ exports.modifyPost = async (req, res) => {
         // Validation du formulaire
         validatePostPayload(postObject);
 
-        // Si ancienne image, on la supprime si nouvel ajout
-        if (findPost.image !== null && req.file) {
+        // Si ancienne image, on la supprime si nouvelle ou suppression
+        if (findPost.image !== null && (req.file || postObject.imageUrl === null)) {
             const fileName = findPost.image.split('images/')[1];
             fs.unlink(`images/${fileName}`, (err) => {
                 if (err) {
@@ -137,38 +137,25 @@ exports.modifyPost = async (req, res) => {
                 }
             });
         }
-
-        // On définie la modification selon les données envoyées depuis le front
-        let newContent;
-        let newImage;
         
-        if(findPost.content && (!postObject.content || postObject.content === false)) {
-            newContent = '';
+        // Update content
+        if (findPost.content !== postObject.content) {
+            await Post.update({ content: postObject.content }, { where: {id: postId} }, (err) => {
+                if (err) throw err;
+            });
         }
-        else if (postObject.content === findPost.content) {
-            newContent = findPost.content;
-        } else {
-            newContent = postObject.content;
+        // Update image
+        if (findPost.image !== postObject.imageUrl) {
+            await Post.update({ image: postObject.imageUrl }, { where: {id: postId } }, (err) => {
+                if (err) throw err;
+            });
         }
-
-        if(findPost.image && postObject.imageUrl === null) {
-            newImage = null;
-        } else if (postObject.imageUrl !== null && postObject.imageUrl !== findPost.image) {
-            newImage = postObject.imageUrl;
-        } else {
-            newImage = findPost.image;
+        // Personnalisation de message sur le front si modération
+        if (isModeration && findPost.User.rank < 2) {
+            await Post.update({ moderator: isModeration }, { where: {id: postId} }, (err) => {
+                if (err) throw err;
+            });
         }
-        
-        // Mise à jour du post
-        const postAttributes = {
-            content: newContent,
-            image: newImage,
-            moderator: findPost.User.rank < 2 ? userRank : null     // personnalisation de message sur le front si modération
-        };
-
-        await Post.update( postAttributes, { where: {id: postId} }, (err) => {
-            if (err) throw err;
-        });
         res.status(200).json({ message: 'Post updated!' });
     } catch (err) {
         switchErrors(res, err);
@@ -187,9 +174,9 @@ exports.deletePost = async (req, res) => {
 
         // Vérification du rang de l'utilisateur. Si admin, il pourra supprimer le post
         const findUser = await User.findOne({ where: {id: req.auth.userId}, attributes: ['rank'] });
-        let userRank = null;
+        let isModeration = null;
         if (findUser !== null && findUser.rank > 2) {
-            userRank = true;
+            isModeration = true;
         }
 
         // Recherche du post à supprimer
@@ -198,7 +185,7 @@ exports.deletePost = async (req, res) => {
             include: { model: User, attributes: ['rank'] }
         });
         if (findPost === null) throw 'Post not found!';
-        else if (findPost.user_id !== req.auth.userId && !userRank) {
+        else if (findPost.user_id !== req.auth.userId && !isModeration) {
             throw 'Unauthorized request!';
         }
 

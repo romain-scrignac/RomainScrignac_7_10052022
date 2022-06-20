@@ -1,0 +1,975 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital@0;1&display=swap");
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Lato", sans-serif;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  color: #4E5166;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+}
+
+#root {
+  padding: 0;
+  margin: 0;
+}
+
+.logout, .unconnected {
+  text-align: center;
+  margin-top: 100px;
+}
+
+.err404, .alreadyConnected {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 100px;
+}
+.err404 img, .alreadyConnected img {
+  width: 30%;
+}
+.err404 a, .alreadyConnected a {
+  text-decoration: underline;
+  font-style: italic;
+}
+.err404 a:hover, .alreadyConnected a:hover {
+  color: #FD2D01;
+}
+.err404 p, .alreadyConnected p {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.alert {
+  font-weight: bold;
+  color: #FD2D01;
+  font-size: 14px;
+}
+
+/* Header */
+.header {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  top: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+  z-index: 1;
+}
+@media screen and (min-width: 600px) {
+  .header {
+    justify-content: center;
+    padding-left: 0;
+  }
+}
+.header .grpm-logo {
+  margin-left: 15px;
+}
+@media screen and (min-width: 600px) {
+  .header .grpm-logo {
+    position: unset;
+  }
+}
+.header .grpm-logo .logo-img {
+  width: 150px;
+}
+@media screen and (min-width: 600px) {
+  .header .grpm-logo .logo-img {
+    width: 200px;
+  }
+}
+.header .grpm-logo .logo-img:hover {
+  cursor: pointer;
+}
+
+/* Footer */
+footer {
+  display: flex;
+}
+
+/* Buttons */
+.btn {
+  cursor: pointer;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+}
+.btn:enabled {
+  background: linear-gradient(#FFD7D7, #FD2D01);
+  color: white;
+}
+.btn:disabled {
+  cursor: no-drop;
+  color: silver;
+}
+.btn:hover:enabled {
+  box-shadow: 2px 3px 10px #4E5166;
+  color: white;
+}
+.btn-logout, .btn-account, .btn-delete, .btn-update {
+  cursor: pointer;
+  background-color: unset;
+  border: none;
+}
+.btn-logout img, .btn-account img, .btn-delete img, .btn-update img {
+  height: 23px;
+}
+.btn-logout:hover, .btn-account:hover, .btn-delete:hover, .btn-update:hover {
+  scale: 1.1;
+}
+.btn-account {
+  margin-right: 10px;
+}
+.btn-login {
+  margin-right: 15px;
+}
+.btn-logout img {
+  height: 22px;
+}
+.btn-delete {
+  position: absolute;
+  top: 35px;
+  right: 5px;
+  z-index: 1;
+}
+.btn-update {
+  position: absolute;
+  right: 20px;
+  bottom: 6px;
+}
+.btn-submit {
+  margin: 5px auto;
+}
+.btn-submit:hover:enabled {
+  scale: 1.05;
+}
+.btn-order {
+  margin-bottom: 10px;
+  scale: 0.9;
+}
+
+.activeBtn .btn {
+  box-shadow: 2px 3px 10px #4E5166;
+}
+.activeBtn .btn:enabled {
+  background: unset;
+  background-color: #4E5166;
+  color: white;
+}
+
+/* Forms */
+.post-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+.post-form textarea, .post-form--modify textarea {
+  resize: none;
+  overflow: auto;
+  margin-top: 0;
+  padding: 8px;
+  border: 1px ridge silver;
+  border-top: none;
+  font-size: 14px;
+}
+.post-form textarea:focus, .post-form--modify textarea:focus {
+  outline: none;
+  border-color: #FD2D01;
+}
+.post-form textarea::-webkit-input-placeholder, .post-form--modify textarea::-webkit-input-placeholder {
+  font-style: italic;
+}
+.post-form textarea:-ms-input-placeholder, .post-form--modify textarea:-ms-input-placeholder {
+  font-style: italic;
+}
+.post-form textarea::placeholder, .post-form--modify textarea::placeholder {
+  font-style: italic;
+}
+.post-form__options, .post-form--modify__options {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 10px 5px;
+  margin: 5px 0;
+}
+.post-form__options-upload, .post-form--modify__options-upload {
+  display: flex;
+  justify-content: center;
+}
+.post-form__options .uploadFile, .post-form--modify__options .uploadFile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 7px;
+  padding: 0;
+}
+.post-form__options .uploadFile-image i, .post-form__options .uploadFile-video i, .post-form--modify__options .uploadFile-image i, .post-form--modify__options .uploadFile-video i {
+  font-size: 30px;
+}
+.post-form__options .uploadFile-image i:hover, .post-form__options .uploadFile-video i:hover, .post-form--modify__options .uploadFile-image i:hover, .post-form--modify__options .uploadFile-video i:hover {
+  cursor: pointer;
+  color: rgba(253, 45, 1, 0.7);
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+}
+.post-form__options .displayFileName, .post-form--modify__options .displayFileName {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+.post-form__options .displayFileName .isFile, .post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .isFile, .post-form--modify__options .displayFileName .modify__isFile {
+  bottom: -10px;
+  font-size: 12px;
+  padding-top: 10px;
+}
+.post-form__options .displayFileName .modify__isFile, .post-form--modify__options .displayFileName .modify__isFile {
+  color: white;
+}
+.post-form__options .displayFileName .deleteFile, .post-form--modify__options .displayFileName .deleteFile {
+  margin-left: 10px;
+  margin-top: 10px;
+  color: #FFD7D7;
+  font-size: 16px;
+}
+.post-form__options .displayFileName .deleteFile:hover, .post-form--modify__options .displayFileName .deleteFile:hover {
+  cursor: pointer;
+  -webkit-transform: scale(1.07);
+          transform: scale(1.07);
+}
+.post-form__options #image-file, .post-form__options #video-link, .post-form__options .modify__image, .post-form__options .modify__video-link, .post-form--modify__options #image-file, .post-form--modify__options #video-link, .post-form--modify__options .modify__image, .post-form--modify__options .modify__video-link {
+  display: none;
+}
+.post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
+  margin: 0 0 0 10px;
+  height: 20px;
+  width: 170px;
+  max-width: 90%;
+}
+@media screen and (min-width: 600px) {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
+    height: unset;
+    width: 230px;
+  }
+}
+@media screen and (min-width: 600px) and (max-width: 991px) {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
+    margin: 0 0 0 20px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .post-form__options #video-link, .post-form__options .modify__video-link, .post-form--modify__options #video-link, .post-form--modify__options .modify__video-link {
+    position: absolute;
+    right: 0;
+    margin: 0;
+  }
+}
+.post-form__options #video-link:focus, .post-form__options .modify__video-link:focus, .post-form--modify__options #video-link:focus, .post-form--modify__options .modify__video-link:focus {
+  outline: 1px groove #4E5166;
+}
+.post-form__options #video-link::-webkit-input-placeholder, .post-form__options .modify__video-link::-webkit-input-placeholder, .post-form--modify__options #video-link::-webkit-input-placeholder, .post-form--modify__options .modify__video-link::-webkit-input-placeholder {
+  font-style: italic;
+  opacity: 0.4;
+  font-size: 12px;
+}
+.post-form__options #video-link:-ms-input-placeholder, .post-form__options .modify__video-link:-ms-input-placeholder, .post-form--modify__options #video-link:-ms-input-placeholder, .post-form--modify__options .modify__video-link:-ms-input-placeholder {
+  font-style: italic;
+  opacity: 0.4;
+  font-size: 12px;
+}
+.post-form__options #video-link::placeholder, .post-form__options .modify__video-link::placeholder, .post-form--modify__options #video-link::placeholder, .post-form--modify__options .modify__video-link::placeholder {
+  font-style: italic;
+  opacity: 0.4;
+  font-size: 12px;
+}
+.post-form__options img, .post-form--modify__options img {
+  height: 100%;
+  margin: 0;
+}
+.post-form--modify {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  padding: 10px;
+  top: 0;
+  border-radius: 7px;
+  background-color: rgba(78, 81, 102, 0.9);
+}
+.post-form--modify textarea {
+  width: 100%;
+  border: none;
+}
+.post-form--modify__options .uploadFile {
+  color: white;
+}
+.post-form--modify__options .uploadFile-image i:hover, .post-form--modify__options .uploadFile-video i:hover {
+  color: #FFD7D7;
+}
+.post-form--modify__options__image, .post-form--modify__options__video {
+  display: none;
+}
+.post-form--modify .confirm-modify button {
+  margin: 0 5px;
+}
+
+.post-addComment {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+}
+.post-addComment textarea {
+  border: 1px ridge silver;
+  border-radius: 8px;
+  padding: 12px 8px 0 8px;
+  resize: none;
+  overflow: auto;
+  font-size: 14px;
+}
+.post-addComment textarea:focus {
+  outline: 1px solid #4E5166;
+}
+.post-addComment textarea::-webkit-input-placeholder {
+  font-style: italic;
+}
+.post-addComment textarea:-ms-input-placeholder {
+  font-style: italic;
+}
+.post-addComment textarea::placeholder {
+  font-style: italic;
+}
+.post-addComment__submit {
+  display: none;
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+}
+.post-addComment__submit i {
+  font-size: 22px;
+}
+.post-addComment__submit i:hover {
+  cursor: pointer;
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+}
+
+.login-form, .signup-form, .verif-form, .account-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px #4E5166 groove;
+  border-radius: 10px;
+  padding: 0 0 10px 0;
+  width: 90%;
+}
+@media screen and (min-width: 600px) {
+  .login-form, .signup-form, .verif-form, .account-form {
+    width: 400px;
+  }
+}
+.login-form h1, .signup-form h1, .verif-form h1, .account-form h1 {
+  color: white;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+  border-radius: 8px 8px 0 0;
+  width: 100%;
+  text-align: center;
+  font-size: 17px;
+  margin: 0 0 20px 0;
+  padding: 5px 0;
+}
+.login-form fieldset, .signup-form fieldset, .verif-form fieldset, .account-form fieldset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  width: 100%;
+}
+.login-form fieldset label, .signup-form fieldset label, .verif-form fieldset label, .account-form fieldset label {
+  font-size: 13px;
+  margin-bottom: 5px;
+  text-align: center;
+}
+.login-form fieldset input, .signup-form fieldset input, .verif-form fieldset input, .account-form fieldset input {
+  outline: none;
+  border: 2px #f2f0f0 groove;
+  width: 70%;
+}
+.login-form .submit, .signup-form .submit, .verif-form .submit, .account-form .submit {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.login-form .messageValid, .signup-form .messageValid, .verif-form .messageValid, .account-form .messageValid {
+  position: absolute;
+  bottom: -20px;
+  font-style: italic;
+  color: #FD2D01;
+  font-size: 12px;
+  margin-left: 10px;
+}
+
+.verif .issue {
+  position: absolute;
+  font-size: 10px;
+  right: 10px;
+  top: 4px;
+  padding: 3px 5px;
+  color: #FD2D01;
+  border: 1px groove #FFD7D7;
+  border-radius: 1em;
+}
+.verif .issue:hover {
+  cursor: help;
+  background-color: #FFD7D7;
+  scale: 1.05;
+}
+.verif .sendCode a {
+  color: #4E5166;
+  font-size: 14px;
+}
+.verif .sendCode a:hover {
+  color: #FD2D01;
+  text-decoration: underline;
+}
+.verif #userCode {
+  width: 7ch;
+}
+
+.account-form {
+  position: relative;
+}
+.account-form fieldset {
+  position: relative;
+}
+.account-form input[type=file] {
+  display: none;
+}
+.account-form .avatarUpload {
+  display: flex;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+}
+.account-form .avatarUpload .avatar {
+  width: 100%;
+  height: 100%;
+}
+.account-form .avatarUpload .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 3em;
+}
+.account-form .avatarUpload .avatar img:hover {
+  box-shadow: 1px 2px 5px #4E5166;
+}
+.account-form .user-rank {
+  font-weight: bold;
+  color: #FD2D01;
+  text-decoration: underline;
+  margin-top: -15px;
+  margin-bottom: 10px;
+}
+
+.login-form fieldset, .signup-form fieldset {
+  position: relative;
+}
+.login-form .icon-low-vision, .login-form .icon-eye, .signup-form .icon-low-vision, .signup-form .icon-eye {
+  position: absolute;
+  right: 20px;
+  bottom: 0;
+  height: 30px;
+  width: 30px;
+}
+.login-form .icon-low-vision i, .login-form .icon-eye i, .signup-form .icon-low-vision i, .signup-form .icon-eye i {
+  font-size: 15px;
+}
+.login-form .icon-low-vision i:hover, .login-form .icon-eye i:hover, .signup-form .icon-low-vision i:hover, .signup-form .icon-eye i:hover {
+  cursor: pointer;
+}
+.login-form .icon-low-vision, .signup-form .icon-low-vision {
+  display: block;
+}
+.login-form .icon-eye, .signup-form .icon-eye {
+  display: none;
+}
+
+/* Main */
+#main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.signup, .login, .verif {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.verif h3 {
+  color: #FD2D01;
+}
+
+/* Nav */
+.nav-buttons {
+  display: flex;
+  justify-content: center;
+  z-index: 1;
+}
+.nav-buttons--profil {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-content: center;
+  top: 10px;
+  right: 10px;
+}
+.nav-buttons--profil a, .nav-buttons--profil button {
+  display: flex;
+  align-items: center;
+}
+.nav-buttons .btn-log {
+  margin-top: 120px;
+}
+
+/* Posts */
+.allPosts {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 90%;
+  margin-top: 70px;
+}
+@media screen and (min-width: 600px) and (max-width: 991px) {
+  .allPosts {
+    margin-top: 90px;
+    width: 80%;
+  }
+}
+@media screen and (min-width: 992px) {
+  .allPosts {
+    margin-top: 100px;
+    width: 600px;
+  }
+}
+.allPosts .addPost {
+  width: 100%;
+  margin-bottom: 30px;
+}
+.allPosts .addPost h1 {
+  font-size: medium;
+  margin: 0;
+  padding: 5px 0 5px 10px;
+  background: linear-gradient(to right top, #FD2D01, #FFD7D7);
+  border-radius: 8px 8px 0 0;
+  color: white;
+  font-size: 15px;
+}
+.allPosts .post {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 60px;
+  border: 1px groove #4E5166;
+  border-radius: 8px;
+  box-shadow: 2px 2px 10px rgb(144, 143, 143);
+}
+.allPosts .post .modify-form {
+  display: none;
+}
+.allPosts .post-infos-user {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+}
+.allPosts .post-infos-user__avatar:hover, .allPosts .post-infos-user__author:hover {
+  cursor: pointer;
+}
+.allPosts .post-infos-user__avatar {
+  height: 40px;
+  width: 40px;
+  border-radius: 3em;
+  border: 1px groove #FFD7D7;
+}
+.allPosts .post-infos-user__avatar img {
+  height: 100%;
+  width: 100%;
+  border-radius: 3em;
+}
+.allPosts .post-infos-user__avatar img:hover {
+  box-shadow: 1px 2px 5px #4E5166;
+}
+.allPosts .post-infos-user__author {
+  margin: 5px 0 0 15px;
+}
+.allPosts .post-infos-user__author {
+  color: #FD2D01;
+  font-weight: bold;
+}
+.allPosts .post-infos-user__author:hover {
+  text-decoration: underline;
+}
+.allPosts .post-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 0 20px 10px 20px;
+}
+.allPosts .post-content--text {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  white-space: pre;
+  overflow: auto;
+  width: 100%;
+  padding: 10px 0;
+}
+.allPosts .post-content--image {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0 7px 0;
+}
+.allPosts .post-content--image img {
+  object-fit: cover;
+  max-height: 500px;
+  max-width: 100%;
+  border-radius: 8px;
+}
+.allPosts .post-content--video {
+  width: 100%;
+  height: 300px;
+  margin: 0 auto;
+}
+.allPosts .post-content--date, .allPosts .post-content--moderation {
+  position: absolute;
+  right: 15px;
+  font-size: 12px;
+  font-style: italic;
+}
+.allPosts .post-content--date {
+  bottom: 3px;
+}
+@media screen and (min-width: 600px) {
+  .allPosts .post-content--date {
+    bottom: -20px;
+  }
+}
+.allPosts .post-content--moderation {
+  color: #FD2D01;
+  bottom: -15px;
+}
+@media screen and (min-width: 600px) {
+  .allPosts .post-content--moderation {
+    bottom: -37px;
+  }
+}
+.allPosts .post-allComments {
+  display: none;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 0 10px;
+}
+.allPosts .post-allComments .oneComment {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  padding: 5px 15px 7px 15px;
+  background-color: rgba(255, 215, 215, 0.4);
+  border-radius: 15px;
+}
+.allPosts .post-allComments .oneComment-author {
+  font-weight: bold;
+  margin-bottom: 7px;
+}
+.allPosts .post-allComments .oneComment-options {
+  position: absolute;
+  display: flex;
+  right: -10px;
+  top: 0;
+  font-size: 18px;
+  height: 100%;
+}
+.allPosts .post-allComments .oneComment-options--display {
+  position: absolute;
+  top: -12px;
+  font-size: 24px;
+}
+.allPosts .post-allComments .oneComment-options--display:hover {
+  cursor: pointer;
+  width: 100px;
+}
+.allPosts .post-allComments .oneComment-options--display:hover > .oneComment-options--choices {
+  display: flex;
+}
+.allPosts .post-allComments .oneComment-options--choices {
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  text-align: center;
+  top: 10px;
+  left: 25px;
+  font-size: 15px;
+  padding: 5px;
+  width: 100px;
+  background-color: rgba(78, 81, 102, 0.1);
+  border-radius: 7px;
+}
+.allPosts .post-allComments .oneComment-options--choices span {
+  margin: 5px 0;
+}
+.allPosts .post-allComments .oneComment-options--choices span:hover {
+  color: #FD2D01;
+  font-weight: bold;
+}
+.allPosts .post-split {
+  border: 1px groove #4E5166;
+  opacity: 0.5;
+  width: 95%;
+  margin: 0 auto 5px auto;
+}
+.allPosts .post-various {
+  height: 50px;
+  width: 100%;
+  padding: 10px 0;
+}
+.allPosts .post-various--options {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+}
+.allPosts .post-various--options__edit, .allPosts .post-various--options__delete {
+  width: 30px;
+  height: 30px;
+  opacity: 0.6;
+}
+.allPosts .post-various--options__edit i, .allPosts .post-various--options__delete i {
+  font-size: 18px;
+}
+.allPosts .post-various--options__edit:hover, .allPosts .post-various--options__delete:hover {
+  cursor: pointer;
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+  opacity: 1;
+}
+.allPosts .post-various--options__edit {
+  margin-right: 10px;
+}
+.allPosts .post-various__emotes {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  left: 15px;
+}
+.allPosts .post-various__emotes .laugh-after, .allPosts .post-various__emotes .laugh-before, .allPosts .post-various__emotes .like-after, .allPosts .post-various__emotes .like-before, .allPosts .post-various__emotes .love-after, .allPosts .post-various__emotes .love-before {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  padding: 1px;
+}
+.allPosts .post-various__emotes .laugh-after i, .allPosts .post-various__emotes .laugh-before i, .allPosts .post-various__emotes .like-after i, .allPosts .post-various__emotes .like-before i, .allPosts .post-various__emotes .love-after i, .allPosts .post-various__emotes .love-before i {
+  font-size: 18px;
+}
+.allPosts .post-various__emotes .laugh-after i:hover, .allPosts .post-various__emotes .laugh-before i:hover, .allPosts .post-various__emotes .like-after i:hover, .allPosts .post-various__emotes .like-before i:hover, .allPosts .post-various__emotes .love-after i:hover, .allPosts .post-various__emotes .love-before i:hover {
+  cursor: pointer;
+  -webkit-transform: scale(1.05);
+          transform: scale(1.05);
+}
+.allPosts .post-various__emotes .laugh-after, .allPosts .post-various__emotes .laugh-before {
+  left: 80px;
+}
+.allPosts .post-various__emotes .like-after, .allPosts .post-various__emotes .like-before {
+  left: 10px;
+}
+.allPosts .post-various__emotes .love-after, .allPosts .post-various__emotes .love-before {
+  left: 45px;
+}
+.allPosts .post-various__emotes .laugh-after {
+  background-image: linear-gradient(30deg, yellow, orange);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+.allPosts .post-various__emotes .love-after {
+  background-image: linear-gradient(30deg, #FFD7D7, #FD2D01);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+}
+.allPosts .post-various__emotes .nbLaughs, .allPosts .post-various__emotes .nbLikes, .allPosts .post-various__emotes .nbLoves {
+  position: absolute;
+  bottom: 0;
+  font-size: 12px;
+  font-weight: bold;
+  -webkit-text-decoration: solid;
+          text-decoration: solid;
+}
+.allPosts .post-various__emotes .nbLaughs {
+  left: 75px;
+}
+.allPosts .post-various__emotes .nbLikes {
+  left: 0;
+}
+.allPosts .post-various__emotes .nbLoves {
+  left: 40px;
+}
+.allPosts .post .displayComments {
+  display: inline-block;
+  padding: 5px 15px 0 15px;
+  font-size: 15px;
+  font-style: italic;
+}
+.allPosts .post .displayComments:hover {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #FD2D01;
+}
+
+.profil {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  height: 100%;
+  margin: 80px auto 0 auto;
+}
+@media screen and (min-width: 600px) {
+  .profil {
+    margin-top: 100px;
+  }
+}
+@media screen and (min-width: 992px) {
+  .profil {
+    width: 60%;
+  }
+}
+.profil-admin {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+  width: 300px;
+}
+.profil-admin-rank {
+  color: white;
+  text-align: center;
+}
+.profil-admin-rank--privileges {
+  position: absolute;
+  display: none;
+  right: 20px;
+  top: -15px;
+  padding: 3px 7px;
+  color: white;
+  background-color: #4E5166;
+  border-radius: 5px;
+}
+@media screen and (min-width: 600px) {
+  .profil-admin-rank--privileges {
+    right: 5px;
+    top: -25px;
+  }
+}
+.profil-admin-rank--privileges ul {
+  margin: 0;
+  padding: 0;
+}
+.profil-admin-rank--privileges ul li {
+  list-style: none;
+  text-align: left;
+  font-size: 13px;
+  margin: 3px 0;
+}
+@media screen and (min-width: 600px) {
+  .profil-admin-rank--privileges ul li {
+    font-size: 15px;
+  }
+}
+.profil-admin-rank--privileges ul li:hover {
+  text-decoration: underline;
+}
+.profil-admin-rank:hover {
+  cursor: pointer;
+  width: 300px;
+}
+.profil-admin-rank:hover > .profil-admin-rank--privileges {
+  display: block;
+}
+.profil-admin-rank i {
+  background-color: #4E5166;
+  border-radius: 5px;
+  padding: 5px 9px;
+}
+.profil .usersList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 30px 0;
+  padding: 5px 7px;
+  border: 1px groove #4E5166;
+  border-radius: 10px;
+}
+.profil .usersList h3, .profil .usersList span:hover {
+  text-decoration: underline;
+}
+.profil .usersList h3 {
+  margin-top: 5px;
+  font-size: 17px;
+}
+.profil .usersList span {
+  margin: 0 0 5px 0;
+  width: 100%;
+  text-align: center;
+}
+.profil .usersList span:hover {
+  cursor: pointer;
+  color: #FD2D01;
+}
+.profil .usersList span hr {
+  width: 50%;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Nhc3MvbWFpbi5zY3NzIiwiLi4vLi4vLi4vc2Fzcy9iYXNlL19iYXNlLnNjc3MiLCIuLi9zdHlsZS5jc3MiLCIuLi8uLi8uLi9zYXNzL3V0aWxzL192YXJpYWJsZXMuc2NzcyIsIi4uLy4uLy4uL3Nhc3MvbGF5b3V0L19oZWFkZXIuc2NzcyIsIi4uLy4uLy4uL3Nhc3MvdXRpbHMvX21peGlucy5zY3NzIiwiLi4vLi4vLi4vc2Fzcy9sYXlvdXQvX2Zvb3Rlci5zY3NzIiwiLi4vLi4vLi4vc2Fzcy9jb21wb25lbnRzL19idXR0b25zLnNjc3MiLCIuLi8uLi8uLi9zYXNzL2NvbXBvbmVudHMvX2Zvcm1zLnNjc3MiLCIuLi8uLi8uLi9zYXNzL3BhZ2VzL19hcHAuc2NzcyIsIi4uLy4uLy4uL3Nhc3MvcGFnZXMvX21lbnUuc2NzcyIsIi4uLy4uLy4uL3Nhc3MvcGFnZXMvX3Bvc3RzLnNjc3MiLCIuLi8uLi8uLi9zYXNzL3BhZ2VzL19hY2NvdW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBR1Esa0ZBQUE7QUNIUjtFQUNJLFNBQUE7RUFBVyxVQUFBO0FDR2Y7O0FEQUE7RUFDSSwrQkFBQTtFQUNBLFdBQUE7RUFDQSxTQUFBO0VBQ0EsVUFBQTtFQUNBLGNFSk87QURPWDs7QURBQTtFQUNJLHNCQUFBO0FDR0o7O0FEQUE7RUFDSSxxQkFBQTtBQ0dKOztBREFBO0VBQ0ksVUFBQTtFQUNBLFNBQUE7QUNHSjs7QURBQTtFQUNJLGtCQUFBO0VBQ0EsaUJBQUE7QUNHSjs7QURBQTtFQUNJLGFBQUE7RUFDQSxzQkFBQTtFQUNBLG1CQUFBO0VBQ0EsaUJBQUE7QUNHSjtBRERJO0VBQ0ksVUFBQTtBQ0dSO0FEREk7RUFDSSwwQkFBQTtFQUNBLGtCQUFBO0FDR1I7QURGUTtFQUNJLGNFeENGO0FENENWO0FEREk7RUFDSSxpQkFBQTtFQUNBLGNBQUE7QUNHUjs7QURDQTtFQUNJLGlCQUFBO0VBQ0EsY0VuRE07RUZvRE4sZUFBQTtBQ0VKOztBRXpE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 */

@@ -50,7 +50,7 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
         setIsModifyPost(false);
         setNewMessage(`Reset modification ${Date()}`);
 
-        // On remet les valuers par défaut dans les champs du formulaire
+        // On remet les valeurs par défaut dans les champs du formulaire
         contentField.value = post.content;
         imageField.value = '';
     };
@@ -62,8 +62,8 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
         e.preventDefault();
         let contentValue;
         let imageValue;
-        
-        if (modifyPostContent !== '') {
+      
+        if (modifyPostContent || modifyPostContent === null) {
             contentValue = modifyPostContent;
         } else {
             contentValue = post.content;
@@ -111,19 +111,6 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                     },
                     body: JSON.stringify({ post: {content: contentValue, imageUrl: imageValue} })
                 });
-                //  formData.append("post", JSON.stringify({
-                //  content: contentValue, 
-                //  imageUrl: imageValue
-                //  }));
-                //  response = await fetch(`https://localhost/api/posts/${post.id}`, {
-                //     method: 'PUT',
-                //     headers: {
-                //        'Accept': 'application/json',
-                //        'Content-type': 'application/json',
-                //         'Authorization': `Bearer ${localStorage.session_token}`
-                //     },
-                //     body: JSON.stringify({ post: {content: contentValue, imageUrl: imageValue} })
-                //  });
             }
             if (response.ok) {
                 resetModify(e, post);
@@ -175,8 +162,8 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                 </div>
                 <div className="confirm-modify">
                     { 
-                        modifyPostContent || modifyImageFile || deleteImage
-                        || (modifyPostContent === false && !deleteImage && post.image) ? 
+                        modifyPostContent || (modifyPostContent === null && !deleteImage) || modifyImageFile 
+                        || (deleteImage && modifyPostContent !== null) ? 
                         (
                             <button 
                                 className="btn btn-submit" 

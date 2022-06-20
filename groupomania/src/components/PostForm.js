@@ -13,7 +13,6 @@ export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostConten
     }
 
     const onChangeContent = (e) => {
-        const oldContent = e.target.defaultValue;
         const content = e.target.value;
 
         // If it's not a post modification
@@ -24,21 +23,12 @@ export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostConten
                 setPostContent(content);
             }
         } else {
-            if (!postImage) {
-                if (content.length < 3 || content.trim() === "") {
-                    setModifyPostContent('');
-                } else {
-                    setModifyPostContent(content);
-                }
+            if (!postImage && (content.length < 3 || content.trim() === "")) {
+                setModifyPostContent('');
+            } else if (postImage && content.trim() === "") {
+                setModifyPostContent(null);
             } else {
-                if (!content) {
-                    setModifyPostContent(false);
-                }
-                else if (oldContent !== content) {
-                    setModifyPostContent(content);
-                } else {
-                    setModifyPostContent(oldContent);
-                }
+                setModifyPostContent(content);
             }
         }
     };
