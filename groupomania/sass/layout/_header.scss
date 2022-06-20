@@ -19,6 +19,7 @@
 
         @include tablet-desktop {
             position: unset;
+            margin-left: 0;
         }
         .logo-img {
             width: 150px;

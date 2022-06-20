@@ -5,11 +5,17 @@ export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostConten
     let postId;
     let postContent;
     let postImage;
+    let inputId = "postText";
+    let placeholder = "Écrivez quelque chose...";
+    let defaultValue = null;
 
-    if (isModifyPost && post !== null) {
+    if (post !== null) {
         postId = post.id;
         postContent = post.content;
         postImage = post.image;
+        inputId = `modify__content-${postId}`;
+        placeholder = null;
+        defaultValue = postContent;
     }
 
     const onChangeContent = (e) => {
@@ -33,27 +39,16 @@ export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostConten
         }
     };
     
-    return (        
-        !isModifyPost ?
-        (
-            <textarea 
-                id="postText"
+    return (
+        <textarea 
+                id={inputId}
                 name="postText"
-                placeholder="Écrivez quelque chose..."
+                placeholder={placeholder}
                 onChange={onChangeContent}
+                defaultValue={defaultValue}
                 rows="5"
             >
-            </textarea>
-        ) :
-        (
-            <textarea 
-                id={`modify__content-${postId}`}
-                defaultValue={postContent}
-                onChange={onChangeContent}
-                rows="5"
-            >
-            </textarea>
-        )
+        </textarea>
     )
 };
 
@@ -62,8 +57,13 @@ export const ContentInput = ({ isModifyPost, setPostContent, setModifyPostConten
  */
 export const ImageInput = ({ isModifyPost, setImageFile, setModifyImageFile, post }) => {
     let postId;
-    if (isModifyPost && post !== null) {
+    let inputId = "image-file";
+    let inputClass = null;
+
+    if (post !== null) {
         postId = post.id;
+        inputId = `modify__image-${postId}`;
+        inputClass = 'modify__image'
     }
 
     const onChangeImage = (e) => {
@@ -85,22 +85,12 @@ export const ImageInput = ({ isModifyPost, setImageFile, setModifyImageFile, pos
     };
 
     return (
-        !isModifyPost ?
-        (
-            <input 
-                id="image-file" 
-                type="file" 
-                accept="image/*" 
-                onChange={onChangeImage} 
-            />
-        ) : (
-            <input 
-                id={`modify__image-${postId}`}
-                className="modify__image" 
-                type="file" 
-                accept="image/*"
-                onChange={onChangeImage}
-            />
-        )
+        <input
+            id={inputId}
+            className={inputClass}
+            type="file"
+            accept="image/*"
+            onChange={onChangeImage}
+        />
     )
 };

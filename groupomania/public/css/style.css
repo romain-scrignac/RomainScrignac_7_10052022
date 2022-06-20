@@ -81,6 +81,7 @@ a {
 @media screen and (min-width: 600px) {
   .header .grpm-logo {
     position: unset;
+    margin-left: 0;
   }
 }
 .header .grpm-logo .logo-img {
@@ -108,7 +109,7 @@ footer {
   font-weight: bold;
   font-size: 12px;
 }
-.btn:enabled {
+.btn:enabled, .btn-login, .btn-signup {
   background: linear-gradient(#FFD7D7, #FD2D01);
   color: white;
 }
@@ -116,7 +117,7 @@ footer {
   cursor: no-drop;
   color: silver;
 }
-.btn:hover:enabled {
+.btn:hover:enabled, .btn-login:hover, .btn-signup:hover {
   box-shadow: 2px 3px 10px #4E5166;
   color: white;
 }
@@ -129,10 +130,10 @@ footer {
   height: 23px;
 }
 .btn-logout:hover, .btn-account:hover, .btn-delete:hover, .btn-update:hover {
-  scale: 1.1;
+  transform: scale(1.1);
 }
 .btn-account {
-  margin-right: 10px;
+  margin-right: 15px;
 }
 .btn-login {
   margin-right: 15px;
@@ -155,11 +156,11 @@ footer {
   margin: 5px auto;
 }
 .btn-submit:hover:enabled {
-  scale: 1.05;
+  transform: scale(1.05);
 }
 .btn-order {
   margin-bottom: 10px;
-  scale: 0.9;
+  transform: scale(0.9);
 }
 
 .activeBtn .btn {
@@ -420,7 +421,7 @@ footer {
 .verif .issue:hover {
   cursor: help;
   background-color: #FFD7D7;
-  scale: 1.05;
+  transform: scale(1.05);
 }
 .verif .sendCode a {
   color: #4E5166;
@@ -529,7 +530,7 @@ footer {
   top: 10px;
   right: 10px;
 }
-.nav-buttons--profil a, .nav-buttons--profil button {
+.nav-buttons--profil a, .nav-buttons--profil span {
   display: flex;
   align-items: center;
 }
@@ -927,16 +928,16 @@ footer {
   margin-top: 5px;
   font-size: 17px;
 }
-.profil .usersList span {
+.profil .usersList div {
   margin: 0 0 5px 0;
   width: 100%;
   text-align: center;
 }
-.profil .usersList span:hover {
+.profil .usersList div:hover {
   cursor: pointer;
   color: #FD2D01;
 }
-.profil .usersList span hr {
+.profil .usersList div hr {
   width: 50%;
 }
 

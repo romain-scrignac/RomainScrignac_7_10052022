@@ -262,7 +262,7 @@
         &:hover {
             cursor: help;
             background-color: $secondary;
-            scale: 1.05;
+            transform: scale(1.05);
         }
     }
     .sendCode {

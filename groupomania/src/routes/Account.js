@@ -426,13 +426,13 @@ const Account = () => {
                     (
                         <fieldset>
                             <label htmlFor='avatar' className="avatarUpload">
-                                <div className='avatar'>
+                                <span className='avatar'>
                                     <img
                                         src={userInfos.avatar}
                                         alt='avatar'
                                         title="Changer d'avatar"
                                     />
-                                </div>
+                                </span>
                             </label>
                             {avatarFile ? (<span id="avatarName">{avatarFile.name}</span>): null}
                             <input
@@ -446,12 +446,12 @@ const Account = () => {
                     ) : (
                         <fieldset>
                             <label htmlFor='avatar' className="avatarUpload">
-                                <div className='avatar'>
+                                <span className='avatar'>
                                     <img
                                         src={userInfos.avatar}
                                         alt='avatar'
                                     />
-                                </div>
+                                </span>
                             </label>
                         </fieldset>
                     )
@@ -564,14 +564,14 @@ const Account = () => {
                             (
                                 usersList.map(user => (
                                     user.id !== userInfos.id ?
-                                    (<span 
+                                    (<div 
                                         key={user.id} 
                                         onClick={() => viewProfile(user.id)}
                                         title={`Voir le profil de ${user.firstname}`}
                                     >
                                         {`${user.firstname} ${user.lastname}`}
                                         <hr></hr>
-                                    </span>) : null
+                                    </div>) : null
                                 ))
                             ) : (<span>Aucun utilisateur</span>)
                         }

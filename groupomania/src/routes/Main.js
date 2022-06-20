@@ -23,24 +23,24 @@ const Main = () => {
                 (
                     <div className="btn-log">
                         <NavLink to="/login" className={({ isActive }) => isActive ? activeClassName : undefined}>
-                            <button className={btnLogin.class} title={btnLogin.title}>{btnLogin.name}</button>
+                            <span className={btnLogin.class} title={btnLogin.title}>{btnLogin.name}</span>
                         </NavLink>
                         <NavLink to="/signup" className={({ isActive }) => isActive ? activeClassName : undefined}>
-                            <button className={btnSignup.class} title={btnSignup.title}>{btnSignup.name}</button>
+                            <span className={btnSignup.class} title={btnSignup.title}>{btnSignup.name}</span>
                         </NavLink>
                     </div>
                 ):(
                     <div className="nav-buttons--profil">
                         <NavLink to ='/account'>
-                            <button className={btnAccount.class} title={btnAccount.title}>
+                            <span className={btnAccount.class} title={btnAccount.title}>
                                 <img src={iconAccount.cover} alt={iconAccount.name} />
-                            </button>
+                            </span>
                             {}
                         </NavLink>
                         <NavLink to="/logout">
-                            <button className={btnLogout.class} title={btnLogout.title}>
+                            <span className={btnLogout.class} title={btnLogout.title}>
                                 <img src={iconLogout.cover} alt={iconLogout.name} />
-                            </button>
+                            </span>
                         </NavLink>
                     </div>
                 )

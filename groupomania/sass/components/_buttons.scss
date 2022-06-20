@@ -6,7 +6,7 @@
     font-weight: bold;
     font-size: 12px;
 
-    &:enabled {
+    &:enabled, &-login, &-signup {
         background: linear-gradient($secondary, $primary);
         color: white;
     }
@@ -14,7 +14,7 @@
         cursor: no-drop;
         color: silver;
     }
-    &:hover:enabled {
+    &:hover:enabled, &-login:hover, &-signup:hover {
         box-shadow: 2px 3px 10px $tertiary;
         color: white;
     }
@@ -26,11 +26,11 @@
             height: 23px;
         }
         &:hover {
-            scale: 1.1;
+            transform: scale(1.1);
         }
     }
     &-account {
-        margin-right: 10px;
+        margin-right: 15px;
     }
     &-login {
         margin-right: 15px;
@@ -53,11 +53,11 @@
         margin: 5px auto;
     }
     &-submit:hover:enabled {
-        scale: 1.05;
+        transform: scale(1.05);
     }
     &-order {
         margin-bottom: 10px;
-        scale: 0.9;
+        transform: scale(0.9);
     }
 }
 
