@@ -1,4 +1,3 @@
-"use strict";
 const nodemailer = require("nodemailer");
 
 // async..await is not allowed in global scope, must use a wrapper
@@ -6,8 +5,8 @@ const verifEmail = (userEmail, userFirstname, userCode) => {
     try {
         // create reusable transporter object using the default SMTP transport
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
-            port: 587,
+            service: process.env.EMAIL_SERVICE,
+            port: process.env.EMAIL_PORT,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS
