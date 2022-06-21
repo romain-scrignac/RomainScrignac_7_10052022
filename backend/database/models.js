@@ -8,11 +8,11 @@ const User = sequelize.define('User', {              // User model
         primaryKey: true
     },
     firstname: {
-        type: DataTypes.STRING(75),
+        type: DataTypes.STRING(50),
         allowNull: false
     },
     lastname: {
-        type: DataTypes.STRING(75),
+        type: DataTypes.STRING(50),
         allowNull: false
     },
     email: {
@@ -31,14 +31,6 @@ const User = sequelize.define('User', {              // User model
         type: DataTypes.TINYINT(1),
         defaultValue: 1
     },
-    code: {
-        type: DataTypes.STRING(6),
-        allowNull: false
-    },
-    isVerified: {
-        type: DataTypes.TINYINT(1),
-        defaultValue: 0
-    }, 
     last_connection: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

@@ -1,7 +1,6 @@
 const { User } = require('../database/models');
 const { validateUserPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
-const verifEmail = require('../functions/verifEmail');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
@@ -24,64 +23,14 @@ exports.signup = async (req, res) => {
             throw 'This email is already in use, please enter another one!';
         }
 
-        // Création d'un code aléatoire de vérification
-        const userCode = Math.random().toString().substring(2,8);
-
         // Création utilisateur
         const hash = await bcrypt.hash(userObject.password, 10);
         await User.create({ firstname: userObject.firstname, lastname: userObject.lastname,
-        email: userObject.email, password: hash, code: userCode }, (err) => {
+        email: userObject.email, password: hash }, (err) => {
                 if (err) throw err;
         });
 
-        // Envoi d'un mail de confirmation
-        //verifEmail(userObject.email, userObject.firstname, userCode);
-
         res.status(201).json({ message: 'User created!' });
-    } catch (err) {
-        switchErrors(res, err);
-    }
-};
-
-// Fonction pour vérifier le code de confirmation d'email
-exports.verifCode = async (req, res) => {
-    try {
-        if(!req.body || !req.body.userId || !req.body.code) {
-            throw 'Bad request!';
-        }
-
-        const findUser = await User.findOne({ where: {id: req.body.userId} });
-        if (findUser === null) throw 'User not found!';
-        if (findUser.code !== req.body.code) throw 'Invalid code!';
-
-        await User.update({ last_connection: Date(), isVerified: 1 }, { where: {id: req.body.userId} }, (err) => {
-            if (err) throw err;
-        })
-
-        const token = jwt.sign(
-            { userEmail: findUser.email, userId: findUser.id }, process.env.JWT_KEY, { expiresIn: '24h' }
-        );
-
-        res.status(200).json({ firstname: findUser.firstname, token: token });
-    } catch (err) {
-        switchErrors(res, err);
-    }
-};
-
-// Fonction pour renvoyer le code de confirmation d'email
-exports.sendCode = async (req, res) => {
-    try {
-        if(!req.body || !req.body.userId) {
-            throw 'Bad request!';
-        }
-
-        const findUser = await User.findOne({ where: {id: req.body.userId} });
-        if (findUser === null) throw 'User not found!';
-
-        // Renvoi du code de vérification
-        verifEmail(findUser.email, findUser.firstname, findUser.code);
-
-        res.status(200).json({ message: 'The code has been send back!'});
     } catch (err) {
         switchErrors(res, err);
     }

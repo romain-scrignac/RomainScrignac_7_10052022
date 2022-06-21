@@ -2,14 +2,11 @@ import { useState } from 'react';
 
 const Signup = () => {
     document.title = 'Groupomania - Signup';
+    const regexName = /\s{2,}|[0-9!-&(-,.-/:-@[-`{-~]/;
     const regexEmail = /^([a-z0-9]{3,20})([.|_|-]{1}[a-z0-9]{1,20})?@{1}([a-z0-9]{2,15})\.[a-z]{2,4}$/;
-    const [firstnameValue, setFirstnameValue] = useState('');
-    const [lastnameValue, setLastnameValue] = useState('');
-    const [emailValue, setEmailValue] = useState('');
-    const [passwordValue, setPasswordValue] = useState('');
-    const [confirmPasswordValue, setConfirmPasswordValue] = useState('');
-    const [message, setMessage] = useState('');
-    const [newAlert, setNewAlert] = useState('');
+
+    const [message, setMessage] = useState('');         // used to notify the user that the registration was successful
+    const [newAlert, setNewAlert] = useState('');       // used to warn the user if a field is invalid
     const [user, setUser] = useState({
         firstname: '',
         lastname: '',
@@ -19,32 +16,35 @@ const Signup = () => {
         signup: true
     });
 
+
     const firstnameOnChange = (e) => {
         const firstname = e.target.value;
-        if (firstname.length < 3) {
+
+        if (firstname.trim() === "" || firstname.length > 50 || firstname.match(regexName)) {
             setUser(previousState => { return {...previousState, firstname: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
             setUser(previousState => { return {...previousState, firstname: firstname}});
             e.target.style["border-color"] = "#34c924";
         }
-        setFirstnameValue(firstname);
     };
 
     const lastnameOnChange = (e) => {
         const lastname = e.target.value;
-        if (lastname.length < 3) {
+
+        if (lastname.trim() === "" || lastname.length > 50 || lastname.match(regexName)) {
             setUser(previousState => { return {...previousState, lastname: ''}});
             e.target.style["border-color"] = "#FD2D01";
-        } else {
+        } 
+        else {
             setUser(previousState => { return {...previousState, lastname: lastname}});
             e.target.style["border-color"] = "#34c924";
         }
-        setLastnameValue(lastname);
     };
 
     const emailOnChange = (e) => {
         const email = e.target.value;
+
         if (!email.match(regexEmail)) {
             setUser(previousState => { return {...previousState, email: ''}});
             e.target.style["border-color"] = "#FD2D01";
@@ -52,33 +52,31 @@ const Signup = () => {
             setUser(previousState => { return {...previousState, email: email}});
             e.target.style["border-color"] = "#34c924";
         }
-        setEmailValue(email.toLowerCase());
     };
 
     const passwordOnChange = (e) => {
         const password = e.target.value;
-        if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g) 
-        || password.length < 8 || password.match[/\s|=|'|"'/]) {
+
+        if (!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g)
+        || password.match([/\s|=|'|"/]) || password.length < 8) {
             setUser(previousState => { return {...previousState, password: ''}});
             e.target.style["border-color"] = "#FD2D01";
-        }
-        else {
+        } else {
             setUser(previousState => { return {...previousState, password: password}});
             e.target.style["border-color"] = "#34c924";
         }
-        setPasswordValue(password);
     };
 
     const confirmPasswordOnChange = (e) => {
         const confirmPass = e.target.value;
-        if(confirmPass !== passwordValue) {
+
+        if (confirmPass !== user.password) {
             setUser(previousState => { return {...previousState, confirmPass: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
             setUser(previousState => { return {...previousState, confirmPass: confirmPass}});
             e.target.style["border-color"] = "#34c924";
         }
-        setConfirmPasswordValue(confirmPass);
     };
 
     const onViewPassword = (e) => {
@@ -116,11 +114,11 @@ const Signup = () => {
                 const responseJson = await response.json();
                 
                 if (response.ok) {
-                    setMessage('Bienvenue ! Un code de confirmation vient de vous être envoyé, veuillez vérifier votre boite email');
+                    setMessage('Inscription terminée, vous pouvez à présent vous connecter');
                     setTimeout(function(){ window.location.href="/login" } , 5000);
                 } else {
                     setNewAlert(responseJson.error);
-                    setTimeout(function(){ setNewAlert('') } , 8000);
+                    setTimeout(function(){ setNewAlert('') } , 7000);
                 }
             } catch (err) {
                 //console.log(err);
@@ -144,7 +142,6 @@ const Signup = () => {
                                 id="firstname"
                                 name="firstname"
                                 type="text"
-                                value={firstnameValue}
                                 onChange={firstnameOnChange}
                             />
                         </fieldset>
@@ -154,7 +151,6 @@ const Signup = () => {
                                 id="lastname"
                                 name="lastname"
                                 type="text"
-                                value={lastnameValue}
                                 onChange={lastnameOnChange}
                             />
                         </fieldset>
@@ -164,7 +160,6 @@ const Signup = () => {
                                 id="email"
                                 name="email"
                                 type="email"
-                                value={emailValue.toLowerCase()}
                                 onChange={emailOnChange}
                             />
                         </fieldset>
@@ -174,7 +169,6 @@ const Signup = () => {
                                 id="password"
                                 name="password"
                                 type="password"
-                                value={passwordValue}
                                 onChange={passwordOnChange}
                             />
                             <span id="icon-low-vision" className="icon-low-vision" onClick={onViewPassword}>
@@ -183,9 +177,6 @@ const Signup = () => {
                             <span id="icon-eye" className ="icon-eye" onClick={onViewPassword}>
                                 <i className="fas fa-eye" title="Cacher"></i>
                             </span>
-                            {/* <span className="icon-eye">
-                                <i className="fas fa-low-vision" onClick={onView} title="Afficher"></i>
-                            </span> */}
                         </fieldset>
                         <fieldset>
                             <label htmlFor="password">Confirmation du mot de passe</label>
@@ -193,20 +184,18 @@ const Signup = () => {
                                 id="verifPassword"
                                 name="verifPassword"
                                 type="password"
-                                value={confirmPasswordValue}
                                 onChange={confirmPasswordOnChange}
                             />
                         </fieldset>
                         {   
                             user.firstname && user.lastname && user.email && user.password 
-                            && user.confirmPass && passwordValue === confirmPasswordValue ?
+                            && user.confirmPass && user.password === user.confirmPass ?
                             (
                                 <button className="btn btn-submit" onClick={handleSubmit} title="Inscription">
                                     Valider
                                 </button>
                             ):(
                                 <div className='submit'>
-                                    <span className='messageValid'>* Tous les champs doivent être renseignés</span>
                                     <button className="btn btn-submit" disabled>Valider</button>
                                 </div>
                             )
@@ -214,7 +203,7 @@ const Signup = () => {
                     </form>
                 )
             }
-            {newAlert ? (<p className="alert">⚠️ {newAlert}</p>): null}
+            {newAlert ? (<p className="alert">⚠️  {newAlert}</p>): null}
         </div>
     )
 }

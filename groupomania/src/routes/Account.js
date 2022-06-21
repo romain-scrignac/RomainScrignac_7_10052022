@@ -96,8 +96,12 @@ const Account = () => {
 
     const firstnameOnChange = (e) => {
         const firstname = e.target.value;
+
         if (firstname.match(regexName)) {
             setNewAlert('Caractère(s) non autorisé(s)');
+            setAccount(previousState => { return {...previousState, firstname: ''}});
+        } else if (firstname.length > 50) {
+            setNewAlert('Prénom trop long (50 caractères maximum)');
             setAccount(previousState => { return {...previousState, firstname: ''}});
         } else {
             setNewAlert('');
@@ -114,8 +118,12 @@ const Account = () => {
 
     const lastnameOnChange = (e) => {
         const lastname = e.target.value;
+
         if (lastname.match(regexName)) {
             setNewAlert('Caractères non autorisés');
+            setAccount(previousState => { return {...previousState, lastname: ''}});
+        } else if (lastname.length > 50) {
+            setNewAlert('Nom trop long (50 caractères maximum)');
             setAccount(previousState => { return {...previousState, lastname: ''}});
         } else {
             setNewAlert('');
@@ -136,8 +144,9 @@ const Account = () => {
             setNewAlert("L'email doit être en minuscules et sans accent");
         } else if (email.match(/[!-,/:-?[-^`°{-~]/)) {
             setNewAlert("Caractère(s) non autorisé(s)");
-        }
-        else {
+        } else if (email.length > 75) {
+            setNewAlert("Email trop long(50 caractères maximum");
+        } else {
             setNewAlert('');
         }
 
@@ -148,13 +157,6 @@ const Account = () => {
             setAccount(previousState => { return {...previousState, email: email.toLowerCase()} });
             e.target.style["border-color"] = "#34c924";
         }
-    };
-
-    const emailOnBlur = (e) => {
-        const email = e.target.value;
-        if (!email.match(regexEmail)) {
-            setNewAlert("Mauvais format d'email");
-        } 
     };
 
     const passwordOnChange = (e) => {
@@ -211,12 +213,20 @@ const Account = () => {
             if (input.name !== 'avatar') {
                 input.value = '';
                 input.style["borderColor"] = '';
+            } else if (input.name !== 'avatar' && input.name !== 'verifPassword') {
                 input.disabled = true;
             }
         }
+
         if (avatarFile) {
             document.getElementById('avatarName').innerText = '';
         }
+        if (account.confirmPass) {
+            document.getElementById('account-form').lastChild.previousSibling.style["display"] = 'none';
+        }
+
+        console.log(document.getElementById('account-form').lastChild.previousSibling);
+
         setAccount({
             firstname: '',
             lastname: '',
@@ -515,7 +525,6 @@ const Account = () => {
                         type="email"
                         placeholder={userInfos.email}
                         onChange={emailOnChange}
-                        onBlur={emailOnBlur}
                         disabled
                     />
                     {
@@ -555,8 +564,8 @@ const Account = () => {
                     />
                 </fieldset>
                 {   
-                    avatarFile || account.firstname || account.lastname || account.email 
-                    || (account.password && account.password === account.confirmPass) ?
+                    !newAlert && (avatarFile || account.firstname || account.lastname || account.email 
+                    || (account.password && account.password === account.confirmPass)) ?
                     (
                         <button className="btn btn-submit" onClick={handleSubmit} title="Modifier le profil">
                             Valider
