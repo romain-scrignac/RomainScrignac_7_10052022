@@ -226,8 +226,13 @@ const AllPosts = () => {
                     'Authorization': `Bearer ${localStorage.session_token}`
                 }
             });
+            const responseJson = await response.json();
+            
             if (response.ok) {
                 setNewMessage(`Post ${postId} deleted`);
+            }
+            else if (responseJson.error && responseJson.error === 'Unauthorized request!') {
+                alert("Vous n'avez pas les droits requis pour cette action !");
             }
         } catch (err) {
             //console.log(err);

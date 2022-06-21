@@ -39,7 +39,7 @@ const Verification = () => {
                 });
 
                 if (response.ok) {
-                    setMessage('Bienvenue ! Redirection vers la page d\'accueil en cours...');
+                    setMessage("Redirection vers la page d'accueil en cours...");
                     localStorage.setItem("session_firstname", responseJson.firstname);
                     localStorage.setItem("session_token", responseJson.token);
                     setTimeout(function(){ window.location.href="/" } , 5000);

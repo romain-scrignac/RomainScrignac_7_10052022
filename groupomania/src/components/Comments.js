@@ -1,11 +1,15 @@
 import { useState } from 'react';
 
 const Comments = ({ post, setNewMessage }) => {
+
     const [commentValue, setCommentValue] = useState('');
     const [addComment, setAddComment] = useState({
         content: commentValue
     });
 
+    /**
+     * @description this function is used to display comments
+     */
     const displayComments = (e) => {
         e.preventDefault();
         const allComments = e.target.nextSibling;
@@ -13,7 +17,6 @@ const Comments = ({ post, setNewMessage }) => {
         if (!allComments.style["display"]) {
             e.target.title = "Cacher"
             allComments.style["display"] = "flex";
-            
         } else {
             e.target.title = "Afficher"
             allComments.style["display"] = "";
@@ -28,7 +31,6 @@ const Comments = ({ post, setNewMessage }) => {
         if(content.trim() === "") {
             setAddComment(previousState => { return {...previousState, content: ''}});
             submitButton.style["display"] = "none";
-
         } else {
             setAddComment(previousState => { return {...previousState, content: content}});
             submitButton.style["display"] = "block";
@@ -49,10 +51,13 @@ const Comments = ({ post, setNewMessage }) => {
         fetchCommentData(postId);
     };
 
+    /**
+     * @description this function is used to reset comment form
+     */
     const resetComment = (postId) => {
         setAddComment({ comment: '' });
         document.getElementById(`content-${postId}`).value = '';
-        document.getElementById(`submit-comment-${post.id}`).style["display"] = 'none';
+        document.getElementById(`submit-comment-${postId}`).style["display"] = 'none';
     };
 
     /**
@@ -85,17 +90,20 @@ const Comments = ({ post, setNewMessage }) => {
      */
      const fetchDeleteComment = async (commentId) => {
         try {
-            const response = await fetch(`https://localhost/api/comments/${commentId}?order=dateDesc`, {
+            const response = await fetch(`https://localhost/api/comments/${commentId}`, {
                 method: 'DELETE',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.session_token}`
-                },
-                body: JSON.stringify({ commentId: commentId })
+                }
             });
+            const responseJson = await response.json();
+            
             if (response.ok) {
                 setNewMessage(`Comment ${commentId} deleted`);
+            } else if (responseJson.error && responseJson.error === 'Unauthorized request!') {
+                alert("Vous n'avez pas les droits requis pour cette action !");
             }
         } catch (err) {
             //console.log(err);
@@ -103,8 +111,8 @@ const Comments = ({ post, setNewMessage }) => {
     };
 
     return (
-        // Display of comments
         <div>
+            {/* Comments display option */}
             {
                 post.Comments.length > 0 ?
                 (
@@ -117,6 +125,7 @@ const Comments = ({ post, setNewMessage }) => {
                     </span>
                 ): null
             }
+            {/* Display of comments */}
             <div className="post-allComments">
                 {
                     post.Comments.map(comment => (
@@ -124,7 +133,7 @@ const Comments = ({ post, setNewMessage }) => {
                             <span className="oneComment-author">{comment.User.firstname}</span>
                             <span id={`comment-${comment.id}`}>{comment.content}</span>
                             {
-                                comment.user_id === Number(localStorage.session_id) ?
+                                comment.user_id === Number(localStorage.session_id) || Number(localStorage.session_rank) === 3 ?
                                 (
                                     <div className="oneComment-options">
                                         <div className="oneComment-options--display">
@@ -154,7 +163,6 @@ const Comments = ({ post, setNewMessage }) => {
             </form>
         </div>
     )
-    
 };
 
 export default Comments

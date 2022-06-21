@@ -112,8 +112,13 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
                     body: JSON.stringify({ post: {content: contentValue, imageUrl: imageValue} })
                 });
             }
+            const responseJson = await response.json();
+            
             if (response.ok) {
                 resetModify(e, post);
+            }
+            else if (responseJson.error && responseJson.error === 'Unauthorized request!') {
+                alert("Vous n'avez pas les droits requis pour cette action !");
             }
         } catch (err) {
             // console.log(err);

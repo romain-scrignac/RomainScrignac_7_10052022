@@ -71,7 +71,19 @@ const Account = () => {
 
     const avatarOnChange = (e) => {
         const file = e.target.files[0];
-        if (file.size > (1024 * 1024)) {
+        const MIME_TYPES = [
+            'image/jpg',
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp'
+        ];
+        if (!MIME_TYPES.includes(file.type)) {
+            setNewAlert("Format d'image invalide");
+            setAvatarFile(null);
+            e.target.style["border-color"] = "#FD2D01";
+        } 
+        else if (file.size > (1024 * 1024)) {
             setNewAlert("La taille de l'image doit être inférieure à 1 Mo");
             setAvatarFile(null);
             e.target.style["border-color"] = "#FD2D01";
@@ -440,7 +452,7 @@ const Account = () => {
                                 name="avatar"
                                 type="file"
                                 onChange={avatarOnChange}
-                                accept="image/*"
+                                accept=".jpg, .jpeg, .png, .gif, .webp"
                             />
                         </fieldset>
                     ) : (

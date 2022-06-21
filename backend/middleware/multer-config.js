@@ -6,7 +6,8 @@ const MIME_TYPES = {
     'image/jpg': 'jpg',
     'image/jpeg': 'jpg',
     'image/png': 'png',
-    'image/gif': 'gif'
+    'image/gif': 'gif',
+    'image/webp': 'webp'
 };
 
 const storage = multer.diskStorage({
@@ -82,9 +83,16 @@ const avatarFile = multer({
         }
 
         // Vérification du format de l'image
-        if(file.mimetype !== 'image/jpeg' && file.mimetype !== 'image/png' && file.mimetype !== 'image/gif') {
+        let isFileValid = false;
+        Object.entries(MIME_TYPES).map( entrie => {
+            if (entrie.includes(file.mimetype)) {
+                isFileValid = true;
+            }
+        });
+
+        if (!isFileValid) {
             success = false;
-            callback({ message: "Invalid Image !" }, false);
+            callback({ message: "Invalid file!" }, false);
         }
 
         if (success) {

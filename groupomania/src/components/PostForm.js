@@ -68,8 +68,14 @@ export const ImageInput = ({ isModifyPost, setImageFile, setModifyImageFile, pos
 
     const onChangeImage = (e) => {
         const file = e.target.files[0];
-
-        if(file.size > (1024 * 1024 * 5)) {
+        const MIME_TYPES = [
+            'image/jpg',
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp'
+        ];
+        if(file.size > (1024 * 1024 * 5) || !MIME_TYPES.includes(file.type)) {
             if (!isModifyPost) {
                 setImageFile(null);
             } else {
@@ -89,7 +95,7 @@ export const ImageInput = ({ isModifyPost, setImageFile, setModifyImageFile, pos
             id={inputId}
             className={inputClass}
             type="file"
-            accept="image/*"
+            accept=".jpg, .jpeg, .png, .gif, .webp"
             onChange={onChangeImage}
         />
     )

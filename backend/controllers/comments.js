@@ -1,4 +1,4 @@
-const { Comment } = require('../database/models');
+const { Comment, User } = require('../database/models');
 const { validateCommentPayload } = require('../functions/validateform');
 const switchErrors = require('../functions/switcherrors');
 
@@ -37,14 +37,22 @@ exports.deleteComment = async (req, res) => {
     try{
         if (!req.auth || !req.auth.userId) {
             throw 'Unauthorized request!';
-        } else if(!req.body || !req.body.commentId) {
+        } else if (!req.params.id) {
             throw 'Bad request!';
         }
-        const commentId = req.body.commentId;
+        const commentId = Number(req.params.id);
 
+        // Vérification du rang de l'utilisateur. Si admin, il pourra supprimer le commentaire
+        const findUser = await User.findOne({ where: {id: req.auth.userId}, attributes: ['rank'] });
+        let isAdmin = false;
+        if (findUser !== null && findUser.rank > 2) {
+            isAdmin = true;
+        }
+
+        // Recherche du commentaire à supprimer
         const findComment = await Comment.findOne({ where: {id: commentId} });
         if (findComment === null) throw 'Comment not found!';
-        if (findComment.user_id !== req.auth.userId) {
+        if (findComment.user_id !== req.auth.userId && !isAdmin) {
             throw 'Unauthorized request!';
         }
 
@@ -52,6 +60,7 @@ exports.deleteComment = async (req, res) => {
         await Comment.destroy({ where: {id: commentId} }, (err) => {
             if (err) throw err;
         });
+
         res.status(200).json({ message: "Comment deleted !" });
     } catch (err) {
         switchErrors(res, err);
