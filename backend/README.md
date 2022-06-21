@@ -1,4 +1,10 @@
-# Generate a self-signed certificate for localhost. 
+# Installation
+
+First install `mySQL` and `Node.js`
+
+After this, run `npm install` to install node modules
+
+# Generate a self-signed certificate for localhost (https)
 
 Open your terminal or git bash and run the following command:
 
@@ -9,10 +15,6 @@ After running this command, we would get some options to fill. We can keep those
 `Common Name (e.g. server FQDN or your name): localhost`
 `Email Address : *************@****** (enter your email)`
 
-
 # Start API
 
-### `node server` or `nodemon server`
-
-Run the web server
-
+Run `node server` or `nodemon server`
