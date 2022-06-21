@@ -227,8 +227,6 @@ const Account = () => {
             document.getElementById('account-form').lastChild.previousSibling.style["display"] = 'none';
         }
 
-        console.log(document.getElementById('account-form').lastChild.previousSibling);
-
         setAccount({
             firstname: '',
             lastname: '',
