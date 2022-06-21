@@ -1,11 +1,10 @@
 /**
- * @description this function checks for token errors and disconnects the user if there are any
+ * @description this function checks for token or connexion errors and disconnects the user if there are any
  * @param {Function} navigate function to redirect the user to the login page
  */
-export const errorToken = (navigate) => {
-    localStorage.clear();
+export const errorConnexion = (navigate) => {
     document.getElementById('root').style["opacity"] = 0;
-    alert('Votre session a expiré, vous allez redirigé vers la page de connexion')
-    navigate('/login');
+    alert('Votre session a expiré, veuillez vous reconnecter')
+    navigate('/logout');
     document.getElementById('root').style["opacity"] = 1;
 };

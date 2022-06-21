@@ -77,17 +77,17 @@ exports.login = async (req, res) => {
 };
 
 // fonction pour se déconnecter
-exports.logout = async(req, res) => {
+exports.logout = async (req, res) => {
     try {
         if (!req.body || !req.body.userId) {
             throw 'Bad request!';
         }
-        const findUser = await User.findOne({ where: {id: req.body.userId} });
+        const userId = Number(req.body.userId);
+
+        const findUser = await User.findOne({ where: {id: userId} });
         if (findUser === null) throw 'User not found!';
-        if (findUser.last_connection < findUser.last_disconnection) {
-            throw 'User already disconnected!';
-        }
-        await User.update({ last_disconnection: Date() }, { where: {id: req.body.userId} }, (err) => {
+
+        await User.update({ last_disconnection: Date() }, { where: {id: userId} }, (err) => {
             if (err) throw err;
         });
         res.status(200).json({ message: 'User disconnected!'});
@@ -232,49 +232,6 @@ exports.modifyUser = async (req, res) => {
             }
 
             res.status(200).json({ message: "User's account updated!" });
-
-            // // Vérification de champs non vides et différents de ceux dans la bdd avant sauvegarde
-            // let firstname;
-            // let lastname;
-            // let email;
-            // let hash;
-
-            // if (userObject.firstname && userObject.firstname !== findUser.firstname) {
-                //firstname = userObject.firstname;
-            // } else {
-            //     firstname = findUser.firstname;
-            // }
-
-            // if (userObject.lastname && userObject.lastname !== findUser.lastname) {
-                // lastname = userObject.lastname;
-            // } else {
-            //     lastname = findUser.lastname;
-            // }
-
-            // if (userObject.email && userObject.email !== findUser.email) {
-                // email = userObject.email;
-            // } else {
-            //     email = findUser.email;
-            // }
-
-            // if (userObject.password) {
-                // hash = await bcrypt.hash(userObject.password, 10);
-            // } else {
-            //     hash = findUser.password;
-            // }
-
-            // // Mise à jour du compte
-            // const userAttributes = {
-            //     avatar: userObject.avatarUrl,
-            //     firstname: firstname,
-            //     lastname: lastname,
-            //     email: email,
-            //     password: hash
-            // };
-            // await User.update(userAttributes, { where: {id: userId} }, (err) => {
-            //     if (err) throw err;
-            // });
-            // res.status(200).json({ message: "User's account updated!" });
         }
     } catch (err) {
         switchErrors(res, err);

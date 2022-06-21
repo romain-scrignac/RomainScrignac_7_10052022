@@ -1,7 +1,7 @@
 import { useState, useEffect, lazy } from "react";
 import { useNavigate } from 'react-router-dom';
 import { ContentInput, ImageInput } from '../components/PostForm';
-import { errorToken } from '../datas/functions';
+import { errorConnexion } from '../datas/functions';
 import ModifyPost from '../components/ModifyPost';
 const Emojis = lazy(() => import('../components/Emojis'));
 const Comments = lazy(() => import('../components/Comments'));
@@ -31,8 +31,10 @@ const AllPosts = () => {
                     }
                 });
                 const responseJson = await response.json();
-                if(responseJson.error && responseJson.error === 'Invalid token!') {
-                    errorToken(navigate);
+
+                if (responseJson.error && (responseJson.error === 'Invalid token!'
+                || responseJson.error === 'You are not logged in!')) {
+                    errorConnexion(navigate);
                 }
                 if (response.ok) {
                     // Reactions counters
