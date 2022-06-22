@@ -16,7 +16,6 @@ const Signup = () => {
         signup: true
     });
 
-
     const firstnameOnChange = (e) => {
         const firstname = e.target.value;
 

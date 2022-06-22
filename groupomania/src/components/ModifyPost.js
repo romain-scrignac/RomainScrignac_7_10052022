@@ -37,20 +37,20 @@ const ModifyPost = ({ post, isModifyPost, setIsModifyPost, setNewMessage }) => {
         const contentField = document.getElementById(`modify__content-${post.id}`);
         const deleteFile = document.getElementById(`deleteFile-${post.id}`);
 
-        // On enlève les affichages créés lors de la modification
+        // Remove the display of the delete image button
         form.style["display"] = "";
         if (post.image && !modifyImageFile && post.content) {
             deleteFile.firstChild.style["display"] = "unset";
         }
 
-        // On remet tous les états à leurs valeurs par défaut
+        // Reset states' values
         setModifyImageFile(null);
         setModifyPostContent('');
         setDeleteImage(false);
         setIsModifyPost(false);
         setNewMessage(`Reset modification ${Date()}`);
 
-        // On remet les valeurs par défaut dans les champs du formulaire
+        // Reset fields' values
         contentField.value = post.content;
         imageField.value = '';
     };

@@ -65,7 +65,7 @@ const Emojis = ({ post, setNewMessage }) => {
     const switchGrinTearsButton = () => {
         const type = "laugh";
 
-        // si l'utilisateur n'a jamais "laugh" ce post ou qu'il est redevenu neutre
+        // If the user has never reacted to the publication or has become neutral again
         if (!userHasLaughedThisPost(post, userId) || countLaughs === 0) {
             return <GrinTearsButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
         } else {
@@ -81,7 +81,7 @@ const Emojis = ({ post, setNewMessage }) => {
     const switchThumbUpButton = () => {
         const type = "like";
 
-        // si l'utilisateur n'a jamais "like" ce post ou qu'il est redevenu neutre
+        // If the user has never reacted to the publication or has become neutral again
         if (!userHasLikedThisPost(post, userId) || countLikes === 0) {
             return <ThumbUpButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
         } else {
@@ -97,7 +97,7 @@ const Emojis = ({ post, setNewMessage }) => {
     const switchHeartButton = () => {
         const type = "love";
 
-        // si l'utilisateur n'a jamais "love" ce post ou qu'il est redevenu neutre
+        // If the user has never reacted to the publication or has become neutral again
         if (!userHasLovedThisPost(post, userId) || countLoves === 0) {
             return <HeartButtonEmpty postId={postId} type={type} addEmoji={addEmoji}/>;
         } else {
