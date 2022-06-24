@@ -178,7 +178,7 @@ const Signup = () => {
                             </span>
                         </fieldset>
                         <fieldset>
-                            <label htmlFor="password">Confirmation du mot de passe</label>
+                            <label htmlFor="verifPassword">Confirmation du mot de passe</label>
                             <input
                                 id="verifPassword"
                                 name="verifPassword"
