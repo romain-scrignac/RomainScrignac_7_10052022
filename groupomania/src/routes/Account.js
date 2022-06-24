@@ -144,7 +144,7 @@ const Account = () => {
 
         if (email.match(/[A-ZÀ-ÿ]/)) {
             setNewAlert("L'email doit être en minuscules et sans accent");
-        } else if (email.match(/[!-,/:-?[-^`°{-~]/)) {
+        } else if (email.match(/\s|[!-,/:-?[-^`°{-~]/)) {
             setNewAlert("Caractère(s) non autorisé(s)");
         } else if (email.length > 75) {
             setNewAlert("Email trop long(50 caractères maximum");
@@ -164,7 +164,7 @@ const Account = () => {
     const passwordOnChange = (e) => {
         const password = e.target.value;
         if(!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g)
-        || password.length < 8 || password.match[/\s|=|'|"'/]) {
+        || password.length < 8 || password.match(/\s|=|'|"'/)) {
             setAccount(previousState => { return {...previousState, password: ''} });
             e.target.style["border-color"] = "#FD2D01";
         }

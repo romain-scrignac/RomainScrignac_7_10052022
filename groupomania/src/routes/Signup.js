@@ -57,7 +57,7 @@ const Signup = () => {
         const password = e.target.value;
 
         if (!password.match(/[A-Z]/g) || !password.match(/[a-z]/g) || !password.match(/[0-9]/g)
-        || password.match([/\s|=|'|"/]) || password.length < 8) {
+        || password.match(/\s|=|'|"/) || password.length < 8) {
             setUser(previousState => { return {...previousState, password: ''}});
             e.target.style["border-color"] = "#FD2D01";
         } else {
